@@ -22,7 +22,7 @@ from .views import ImageUpload, ImageServe, ImageDelete
 
 urlpatterns = [
     path('api/media/upload/', ImageUpload, name='upload-image'),
-    path('api/media/profile-images/<int:id>/', ImageServe, name='profile-image'),
+    path('api/media/profile-images/', ImageServe, name='profile-image'),
     path('api/media/delete', ImageDelete, name='delete-image'),
     path('admin/', admin.site.urls),
 ]

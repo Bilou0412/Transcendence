@@ -4,9 +4,9 @@ from ..decorators import authorize_user
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from ..serializers import UserProfileImageSerializer
-from ..models import UserProfileImage
+from ..models import UserProfileImage, CustomUser
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
@@ -14,7 +14,7 @@ from ..models import UserProfileImage
 def ImageUpload(request):
     try:      
         id = getattr(request, 'id')
-        user, created = User.objects.get_or_create(id=id, defaults={'is_active': True})
+        user, created = CustomUser.objects.get_or_create(id=id, defaults={'is_active': True})
         serializer = UserProfileImageSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(

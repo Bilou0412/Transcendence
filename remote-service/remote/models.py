@@ -8,11 +8,10 @@ class Player:
 	def __init__ (self, id):
 		self.id = id
 		self.pos = {'x': 0, 'y': 0}
-		self.direction = 0
 		self.dimension = {'w': 0.6, 'h': 7}
 
-	def move (self):
-		self.pos['y'] += self.direction
+	def move (self, direction):
+		self.pos['y'] += direction
 		if self.pos['y'] + 3.5 > 15:
 			self.pos['y'] = 15 - 3.5
 		if self.pos['y'] - 3.5 < -15:
@@ -37,6 +36,7 @@ class Game:
 		self.group_name = group_name
 		self.score = {'left': 0, 'right': 0}
 		self.status = False
+		self.paused = False
 
 
 	async def add_player (self, player):
@@ -46,29 +46,40 @@ class Game:
 			if len(self.players) == 0:
 				print('Error: No players to remove')
 				return
-			if role != 0 and role != 1:
-				print(f'Error: Invalid role index {role}')
-				return
-			if role >= len(self.players):
-				role = role - 1
+			print(f'removing player at index {role}')
+			# if role != 0 and role != 1:
+			# 	print(f'Error: Invalid role index {role}')
+			# 	return
+			# if role >= len(self.players):
+			# 	role = role - 1
 			# if role < 0 or role >= len(self.players):
 			# 	print(f'Error: Invalid role index {role} for players list of length {len(self.players)}')
 			# 	return
+			if self.status:
+				self.paused = True
+			self.status = False
 			self.players.pop(role)
 			
-			await self.send_data({'type': 'player_disconnected'})
+			# await self.send_data({'type': 'player_disconnected'})
+
+	def get_player_index_by_id(self, player_id):
+		for index, player in enumerate(self.players):
+			if player.id == player_id:
+				return index
+		return -1  # Return -1 if no player with the given id is found
 
 	async def start (self):
 		print(f'len players: {len(self.players)}')
 		if len(self.players) != 2:
 			return
-		self.status = True
-		self.reset()
+		if not self.paused:
+			self.reset()
 		self.time = datetime.now()
 		await self.send_data( {'type': 'assign_role'}
 		)
 		await self.send_data( {'type': 'start_game'}
 		)
+		self.status = True
 
 	async def end (self):
 		print('game ended')
@@ -101,6 +112,7 @@ class Game:
 					'score_player_2': self.score['right'],
 				}
 			)
+			print(userManagerResponse.text)
 		self.score['left'] = self.score['right'] = 0
 
 	async def send_data (self, data):
@@ -130,6 +142,25 @@ class Game:
 		self.ball.direction = {'x': random.choice([-0.1, 0.1]), 'y': random.choice([-0.1, 0.1])}
 		self.players[0].pos = {'x': -10, 'y': 0}
 		self.players[1].pos = {'x': 10, 'y': 0}
+
+	async def move_paddle (self, player_id, direction):
+		print(f'moving paddle {direction}')
+		index = self.get_player_index_by_id(player_id)
+		if index == -1:
+			print(f'Error: Player with id {player_id} not found')
+			return
+		direction = 0.5 if direction == 'up' else -0.5
+		# print(f'player {index} pos before move {self.players[index].pos}')
+		self.players[index].move(direction)
+		# print(f'player {index} pos after move {self.players[index].pos}')
+		# await self.send_data( {
+		# 		'type': 'paddle_moved',
+		# 		'data': {
+		# 			'role': 'left' if index == 0 else 'right',
+		# 			'pos': self.players[index].pos
+		# 		}
+		# 	}
+		# )
 
 	def check_collision(self, paddle):
 		# Ball properties
@@ -176,12 +207,13 @@ class Game:
 
 	async def update (self):
 		try:
+			# print('updating')
 			left_paddle = self.players[0]
 			right_paddle = self.players[1]
 
 			self.ball.move()
-			left_paddle.move()
-			right_paddle.move()
+			# left_paddle.move()
+			# right_paddle.move()
 
 			
 			# walls collision 
@@ -199,8 +231,8 @@ class Game:
 				self.score['right'] += 1
 				self.reset()
 			
-			left_paddle.direction = 0
-			right_paddle.direction = 0
+			# left_paddle.direction = 0
+			# right_paddle.direction = 0
 
 			await self.send_update()
 

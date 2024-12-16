@@ -3,7 +3,7 @@ POST http://127.0.0.1:8000/api/auth/login/
 Content-Type: application/json
 
 {
-    "email": "c@gmail.com",
+    "email": "a@gmail.com",
     "password": "Motdepasse12@@",
     "otp": ""
 }

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        #login-signup, #main-menu {
+            display: none;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #login-signup.active, #main-menu.active {
+            display: block;
+        }
+        #profile-info, #matches-info, #settings-info, #chat-interface, #duel-elements, #threejs-container {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+        }
+        #profile-info.active, #matches-info.active, #settings-info.active, #chat-interface.active, #duel-elements.active, #threejs-container.active {
+            display: block;
+        }
+        #profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-top: 10px;
+        }
+        .match {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+        }
+        .chat-messages {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        }
+        .chat-input {
+            display: flex;
+            margin-top: 10px;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 5px;
+        }
+        .chat-input button {
+            margin-left: 10px;
+        }
+        canvas {
+            display: block;
+        }
+        #scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+        #start-game-button {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-signup" class="active">
+        <h2>Login or Signup</h2>
+        <form id="signin-form">
+            <h3>Sign In</h3>
+            <input type="email" id="signin-email" placeholder="Email" required>
+            <input type="password" id="signin-password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <form id="signup-form">
+            <h3>Sign Up</h3>
+            <input type="email" id="signup-email" placeholder="Email" required>
+            <input type="password" id="signup-password" placeholder="Password" required>
+            <input type="password" id="signup-password2" placeholder="Confirm Password" required>
+            <input type="text" id="signup-username" placeholder="Username" required>
+            <button type="submit">Signup</button>
+        </form>
+        <button id="oauth-button">Login with 42</button>
+    </div>
+    <div id="main-menu">
+        <h2>Main Menu</h2>
+        <button onclick="searchGame()">Launch Duel</button>
+        <button onclick="viewProfile()">View Profile</button>
+        <button onclick="showSettings()">Settings</button>
+        <button onclick="showChat()">Chat</button>
+        <button id="logout-button">Logout</button>
+        <div id="threejs-container"></div>
+        <div id="profile-info">
+            <h3>Profile Information</h3>
+            <p id="profile-username"></p>
+            <p id="profile-email"></p>
+            <img id="profile-image" src="" alt="Profile Image">
+        </div>
+        <div id="matches-info">
+            <h3>Match Information</h3>
+            <div id="matches-list"></div>
+        </div>
+        <div id="settings-info">
+            <h3>Update Profile Information</h3>
+            <form id="update-profile-form">
+                <input type="text" id="update-username" placeholder="New Username">
+                <input type="email" id="update-email" placeholder="New Email">
+                <button type="submit">Update</button>
+            </form>
+            <h3>Profile Image</h3>
+            <img id="settings-profile-image" src="" alt="Profile Image" style="width: 150px; height: 150px; border-radius: 50%; margin-top: 10px;">
+            <form id="upload-image-form">
+                <input type="file" id="upload-image" accept="image/*">
+                <button type="submit">Upload Image</button>
+            </form>
+            <h3>Change Password</h3>
+            <form id="change-password-form">
+                <input type="password" id="old-password" placeholder="Old Password" required>
+                <input type="password" id="new-password" placeholder="New Password" required>
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+        <div id="chat-interface">
+            <h3>Chat</h3>
+            <div class="chat-input">
+                <input type="text" id="chat-user-id" placeholder="Enter User ID">
+                <button onclick="startChat()">Connect</button>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Type your message...">
+                <button onclick="sendChatMessage()">Send</button>
+            </div>
+        </div>
+        <div id="duel-elements">
+            <div id="scoreboard">
+                <span id="score-left">0</span> - <span id="score-right">0</span>
+            </div>
+            <button id="start-game-button">Start Game</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let ball;
+        let paddle1;
+        let paddle2;
+        let playerRole = null;
+        let gameStarted = false;
+        let scoreLeft = 0;
+        let scoreRight = 0;
+        let intervalId = null;
+
+        let remoteWs = null;
+        let globalSocket = null;
+        let chatSocket = null;
+
+        function initThreeJs() {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('threejs-container').appendChild(renderer.domElement);
+
+        // Create the inside background
+        const backgroundGeometry = new THREE.PlaneGeometry(20, 30);
+        const backgroundMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // Blue color
+        const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+        background.position.z = -1; // Position it behind the game objects
+        scene.add(background);
+
+        const paddleWidth = 0.6, paddleHeight = 7;
+        const geometry = new THREE.BoxGeometry(paddleWidth, paddleHeight, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        paddle1 = new THREE.Mesh(geometry, material);
+        paddle2 = new THREE.Mesh(geometry, material);
+        scene.add(paddle1);
+        scene.add(paddle2);
+
+        paddle1.position.x = -10;
+        paddle2.position.x = 10;
+
+        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const ballMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        ball = new THREE.Mesh(ballGeometry, ballMaterial);
+        scene.add(ball);
+
+        camera.position.z = 30;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+
+        document.getElementById('signin-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (data.access) {
+                    const accessToken = data.access;
+                    const username = data.user.username;
+                    const userId = data.user.id;
+                    sessionStorage.setItem('accessToken', accessToken);
+                    sessionStorage.setItem('username', username);
+                    sessionStorage.setItem('userId', userId);
+                    connectWebSocket(accessToken, username, userId);
+                    showMainMenu();
+                } else {
+                    alert('Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error('Error during login or WebSocket connection:', error);
+                alert('Login failed. Please try again.');
+            }
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const password2 = document.getElementById('signup-password2').value;
+            const username = document.getElementById('signup-username').value;
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/signup/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, password2, username })
+                });
+                const data = await response.json();
+                if (data.access) {
+                    const accessToken = data.access;
+                    const username = data.user.username;
+                    const userId = data.user.id;
+                    sessionStorage.setItem('accessToken', accessToken);
+                    sessionStorage.setItem('username', username);
+                    sessionStorage.setItem('userId', userId);
+                    connectWebSocket(accessToken, username, userId);
+                    showMainMenu();
+                } else {
+                    alert('Signup failed. Please check your details.');
+                }
+            } catch (error) {
+                console.error('Error during signup or WebSocket connection:', error);
+                alert('Signup failed. Please try again.');
+            }
+        });
+
+        document.getElementById('oauth-button').addEventListener('click', function () {
+            window.open('https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fapi%2Fauth%2Foauth%2F&response_type=code', '_blank');
+        });
+
+        document.getElementById('logout-button').addEventListener('click', function () {
+            if (globalSocket) {
+                globalSocket.close();
+            }
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('userId');
+            location.reload();
+        });
+
+        function connectWebSocket(accessToken, username, userId) {
+            globalSocket = new WebSocket(`ws://127.0.0.1:8005/ws/lobby/`, [`Bearer_${accessToken}`]);
+            globalSocket.onopen = () => {
+                console.log('WebSocket connection opened');
+            };
+            globalSocket.onmessage = event => {
+                console.log('Received message:', event.data);
+            };
+            globalSocket.onclose = () => {
+                console.log('WebSocket connection closed');
+            };
+        }
+
+        function showMainMenu() {
+            document.getElementById('login-signup').classList.remove('active');
+            document.getElementById('main-menu').classList.add('active');
+            document.getElementById('profile-info').classList.remove('active');
+            document.getElementById('matches-info').classList.remove('active');
+            document.getElementById('settings-info').classList.remove('active');
+            document.getElementById('chat-interface').classList.remove('active');
+            document.getElementById('threejs-container').classList.remove('active');
+        }
+
+        function showChat() {
+            document.getElementById('profile-info').classList.remove('active');
+            document.getElementById('matches-info').classList.remove('active');
+            document.getElementById('settings-info').classList.remove('active');
+            document.getElementById('chat-interface').classList.add('active');
+            document.getElementById('duel-elements').classList.remove('active');
+            document.getElementById('threejs-container').classList.remove('active');
+        }
+
+
+
+        function startChat() {
+            const userId = document.getElementById('chat-user-id').value.trim();
+            const accessToken = sessionStorage.getItem('accessToken');
+            if (userId && accessToken) {
+                if (chatSocket) {
+                    chatSocket.close();
+                }
+                chatSocket = new WebSocket(`ws://localhost:8001/ws/chat/${userId}/`, ['Bearer_' + accessToken]);
+
+                chatSocket.onopen = () => {
+                    console.log('Direct Message WebSocket connection opened');
+                const statusElement = document.createElement('div');
+                statusElement.textContent = `Connected to direct messages with user ${userId}`;
+                document.getElementById('chat-messages').appendChild(statusElement);
+                };
+
+                chatSocket.onmessage = event => {
+                    const message = JSON.parse(event.data);
+
+                    if (message.type === 'message_history') {
+                        message.messages.forEach(msg => {
+                            const messageElement = document.createElement('div');
+                            messageElement.textContent = `${msg.sender}: ${msg.content}`;
+                            document.getElementById('chat-messages').appendChild(messageElement);
+                        });
+                    } else if (message.type === 'chat_message') {
+                        const messageElement = document.createElement('div');
+                        messageElement.textContent = `${message.sender}: ${message.message}`;
+                        document.getElementById('chat-messages').appendChild(messageElement);
+                    }
+                    };
+
+                chatSocket.onclose = () => {
+                    console.log('Chat WebSocket connection closed');
+                };
+            } else {
+                alert('Please enter a valid User ID and make sure you are logged in.');
+            }
+        }
+
+        function sendChatMessage() {
+            const messageInput = document.getElementById('chat-message-input');
+            const message = messageInput.value.trim();
+            if (chatSocket && message) {
+                chatSocket.send(JSON.stringify({ message }));
+                messageInput.value = '';
+            } else {
+                alert('Please enter a message to send.');
+            }
+        }
+
+        function searchGame() {
+            initThreeJs();
+            document.getElementById('duel-elements').classList.add('active');
+            document.getElementById('threejs-container').classList.add('active');
+            document.getElementById('settings-info').classList.remove('active');
+            document.getElementById('profile-info').classList.remove('active');
+            document.getElementById('matches-info').classList.remove('active');
+            document.getElementById('chat-interface').classList.remove('active');
+            const accessToken = sessionStorage.getItem('accessToken');
+            if (accessToken) {
+                remoteWs = new WebSocket('ws://localhost:8003/ws/pong/key/', ['Bearer_' + accessToken]);
+				remoteWs.onopen = function () {
+            		console.log('Remote WebSocket connection established');
+        		};
+
+        		remoteWs.onmessage = function (event) {
+            		const message = JSON.parse(event.data);
+            		console.log('Received message:', message);
+            		if (message.event === 'assign_role') {
+            		    playerRole = message.data;
+            		    console.log('Assigned role:', playerRole);
+            		}
+            		if (message.event === 'game_update') {
+            		    ball.position.x = message.data.ball.x;
+            		    ball.position.y = message.data.ball.y;
+            		    paddle1.position.y = message.data.players.left.pos.y;
+            		    paddle2.position.y = message.data.players.right.pos.y;
+            		    if (scoreLeft !== message.data.players.left.score || scoreRight !== message.data.players.right.score) {
+            		        scoreLeft = message.data.players.left.score;
+            		        scoreRight = message.data.players.right.score;
+            		        document.getElementById('score-left').textContent = scoreLeft;
+            		        document.getElementById('score-right').textContent = scoreRight;
+            		    }
+            		}
+            		if (message.event === 'start_game') {
+            		    gameStarted = true;
+            		    console.log('Game started');
+                        if (!intervalId) {
+                            intervalId = setInterval(sendPaddleMovement, 10); // Check and send paddle movement every 10ms
+                        }
+            		}
+            		if (message.event === 'game_ended') {
+            		    gameStarted = false;
+            		    if (message.data.winner === playerRole) {
+            		        alert('You won!');
+            		    } else if (message.data.winner !== 'unfinished') {
+            		        alert('You lost!');
+            		    }
+            		    resetGame();
+            		    console.log('Game ended');
+                        clearInterval(intervalId);
+                        intervalId = null;
+            		}
+        		};
+
+				remoteWs.onclose = function () {
+					console.log('WebSocket connection closed');
+				};
+
+					} else {
+						console.error('No auth token available');
+					}
+				}
+            
+        document.getElementById('start-game-button').addEventListener('click', function () {
+            if (remoteWs.readyState === WebSocket.OPEN) {
+                remoteWs.send(JSON.stringify({ event: 'start_game', data: null }));
+                console.log('Sent start_game message to WebSocket server');
+            } else {
+                console.log('WebSocket connection is not open');
+            }
+        });
+
+
+        function viewProfile() {
+            const accessToken = sessionStorage.getItem('accessToken');
+            const userId = sessionStorage.getItem('userId');
+            console.log(JSON.stringify({ user_ids: [userId] }));
+            fetch('http://127.0.0.1:8000/api/auth/users/info/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                body: JSON.stringify({ user_ids: [userId] })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const user = data[userId];
+                document.getElementById('profile-username').innerText = `Username: ${user.username}`;
+                document.getElementById('profile-email').innerText = `Email: ${user.email}`;
+                document.getElementById('profile-info').classList.add('active');
+                document.getElementById('matches-info').classList.remove('active');
+                document.getElementById('duel-elements').classList.remove('active');
+                document.getElementById('settings-info').classList.remove('active');
+                document.getElementById('threejs-container').classList.remove('active');
+                fetchProfileImages(user.id, accessToken, ['profile-image']);
+                fetchUserMatches(user.id, accessToken);
+            })
+            .catch(error => console.error('Error viewing profile:', error));
+        }
+
+        function fetchProfileImages(userIds, accessToken, imageElementIds) {
+            const cacheBuster = new Date().getTime(); // Generate a unique timestamp
+            fetch(`http://127.0.0.1:8002/api/media/profile-images/?cb=${cacheBuster}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ids: userIds })
+            })
+            .then(response => response.json())
+            .then(images => {
+                images.forEach((image, index) => {
+                    if (image.error) {
+                        console.error(`Error fetching profile image for user ${image.id}: ${image.error}`);
+                    } else {
+                        // const imageUrl = URL.createObjectURL(image.image);
+                        console.log(image);
+                        const imgElement = document.getElementById(imageElementIds[index]);
+                        imgElement.src = image.image_url;
+                        imgElement.alt = `Image ${image.id}`;
+                        imgElement.type = image.content_type;
+                        
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching profile images:', error));
+        }
+
+        function fetchUserMatches(userId, accessToken) {
+            fetch(`http://127.0.0.1:8004/user/${userId}/matches/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            })
+            .then(response => {
+                if (response.status === 404) {
+                    const matchesList = document.getElementById('matches-list');
+                    matchesList.innerHTML = '<p>No matches found</p>';
+                    document.getElementById('matches-info').classList.add('active');
+                    throw new Error('No matches found');
+                }
+                if (!response.ok && response.status !== 404) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const matchesList = document.getElementById('matches-list');
+                matchesList.innerHTML = '';
+                data.matches.forEach(match => {
+                    const matchElement = document.createElement('div');
+                    matchElement.className = 'match';
+                    matchElement.innerHTML = `
+                        <p>Match ID: ${match.match_id}</p>
+                        <p>Player 1 ID: ${match.player_1_id}</p>
+                        <p>Player 2 ID: ${match.player_2_id}</p>
+                        <p>Start Time: ${match.start_time}</p>
+                        <p>End Time: ${match.end_time}</p>
+                        <p>Score Player 1: ${match.score_player_1}</p>
+                        <p>Score Player 2: ${match.score_player_2}</p>
+                        <p>Created At: ${match.created_at}</p>
+                    `;
+                    matchesList.appendChild(matchElement);
+                });
+                document.getElementById('matches-info').classList.add('active');
+            })
+            .catch(error => console.error('Error fetching user matches:', error));
+        }
+
+        function showSettings() {
+            document.getElementById('settings-info').classList.add('active');
+            document.getElementById('profile-info').classList.remove('active');
+            document.getElementById('threejs-container').classList.remove('active');
+            document.getElementById('duel-elements').classList.remove('active');
+            document.getElementById('matches-info').classList.remove('active');
+            const accessToken = sessionStorage.getItem('accessToken');
+            const userId = sessionStorage.getItem('userId');
+            fetchProfileImages(userId, accessToken, ['settings-profile-image']);
+        }
+
+        document.getElementById('update-profile-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const accessToken = sessionStorage.getItem('accessToken');
+            const currentUsername = sessionStorage.getItem('username');
+            const currentEmail = document.getElementById('profile-email').innerText.split(': ')[1];
+            const newUsername = document.getElementById('update-username').value || currentUsername;
+            const newEmail = document.getElementById('update-email').value || currentEmail;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/update/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + accessToken
+                    },
+                    body: JSON.stringify({ username: newUsername, email: newEmail })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    sessionStorage.setItem('username', data.username);
+                    document.getElementById('profile-username').innerText = `Username: ${data.username}`;
+                    document.getElementById('profile-email').innerText = `Email: ${data.email}`;
+                    alert('Profile updated successfully.');
+                } else {
+                    alert('Failed to update profile. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Failed to update profile. Please try again.');
+            }
+        });
+
+        document.getElementById('upload-image-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const accessToken = sessionStorage.getItem('accessToken');
+            const userId = sessionStorage.getItem('userId');
+            const fileInput = document.getElementById('upload-image');
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8002/api/media/upload/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    },
+                    body: formData
+                });
+                if (response.ok) {
+                    alert('Image uploaded successfully.');
+                    fetchProfileImages(userId, accessToken, 'settings-profile-image');
+                } else {
+                    alert('Failed to upload image. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                alert('Failed to upload image. Please try again.');
+            }
+        });
+
+        document.getElementById('change-password-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const accessToken = sessionStorage.getItem('accessToken');
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/auth/password/update/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + accessToken
+                    },
+                    body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
+                });
+                if (response.ok) {
+                    alert('Password changed successfully.');
+                } else {
+                    alert('Failed to change password. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('Failed to change password. Please try again.');
+            }
+        });
+
+        window.addEventListener('beforeunload', function () {
+            if (remoteWs) {
+                remoteWs.close();
+            }
+            if (globalSocket) {
+                globalSocket.close();
+            }
+            if (chatSocket) {
+                chatSocket.close();
+            }
+            // sessionStorage.removeItem('accessToken');
+            // sessionStorage.removeItem('username');
+            // sessionStorage.removeItem('userId');
+        });
+
+        // Check if the user is already logged in
+        window.onload = function() {
+            const accessToken = sessionStorage.getItem('accessToken');
+            const username = sessionStorage.getItem('username');
+            const userId = sessionStorage.getItem('userId');
+            if (accessToken && username && userId) {
+                connectWebSocket(accessToken, username, userId);
+                showMainMenu();
+            } else {
+                document.getElementById('login-signup').classList.add('active');
+            }
+        };
+        let keysPressed = {};
+
+        window.addEventListener('keydown', function (event) {
+            keysPressed[event.key] = true;
+            sendPaddleMovement();
+        });
+
+        window.addEventListener('keyup', function (event) {
+            keysPressed[event.key] = false;
+            sendPaddleMovement();
+        });
+
+        window.addEventListener('blur', function () {
+            keysPressed = {};
+            sendPaddleMovement();
+        });
+
+        function sendPaddleMovement() {
+            if (remoteWs && remoteWs.readyState === WebSocket.OPEN) {
+                let direction = 0;
+                if (keysPressed['w']) {
+                    direction = 'up';
+                } else if (keysPressed['s']) {
+                    direction = 'down';
+                }
+                if (direction !== 0) {
+                    // console.log('Sending paddle movement:', direction);
+                    remoteWs.send(JSON.stringify({
+                        event: 'paddle_moved',
+                        data: { direction: direction, role: playerRole }
+                    }));
+                }
+            }
+        }
+
+
+        function resetGame() {
+            ball.position.set(0, 0, 0);
+            ballDirection = { x: 0.1, y: 0.1 };
+            paddle1.position.y = 0;
+            paddle2.position.y = 0;
+            scoreLeft = 0;
+            scoreRight = 0;
+            document.getElementById('score-left').textContent = scoreLeft;
+            document.getElementById('score-right').textContent = scoreRight;
+        }
+    </script>
+</body>
+</html>

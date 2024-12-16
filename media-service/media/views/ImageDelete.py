@@ -5,7 +5,7 @@ from ..decorators import authorize_user
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from ..models import UserProfileImage
+from ..models import UserProfileImage, CustomUser
 from django.core.exceptions import ObjectDoesNotExist
 
 @api_view(['DELETE'])
@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def	ImageDelete(request):
     id = getattr(request, 'id')
     try:
-        user = User.objects.get(id=id)
+        user = CustomUser.objects.get(id=id)
         profileImage = UserProfileImage.objects.get(user=user)
         
         if not os.path.exists(profileImage.image.path):

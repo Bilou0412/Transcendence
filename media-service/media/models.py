@@ -1,8 +1,15 @@
 import os
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 import uuid
 from django.utils.text import slugify
+
+class CustomUser(AbstractUser):
+    username = models.CharField(max_length=150, unique=False)
+
+    USERNAME_FIELD = 'id'
+    REQUIRED_FIELDS = ['username']
+
 
 def unique_filename_username(instance, filename):
     extension = filename.split('.')[-1]
@@ -12,9 +19,9 @@ def unique_filename_username(instance, filename):
 
 
 class UserProfileImage(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile_image')
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile_image')
     image = models.ImageField(upload_to=unique_filename_username, null=True)
-
+    print(f'uploaded to: {unique_filename_username}')
     def save(self, *args, **kwargs):
         if self.pk:
             old_image = UserProfileImage.objects.get(pk=self.pk).image
