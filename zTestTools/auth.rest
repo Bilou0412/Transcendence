@@ -13,10 +13,10 @@ POST http://127.0.0.1:8000/api/auth/signup/
 Content-Type: application/json
 
 {
-    "username": "b",
+    "username": "a",
     "password": "Motdepasse12@@",
     "password2": "Motdepasse12@@",
-    "email": "b@gmail.com"
+    "email": "a@gmail.com"
 }
 
 ### Refresh Token

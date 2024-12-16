@@ -1,9 +1,9 @@
 services:
-  wsmanagement:
+  tournament:
     build:
       context: ./docker
     ports:
-      - "8005:8000"
+      - "8006:8000"
     volumes:
       - .:/app
       - ./docker:/app/docker
@@ -15,7 +15,7 @@ services:
     networks:
       my_network:
         aliases:
-          - wsmanagement
+          - tournament
     entrypoint: ["/app/docker/entrypoint_dev.sh"]
 
 volumes:
