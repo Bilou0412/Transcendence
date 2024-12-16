@@ -8,6 +8,7 @@ class UserProfile(models.Model):
     nb_losses = models.IntegerField(default=0)
     avg_duration = models.FloatField(default=0)
     friends = models.ManyToManyField('self', through='Friendship', symmetrical=False)
+    
     def __str__(self) -> str:
         return f"User {self.user_id}"
 
