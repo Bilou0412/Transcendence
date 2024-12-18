@@ -51,7 +51,7 @@ function initThreeJs() {
 }
 
 function connectWebSocket(accessToken, username, userId) {
-    globalSocket = new WebSocket(`ws://127.0.0.1:8005/ws/lobby/`, [`Bearer_${accessToken}`]);
+    globalSocket = new WebSocket(`ws://127.0.0.1:8005/wsmanagement/lobby/`, [`Bearer_${accessToken}`]);
     globalSocket.onopen = () => {
         console.log('WebSocket connection opened');
     };
@@ -89,7 +89,7 @@ function startChat() {
         if (chatSocket) {
             chatSocket.close();
         }
-        chatSocket = new WebSocket(`ws://localhost:8001/ws/chat/${userId}/`, ['Bearer_' + accessToken]);
+        chatSocket = new WebSocket(`ws://localhost:8001/chat/${userId}/`, ['Bearer_' + accessToken]);
 
         chatSocket.onopen = () => {
             console.log('Direct Message WebSocket connection opened');
@@ -143,7 +143,7 @@ function searchGame() {
     document.getElementById('chat-interface').classList.remove('active');
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
-        remoteWs = new WebSocket('ws://localhost:8003/ws/pong/key/', ['Bearer_' + accessToken]);
+        remoteWs = new WebSocket('ws://localhost:8003/remote/key/', ['Bearer_' + accessToken]);
         remoteWs.onopen = function () {
             console.log('Remote WebSocket connection established');
         };
@@ -210,7 +210,7 @@ function viewProfile() {
     const accessToken = sessionStorage.getItem('accessToken');
     const userId = sessionStorage.getItem('userId');
     console.log(JSON.stringify({ user_ids: [userId] }));
-    fetch('http://127.0.0.1:8000/api/auth/users/info/', {
+    fetch('http://127.0.0.1:8000/auth/users/info/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ function viewProfile() {
 
 function fetchProfileImages(userIds, accessToken, imageElementIds) {
     const cacheBuster = new Date().getTime(); // Generate a unique timestamp
-    fetch(`http://127.0.0.1:8002/api/media/profile-images/?cb=${cacheBuster}`, {
+    fetch(`http://127.0.0.1:8002/media/profile-images/?cb=${cacheBuster}`, {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + accessToken,
@@ -264,7 +264,7 @@ function fetchProfileImages(userIds, accessToken, imageElementIds) {
 }
 
 function fetchUserMatches(userId, accessToken) {
-    fetch(`http://127.0.0.1:8004/user/${userId}/matches/`, {
+    fetch(`http://127.0.0.1:8004/usermanagement/${userId}/matches/`, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + accessToken
@@ -325,7 +325,7 @@ document.getElementById('update-profile-form').addEventListener('submit', async 
     const newEmail = document.getElementById('update-email').value || currentEmail;
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/auth/update/', {
+        const response = await fetch('http://127.0.0.1:8000/auth/update/', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -357,7 +357,7 @@ document.getElementById('upload-image-form').addEventListener('submit', async fu
     formData.append('image', fileInput.files[0]);
 
     try {
-        const response = await fetch('http://127.0.0.1:8002/api/media/upload/', {
+        const response = await fetch('http://127.0.0.1:8002/media/upload/', {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken
@@ -383,7 +383,7 @@ document.getElementById('change-password-form').addEventListener('submit', async
     const newPassword = document.getElementById('new-password').value;
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/auth/password/update/', {
+        const response = await fetch('http://127.0.0.1:8000/auth/password/update/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -479,7 +479,7 @@ function resetGame() {
 function connectWebSocket(accessToken, username, userId) {
     const userList = document.getElementById('user-list');
     const friendRequestList = document.getElementById('friend-request-list');
-    const socket = new WebSocket(`ws://localhost:8005/ws/lobby/`, [`Bearer_${accessToken}`]);
+    const socket = new WebSocket(`ws://localhost:8005/wsmanagement/lobby/`, [`Bearer_${accessToken}`]);
     globalSocket = socket;
 
     socket.onmessage = function (event) {
@@ -561,7 +561,7 @@ function sendFriendRequest(receiverId) {
         return;
     }
 
-    fetch('http://127.0.0.1:8004/user/friends/request/', {
+    fetch('http://127.0.0.1:8004/usermanagement/friends/request/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -613,7 +613,7 @@ function handleFriendRequest(data, friendRequestList) {
 
 function fetchFriendRequests() {
     const accessToken = sessionStorage.getItem('accessToken');
-    fetch('http://127.0.0.1:8004/user/friends/listrequests/', {
+    fetch('http://127.0.0.1:8004/usermanagement/friends/listrequests/', {
         headers: {
             'Authorization': `Bearer ${accessToken}`
         }
@@ -660,7 +660,7 @@ function fetchFriendRequests() {
 
 function updateFriendRequest(friendId, status) {
     const accessToken = sessionStorage.getItem('accessToken');
-    fetch('http://127.0.0.1:8004/user/friends/update/', {
+    fetch('http://127.0.0.1:8004/usermanagement/friends/update/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -698,7 +698,7 @@ function showMainMenu() {
 
 function fetchFriendList() {
     const accessToken = sessionStorage.getItem('accessToken');
-    fetch('http://127.0.0.1:8004/user/friends/', {
+    fetch('http://127.0.0.1:8004/usermanagement/friends/', {
         headers: {
             'Authorization': `Bearer ${accessToken}`
         }
@@ -707,7 +707,7 @@ function fetchFriendList() {
         .then(data => {
             const friendIds = data.friends;
             if (friendIds.length > 0) {
-                fetch('http://127.0.0.1:8000/api/auth/users/info/', {
+                fetch('http://127.0.0.1:8000/auth/users/info/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -741,7 +741,7 @@ function fetchFriendList() {
 }
 
 function fetchConnectedUsers(accessToken) {
-    fetch('http://127.0.0.1:8000/api/user/connected/', {
+    fetch('http://127.0.0.1:8000/api/usermanagement/connected/', {
         headers: {
             'Authorization': `Bearer ${accessToken}`
         }
@@ -788,7 +788,7 @@ document.getElementById('search-user-form').addEventListener('submit', async fun
     const username = document.getElementById('search-username').value;
     const accessToken = sessionStorage.getItem('accessToken');
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/auth/search_user/?username=${username}`, {
+        const response = await fetch(`http://127.0.0.1:8000/auth/search_user/?username=${username}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -815,7 +815,7 @@ document.getElementById('search-username').addEventListener('input', async funct
         return;
     }
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/auth/search_user/?username=${username}`, {
+        const response = await fetch(`http://127.0.0.1:8000/auth/search_user/?username=${username}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }

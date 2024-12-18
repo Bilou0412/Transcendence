@@ -1,4 +1,4 @@
-POST http://127.0.0.1:8001/user/matches/create/
+POST http://127.0.0.1:8001/usermanagement/matches/create/
 Content-Type: application/json
 
 {
@@ -11,11 +11,11 @@ Content-Type: application/json
 }
 
 ###
-GET http://127.0.0.1:8001/user/3/matches/
+GET http://127.0.0.1:8001/usermanagement/3/matches/
 
 ###
 
-POST http://127.0.0.1:8004/user/friends/request/
+POST http://127.0.0.1:8004/usermanagement/friends/request/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzODc5MjIwLCJpYXQiOjE3MzM4NzU2MjAsImp0aSI6IjQ4NmUzZGViOTdiYzQxYTZhOTRlMTE3ZmYyNDEyYjU2IiwidXNlcl9pZCI6NH0.dsFuZTs33KLCM1rQU6UnR-k9EKjSNVY_ng7IaPKNZWM
 
@@ -24,7 +24,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 }
 
 ###
-POST http://127.0.0.1:8001/user/friends/update/
+POST http://127.0.0.1:8001/usermanagement/friends/update/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyODgxNzM4LCJpYXQiOjE3MzI4NzgxMzgsImp0aSI6Ijk4NTUyNGE1OTExMzQ3OWU4ZWEwNWZlMzY0ZWVhZThjIiwidXNlcl9pZCI6M30.dmKvZEWhL93snrXg1Fflfl3qgAz727HzWN_kZogQ_I0
 
@@ -33,13 +33,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
   "status": "accepted"
 }
 ###
-GET http://127.0.0.1:8001/user/friends/
+GET http://127.0.0.1:8001/usermanagement/friends/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyODgxNzM4LCJpYXQiOjE3MzI4NzgxMzgsImp0aSI6Ijk4NTUyNGE1OTExMzQ3OWU4ZWEwNWZlMzY0ZWVhZThjIiwidXNlcl9pZCI6M30.dmKvZEWhL93snrXg1Fflfl3qgAz727HzWN_kZogQ_I0
 
 ###
 
-POST http://127.0.0.1:8001/user/block/request/
+POST http://127.0.0.1:8001/usermanagement/block/request/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyODg2ODI2LCJpYXQiOjE3MzI4ODMyMjYsImp0aSI6ImVlODc5OTMwYjhjNjQ5NjM4MTgwMWQ5ZmZhNTRmNWY3IiwidXNlcl9pZCI6Mn0.lAWc_AIATAlFqdm7IEZabFw9Kq_L2IZqU_7ZX9vNvPI
 
@@ -47,12 +47,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
   "user_to_block": 4
 }
 ###
-GET http://127.0.0.1:8001/user/block/
+GET http://127.0.0.1:8001/usermanagement/block/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyODg2ODI2LCJpYXQiOjE3MzI4ODMyMjYsImp0aSI6ImVlODc5OTMwYjhjNjQ5NjM4MTgwMWQ5ZmZhNTRmNWY3IiwidXNlcl9pZCI6Mn0.lAWc_AIATAlFqdm7IEZabFw9Kq_L2IZqU_7ZX9vNvPI
 
 ###
-POST http://127.0.0.1:8001/user/unblock/
+POST http://127.0.0.1:8001/usermanagement/unblock/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyODg3ODg4LCJpYXQiOjE3MzI4ODQyODgsImp0aSI6ImZiZmM2YjI1YWNkYjQ5YjM4Y2JkYzgxNWJiZTYzMjg2IiwidXNlcl9pZCI6Mn0.bT1lz30-IVIZSCI4sNEym8hyNoMgWvdg7hmblAKf9KM
 

@@ -40,7 +40,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             raise DenyConnection("User cannot chat with self")
         async with httpx.AsyncClient(timeout=5) as userInfosClient:
             userInfosResponse = await userInfosClient.post(
-				'http://auth:8000/api/auth/users/info/',
+				'http://auth:8000/auth/users/info/',
 				headers={'Authorization': f'Bearer {tokenVal}'},
 				json={"user_ids": [self.chatId]}
 			)
@@ -48,7 +48,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             raise DenyConnection("User not found")
         async with httpx.AsyncClient(timeout=5) as userInfosClient:
             userInfosResponse = await userInfosClient.get(
-				'http://usermanagement:8000/user/friends/',
+				'http://usermanagement:8000/usermanagement/friends/',
 				headers={'Authorization': f'Bearer {tokenVal}'}
 			)
         print(userInfosResponse.json())

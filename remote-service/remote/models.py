@@ -102,7 +102,7 @@ class Game:
 		start_time = self.time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		async with httpx.AsyncClient(timeout=5) as userManagerClient:
 			userManagerResponse = await userManagerClient.post(
-				'http://usermanagement:8000/user/matches/create/',
+				'http://usermanagement:8000/usermanagement/matches/create/',
 				json={
 					'player_1_id': self.players[0].id,
 					'player_2_id': self.players[1].id,

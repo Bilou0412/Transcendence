@@ -116,7 +116,7 @@
             const email = document.getElementById('signin-email').value;
             const password = document.getElementById('signin-password').value;
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+                const response = await fetch('http://127.0.0.1:8000/auth/login/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -150,7 +150,7 @@
             const password2 = document.getElementById('signup-password2').value;
             const username = document.getElementById('signup-username').value;
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/auth/signup/', {
+                const response = await fetch('http://127.0.0.1:8000/auth/signup/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -185,7 +185,7 @@
                         const urlParams = new URLSearchParams(popup.location.search);
                         const code = urlParams.get('code');
                         if (code) {
-                            fetch(`http://127.0.0.1:8000/api/auth/oauth/?code=${code}`, {
+                            fetch(`http://127.0.0.1:8000/auth/oauth/?code=${code}`, {
                                 method: 'GET'
                             })
                             .then(response => response.json())
@@ -238,7 +238,7 @@
         function connectWebSocket(accessToken, username, userId) {
             const userList = document.getElementById('user-list');
             const friendRequestList = document.getElementById('friend-request-list');
-            const socket = new WebSocket(`ws://localhost:8005/ws/lobby/`, [`Bearer_${accessToken}`]);
+            const socket = new WebSocket(`ws://localhost:8005/wsmanagement/lobby/`, [`Bearer_${accessToken}`]);
             globalSocket = socket;
 
             socket.onmessage = function (event) {
@@ -320,7 +320,7 @@
                 return;
             }
 
-            fetch('http://127.0.0.1:8004/user/friends/request/', {
+            fetch('http://127.0.0.1:8004/usermanagement/friends/request/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -372,7 +372,7 @@
 
         function fetchFriendRequests() {
             const accessToken = sessionStorage.getItem('accessToken');
-            fetch('http://127.0.0.1:8004/user/friends/listrequests/', {
+            fetch('http://127.0.0.1:8004/usermanagement/friends/listrequests/', {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
@@ -419,7 +419,7 @@
 
         function updateFriendRequest(friendId, status) {
             const accessToken = sessionStorage.getItem('accessToken');
-            fetch('http://127.0.0.1:8004/user/friends/update/', {
+            fetch('http://127.0.0.1:8004/usermanagement/friends/update/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -457,7 +457,7 @@
 
         function fetchFriendList() {
             const accessToken = sessionStorage.getItem('accessToken');
-            fetch('http://127.0.0.1:8004/user/friends/', {
+            fetch('http://127.0.0.1:8004/usermanagement/friends/', {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
@@ -466,7 +466,7 @@
             .then(data => {
                 const friendIds = data.friends;
                 if (friendIds.length > 0) {
-                    fetch('http://127.0.0.1:8000/api/auth/users/info/', {
+                    fetch('http://127.0.0.1:8000/auth/users/info/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -524,7 +524,7 @@
         }
 
         function fetchConnectedUsers(accessToken) {
-            fetch('http://127.0.0.1:8000/api/user/connected/', {
+            fetch('http://127.0.0.1:8000/api/usermanagement/connected/', {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
@@ -571,7 +571,7 @@
             const username = document.getElementById('search-username').value;
             const accessToken = sessionStorage.getItem('accessToken');
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/auth/search_user/?username=${username}`, {
+                const response = await fetch(`http://127.0.0.1:8000/auth/search_user/?username=${username}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     }
@@ -598,7 +598,7 @@
                 return;
             }
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/auth/search_user/?username=${username}`, {
+                const response = await fetch(`http://127.0.0.1:8000/auth/search_user/?username=${username}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     }

@@ -91,7 +91,7 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
-            fetch('http://localhost:8000/api/auth/login/', {
+            fetch('http://localhost:8000/auth/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -118,7 +118,7 @@
             const password = document.getElementById('signup-password').value;
             const password2 = document.getElementById('signup-password2').value;
 
-            fetch('http://localhost:8000/api/auth/signup/', {
+            fetch('http://localhost:8000/auth/signup/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -187,7 +187,7 @@
                 directWebSocket.close();
             }
 
-            directWebSocket = new WebSocket(`ws://localhost:8001/ws/chat/${userId}/`, ['Bearer_' + authToken]);
+            directWebSocket = new WebSocket(`ws://localhost:8001/chat/${userId}/`, ['Bearer_' + authToken]);
 
             directWebSocket.onopen = () => {
                 console.log('Direct Message WebSocket connection opened');

@@ -19,7 +19,7 @@ def authorize_user(view_func):
         try:
             # Validation du token avec le service d'auth
             response = requests.post(
-                'http://auth:8000/api/auth/token/validate/',
+                'http://auth:8000/auth/token/validate/',
                 headers={'Authorization': f'Bearer {token}'},
                 timeout=5  # Timeout de 5 secondes
             )

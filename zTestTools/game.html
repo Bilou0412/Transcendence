@@ -86,7 +86,7 @@
             const email = document.getElementById('signin-email').value;
             const password = document.getElementById('signin-password').value;
 
-            fetch('http://localhost:8000/api/auth/login/', {
+            fetch('http://localhost:8000/auth/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -109,7 +109,7 @@
 
 		function connectToGame() {
             if (authToken) {
-                ws = new WebSocket('ws://localhost:8003/ws/pong/key/', ['Bearer_' + authToken]);
+                ws = new WebSocket('ws://localhost:8003/remote/key/', ['Bearer_' + authToken]);
 				ws.onopen = function () {
             		console.log('WebSocket connection established');
         		};

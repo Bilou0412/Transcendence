@@ -18,7 +18,7 @@ def auth_token(func):
 
 			async with httpx.AsyncClient(timeout=5) as validateClient:
 				validateResponse = await validateClient.post(
-					'http://auth:8000/api/auth/token/validate/',
+					'http://auth:8000/auth/token/validate/',
 					headers={'Authorization': f'Bearer {tokenVal}'}
 				)
 			if validateResponse.status_code != 200:
@@ -29,7 +29,7 @@ def auth_token(func):
 			
 			async with httpx.AsyncClient(timeout=5) as userInfosClient:
 				userInfosResponse = await userInfosClient.post(
-					'http://auth:8000/api/auth/users/info/',
+					'http://auth:8000/auth/users/info/',
 					headers={'Authorization': f'Bearer {tokenVal}'},
 					json={"user_ids": [self.userId]}
 				)
