@@ -2,8 +2,6 @@ services:
   remote:
     build:
       context: ./docker
-    ports:
-      - "8003:8000"
     volumes:
       - .:/app
       # - ./docker:/app/docker

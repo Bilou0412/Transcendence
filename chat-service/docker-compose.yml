@@ -13,8 +13,6 @@ services:
   chat:
     build:
       context: ./docker
-    ports:
-      - "8001:8000"
     volumes:
       - .:/app
       - ./docker:/app/docker

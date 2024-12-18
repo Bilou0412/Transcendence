@@ -2,8 +2,6 @@ services:
   wsmanagement:
     build:
       context: ./docker
-    ports:
-      - "8005:8000"
     volumes:
       - .:/app
       - ./docker:/app/docker

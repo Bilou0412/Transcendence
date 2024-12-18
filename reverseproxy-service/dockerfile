@@ -1,0 +1,17 @@
+# Utiliser l'image officielle de Nginx
+FROM nginx:latest
+
+# Installer OpenSSL pour générer le certificat SSL auto-signé
+RUN apt-get update && apt-get install -y openssl
+
+# Créer un répertoire pour les certificats SSL
+RUN mkdir -p /etc/nginx/ssl
+# Créer un script d'initialisation pour générer le certificat auto-signé
+COPY generate-cert-and-wait.sh /docker-entrypoint.d/
+
+COPY wait-for-it.sh /wait-for-it.sh
+# Copie de la configuration Nginx (tu devras aussi avoir ce fichier dans ton répertoire)
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Exposer les ports 80 (HTTP) et 443 (HTTPS)
+EXPOSE 80 443

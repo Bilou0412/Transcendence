@@ -2,8 +2,6 @@ services:
   tournament:
     build:
       context: ./docker
-    ports:
-      - "8006:8000"
     volumes:
       - .:/app
       - ./docker:/app/docker

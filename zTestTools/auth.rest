@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Signup
-POST http://127.0.0.1:8000/api/auth/signup/
+POST https://localhost/auth/api/auth/signup/
 Content-Type: application/json
 
 {

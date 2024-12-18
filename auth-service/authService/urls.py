@@ -20,7 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API Authentication endpoints
-    path('api/auth/signup/', Signup, name='signup'),
+    path('auth/api/auth/signup/', Signup, name='signup'),
     path('api/auth/login/', Login, name='login'),
     path('api/auth/logout/', Logout, name='logout'),
 
