@@ -14,4 +14,4 @@ COPY wait-for-it.sh /wait-for-it.sh
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Exposer les ports 80 (HTTP) et 443 (HTTPS)
-EXPOSE 80 443
+EXPOSE 8080 8443

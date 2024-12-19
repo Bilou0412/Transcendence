@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Signup
-POST https://localhost/auth/auth/signup/
+POST https://localhost:8443/auth/signup/
 Content-Type: application/json
 
 {

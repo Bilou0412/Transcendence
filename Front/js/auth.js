@@ -3,7 +3,7 @@ document.getElementById('signin-form').addEventListener('submit', async function
     const email = document.getElementById('signin-email').value;
     const password = document.getElementById('signin-password').value;
     try {
-        const response = await fetch('http://127.0.0.1:8000/auth/login/', {
+        const response = await fetch('http://localhost:8443/auth/login/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ document.getElementById('signup-form').addEventListener('submit', async function
     const password2 = document.getElementById('signup-password2').value;
     const username = document.getElementById('signup-username').value;
     try {
-        const response = await fetch('http://127.0.0.1:8000/auth/signup/', {
+        const response = await fetch('http://localhost:8443/auth/signup/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ document.getElementById('oauth-button').addEventListener('click', function () {
                 const urlParams = new URLSearchParams(popup.location.search);
                 const code = urlParams.get('code');
                 if (code) {
-                    fetch(`http://127.0.0.1:8000/auth/oauth/?code=${code}`, {
+                    fetch(`http://localhost:8443/auth/oauth/?code=${code}`, {
                         method: 'GET'
                     })
                         .then(response => response.json())

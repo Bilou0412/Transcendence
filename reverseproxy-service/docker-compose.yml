@@ -3,8 +3,8 @@ services:
     build: .  # Utilise le Dockerfile dans le répertoire ./nginx
     container_name: nginx_reverse_proxy
     ports:
-      - "80:80"   # HTTP
-      - "443:443" # HTTPS
+      - "8080:8080"   # HTTP
+      - "8443:8443" # HTTPS
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf  # Configuration Nginx
       - ./nginx/ssl:/etc/nginx/ssl          # Volume pour les certificats SSL générés
