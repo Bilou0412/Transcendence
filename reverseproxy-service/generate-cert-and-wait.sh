@@ -17,7 +17,6 @@ echo "En attente des services..."
 /wait-for-it.sh chat:8000 --timeout=60 --strict -- echo "Chat prêt"
 /wait-for-it.sh media:8000 --timeout=60 --strict -- echo "Media prêt"
 /wait-for-it.sh remote:8000 --timeout=60 --strict -- echo "Remote prêt"
-/wait-for-it.sh tournament:8000 --timeout=60 --strict -- echo "Tournament prêt"
 /wait-for-it.sh usermanagement:8000 --timeout=60 --strict -- echo "Usermanagement prêt"
 /wait-for-it.sh wsmanagement:8000 --timeout=60 --strict -- echo "Wsmanagement prêt"
 

@@ -1,5 +1,5 @@
 ### Login
-POST http://127.0.0.1:8000/auth/login/
+POST https://localhost:8443/auth/login/
 Content-Type: application/json
 
 {

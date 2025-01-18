@@ -2,6 +2,5 @@ auth
 chat
 media
 remote
-tournament
 usermanagement
 wsmanagement

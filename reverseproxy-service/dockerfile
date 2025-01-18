@@ -10,6 +10,10 @@ RUN mkdir -p /etc/nginx/ssl
 COPY generate-cert-and-wait.sh /docker-entrypoint.d/
 
 COPY wait-for-it.sh /wait-for-it.sh
+
+COPY proxy-headers.conf /etc/nginx/proxy-headers.conf
+
+COPY front /etc/front
 # Copie de la configuration Nginx (tu devras aussi avoir ce fichier dans ton répertoire)
 COPY nginx.conf /etc/nginx/nginx.conf
 
