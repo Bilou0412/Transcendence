@@ -11,6 +11,7 @@ REDIS_URL = f"redis://{host}:{port}"
 games = {}
 game_tasks = {}
 games_lock = asyncio.Lock()
+game_locks = {}
 
 async def game_loop(game):
 	while True:
@@ -29,9 +30,11 @@ class PongConsumer(AsyncWebsocketConsumer):
 				if self.game_name not in games:
 					games[self.game_name] = Game(self.game_name)
 					game_tasks[self.game_name] = asyncio.create_task(game_loop(games[self.game_name]))
+					game_locks[self.game_name] = asyncio.Lock()
 
-				await games[self.game_name].add_player(Player(self.userId))
-				self.game = games[self.game_name]
+				async with game_locks[self.game_name]:
+					await games[self.game_name].add_player(Player(self.userId))
+					self.game = games[self.game_name]
 
 			await self.channel_layer.group_add(
 				self.game_name,
@@ -45,13 +48,14 @@ class PongConsumer(AsyncWebsocketConsumer):
 	@auth_token
 	async def disconnect(self, close_code):
 		try:
-			async with games_lock:
-				index = self.game.get_player_index_by_id(self.userId)
-				await self.game.remove_player(index)
-				if len(self.game.players) == 0:
+			async with game_locks[self.game_name]:
+				role = self.game.get_player_role(self.userId)
+				await self.game.remove_player(role)
+				if all(player is None for player in self.game.players.values()):
 					del games[self.game_name]
 					game_tasks[self.game_name].cancel()
 					del game_tasks[self.game_name]
+					del game_locks[self.game_name]
 
 			await self.channel_layer.group_discard(
 			    self.game_name,
@@ -90,7 +94,6 @@ class PongConsumer(AsyncWebsocketConsumer):
 		try:
 			if not self.game.status:
 				return
-
 			direction = data['direction']
 			await self.game.move_paddle(self.userId, direction)
 		
@@ -140,10 +143,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 		}))
 
 	async def assign_role(self, event):
-		index = self.game.get_player_index_by_id(self.userId)
+		role = self.game.get_player_role(self.userId)
 		await self.send(text_data=json.dumps({
 			'event': 'assign_role',
-			'data': 'left' if index == 0 else 'right'
+			'data': role
 		}))
 
 	async def game_ended(self, event):
