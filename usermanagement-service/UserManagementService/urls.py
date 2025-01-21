@@ -9,24 +9,26 @@ from .views.SendRequest import SendRequest
 from .views.UserStats import UserStats
 from .views.ListBlocked import ListBlocked
 from .views.UnblockUser import UnblockUser
+from .views.ListRequest import ListRequest
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/stats/', UserStats, name='userstats'),
+    path('usermanagement/stats/', UserStats, name='userstats'),
 
     # Match History
-    path('user/matches/create/', CreateMatch, name='creatematch'),
-    path('user/<int:user_id>/matches/', MatchHistory,
+    path('usermanagement/matches/create/', CreateMatch, name='creatematch'),
+    path('usermanagement/<int:user_id>/matches/', MatchHistory,
          name='get_user_match_history'),
-    # path('user/matches/', MatchHistory, name='matchhistory'),
+    # path('usermanagement/matches/', MatchHistory, name='matchhistory'),
 
     # Friendship
-    path('user/friends/request/', SendRequest, name='sendrequest'),
-    path('user/friends/update/', UpdateFriendshipStatus, name='acceptrequest'),
-    path('user/friends/', ListFriends, name='listfriends'),
+    path('usermanagement/friends/request/', SendRequest, name='sendrequest'),
+    path('usermanagement/friends/update/', UpdateFriendshipStatus, name='acceptrequest'),
+    path('usermanagement/friends/', ListFriends, name='listfriends'),
+    path('usermanagement/friends/listrequests/', ListRequest, name='listrequests'),
 
     # Block
-    path('user/block/request/', BlockUser, name='blockuser'),
-    path('user/block/', ListBlocked, name='listblocked'),
-    path('user/unblock/', UnblockUser, name='unblockuser'),
+    path('usermanagement/block/request/', BlockUser, name='blockuser'),
+    path('usermanagement/block/', ListBlocked, name='listblocked'),
+    path('usermanagement/unblock/', UnblockUser, name='unblockuser'),
 ]

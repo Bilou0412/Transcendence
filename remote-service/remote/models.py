@@ -96,7 +96,7 @@ class Game:
 		start_time = self.time.strftime('%Y-%m-%dT%H:%M:%SZ')
 		async with httpx.AsyncClient(timeout=5) as userManagerClient:
 			userManagerResponse = await userManagerClient.post(
-				'http://usermanagement:8000/user/matches/create/',
+				'http://usermanagement:8000/usermanagement/matches/create/',
 				json={
 					'player_1_id': self.players['left'].id,
 					'player_2_id': self.players['right'].id,
@@ -106,6 +106,7 @@ class Game:
 					'score_player_2': self.score['right'],
 				}
 			)
+			print(userManagerResponse.text)
 			print(userManagerResponse.text)
 		self.score['left'] = self.score['right'] = 0
 

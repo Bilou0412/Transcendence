@@ -13,8 +13,6 @@ services:
   usermanagement:
     build:
       context: ./docker
-    ports:
-      - "8004:8000"
     volumes:
       - .:/app
       - ./docker:/app/docker

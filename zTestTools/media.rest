@@ -1,6 +1,6 @@
 
 # Upload nouvel utilisateur
-POST http://127.0.0.1:8002/api/media/upload/
+POST http://127.0.0.1:8002/media/upload/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDE5NjIzLCJpYXQiOjE3MzQwMTYwMjMsImp0aSI6ImJkYzQyZTNhNmQyMjQzYzBiY2JhNGY1NmVkZTQ1MzIyIiwidXNlcl9pZCI6M30.eZW4S72LffXaMfWHyufJqIHdGDuJiHQighdRcdJHkrM
 
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
@@ -14,7 +14,7 @@ Content-Type: image/jpeg
 ###
 
 # Remplacer image
-POST http://127.0.0.1:8001/api/media/upload/
+POST http://127.0.0.1:8001/media/upload/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxMDc3ODA4LCJpYXQiOjE3MzEwNzQyMDgsImp0aSI6IjZiM2U3MmZlOTAzZjQwYjNhYTM0ZTllN2U3ZmM1NGViIiwidXNlcl9pZCI6Mn0.EXU0BlwyUOw14owoObelpL1R8AdoKErT7kiHU6TQhow
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
@@ -27,7 +27,7 @@ Content-Type: image/gif
 ###
 
 # Upload sans image
-POST http://localhost:8001/api/media/upload/
+POST http://localhost:8001/media/upload/
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxMDc3ODA4LCJpYXQiOjE3MzEwNzQyMDgsImp0aSI6IjZiM2U3MmZlOTAzZjQwYjNhYTM0ZTllN2U3ZmM1NGViIiwidXNlcl9pZCI6Mn0.EXU0BlwyUOw14owoObelpL1R8AdoKErT7kiHU6TQhow
 
@@ -35,17 +35,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ###
 
 # Get image d un mec avec image
-GET http://127.0.0.1:8002/api/media/profile-images/3/
+GET http://127.0.0.1:8002/media/profile-images/3/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDIwNDg1LCJpYXQiOjE3MzQwMTY4ODUsImp0aSI6IjkyYjQ4MDE3MzIzZjQwNWViODBhZWZlNmM2MWFhNjBmIiwidXNlcl9pZCI6Mn0.P_NLPkbPvCEjJUeK0PEnzkOC1onCM-m-RKcarOfc1dQ
 
 ###
 
 # Get image d un mec sans image
-GET http://127.0.0.1:8001/api/media/profile-images/jd/
+GET http://127.0.0.1:8001/media/profile-images/jd/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwOTA1MzM2LCJpYXQiOjE3MzA5MDE3MzYsImp0aSI6ImY0YjU3ZjgyYWYzYTQ4YjRhOGNjYzMyMTEzYmI5OWY5IiwidXNlcl9pZCI6M30.4ungZg6WDGDhF_Y2Vhavz3p_VgAlqc8xsPFPTmqgqrE
 ###
 
 # Delete image
-DELETE  http://127.0.0.1:8001/api/media/delete
+DELETE  http://127.0.0.1:8001/media/delete
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwOTA1MzM2LCJpYXQiOjE3MzA5MDE3MzYsImp0aSI6ImY0YjU3ZjgyYWYzYTQ4YjRhOGNjYzMyMTEzYmI5OWY5IiwidXNlcl9pZCI6M30.4ungZg6WDGDhF_Y2Vhavz3p_VgAlqc8xsPFPTmqgqrE
 ###

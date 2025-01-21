@@ -1,0 +1,21 @@
+services:
+  reverseproxy:
+    build: .  # Utilise le Dockerfile dans le répertoire ./nginx
+    container_name: nginx_reverse_proxy
+    ports:
+      - "8080:8080"   # HTTP
+      - "8443:8443" # HTTPS
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Configuration Nginx
+      - ./nginx/ssl:/etc/nginx/ssl          # Volume pour les certificats SSL générés
+    networks:
+      my_network:
+        aliases:
+          - reverseproxy
+    environment:
+      - TZ=Europe/Paris  # Optionnel : Pour configurer le fuseau horaire
+
+
+networks:
+  my_network:
+    external: true

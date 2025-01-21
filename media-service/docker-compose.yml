@@ -14,8 +14,6 @@ services:
   media:
     build:
       context: ./docker
-    ports:
-      - "8002:8000"
     volumes:
       - .:/app
       - ./docker:/app/docker

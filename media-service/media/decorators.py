@@ -9,7 +9,7 @@ def authorize_user(view_func):
         token = request.headers.get('Authorization', '')
         if not token:
             return Response({'error': 'No token'}, status=status.HTTP_401_UNAUTHORIZED)
-        response = requests.post('http://auth:8000/api/auth/token/validate/', headers={'Authorization': token})
+        response = requests.post('http://auth:8000/auth/token/validate/', headers={'Authorization': token})
         if response.status_code != 200:
             return Response({'error': 'Invalid token', 'status': response.status_code}, status=status.HTTP_401_UNAUTHORIZED)
         request.id = response.json()['id']

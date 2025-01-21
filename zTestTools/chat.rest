@@ -5,7 +5,7 @@ Upgrade: websocket
 Sec-WebSocket-Version: 13
 
 ### Login HTTP (à faire avant la connexion WebSocket si authentification requise)
-POST http://127.0.0.1:8000/api/auth/login/
+POST http://127.0.0.1:8000/auth/login/
 Content-Type: application/json
 
 {

@@ -1,26 +1,26 @@
 ### Login
-POST http://127.0.0.1:8000/api/auth/login/
+POST https://localhost:8443/auth/login/
 Content-Type: application/json
 
 {
-    "email": "c@gmail.com",
+    "email": "a@gmail.com",
     "password": "Motdepasse12@@",
     "otp": ""
 }
 
 ### Signup
-POST http://127.0.0.1:8000/api/auth/signup/
+POST https://localhost:8443/auth/signup/
 Content-Type: application/json
 
 {
-    "username": "b",
+    "username": "a",
     "password": "Motdepasse12@@",
     "password2": "Motdepasse12@@",
-    "email": "b@gmail.com"
+    "email": "a@gmail.com"
 }
 
 ### Refresh Token
-POST http://127.0.0.1:8000/api/auth/token/refresh/
+POST http://127.0.0.1:8000/auth/token/refresh/
 Content-Type: application/json
 
 {
@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ### Request Password Reset
-POST http://127.0.0.1:8000/api/auth/password/reset/
+POST http://127.0.0.1:8000/auth/password/reset/
 Content-Type: application/json
 
 {
@@ -36,7 +36,7 @@ Content-Type: application/json
 }
 
 ### Confirm Password Reset
-POST http://127.0.0.1:8000/api/auth/password/reset/confirm/Mg/cfnhn8-6526e51095b178fa8d48f420e5b2e6bc/
+POST http://127.0.0.1:8000/auth/password/reset/confirm/Mg/cfnhn8-6526e51095b178fa8d48f420e5b2e6bc/
 Content-Type: application/json
 
 {
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 ### Confirm Password Reset
 
-POST http://127.0.0.1:8000/api/auth/password/update/
+POST http://127.0.0.1:8000/auth/password/update/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNDM1NTYwLCJpYXQiOjE3MzE0MzE5NjAsImp0aSI6ImUzMTkzNjY4MmViZTQzMGI4OWQzZDg1OGI1NTA4ZjUxIiwidXNlcl9pZCI6Mn0.L4uzPIEMGVoc3VpUm71EmBRmhybjVdAQrHg5A71nSrc
 
@@ -54,7 +54,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
     "new_password": "Azerty93@"
 }
 ### Logout
-POST http://127.0.0.1:8000/api/auth/logout/
+POST http://127.0.0.1:8000/auth/logout/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwMjk1MTYwLCJpYXQiOjE3MzAyOTE1NjAsImp0aSI6IjRkNWJhN2NlYTQxZDRiMzhiNzI5ZjQyM2NkYjY2ZjhjIiwidXNlcl9pZCI6Mn0.-1EBA11nqoOzgtH0kYbQj-XG8HusprnZPGdHYdaYPkI
 
@@ -64,11 +64,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ### Token verify
 
-POST http://127.0.0.1:8000/api/auth/token/validate/
+POST http://127.0.0.1:8000/auth/token/validate/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNDM1NTYwLCJpYXQiOjE3MzE0MzE5NjAsImp0aSI6ImUzMTkzNjY4MmViZTQzMGI4OWQzZDg1OGI1NTA4ZjUxIiwidXNlcl9pZCI6Mn0.L4uzPIEMGVoc3VpUm71EmBRmhybjVdAQrHg5A71nSrc
 ###
-POST http://127.0.0.1:8000/api/auth/users/info/
+POST http://127.0.0.1:8000/auth/users/info/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzOTMzOTQyLCJpYXQiOjE3MzM5MzAzNDIsImp0aSI6IjlmZjlmMjZhOTQxZTQzZTRiYWZiYjI2M2ZjMzJmZmUxIiwidXNlcl9pZCI6NH0.sJ6QXUoSheB8bRabratu4EAZWOy3xL0tLF-5nZtCsSM
 
@@ -78,17 +78,17 @@ Authorization: Bearer eyJhbGciiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYW
 
 ### 2FA
 
-GET http://127.0.0.1:8000/api/auth/2fa/enable/
+GET http://127.0.0.1:8000/auth/2fa/enable/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxOTUzNTY3LCJpYXQiOjE3MzE5NDk5NjcsImp0aSI6IjU1ODBmZmM2OWI5NjQwNDY5NGRkZjhmZDM1OTFlYjY5IiwidXNlcl9pZCI6Mn0.O_sJEk5LbjnK8wNLNzHWazseDOFzE5_gLn1LZsxX9LQ
 
 ###
 
-DELETE http://127.0.0.1:8000/api/auth/2fa/disable/
+DELETE http://127.0.0.1:8000/auth/2fa/disable/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxOTUzNTExLCJpYXQiOjE3MzE5NDk5MTEsImp0aSI6IjA3MDlkYWM5YWQ3MDQ3YTRiNTBjN2VjZWU0NjNkNmE1IiwidXNlcl9pZCI6Mn0._e4EcQx9YEeedXz6jmwDRwWYSeGc3ksA2HPfhsU4DRI
 
 ###
-POST http://127.0.0.1:8000/api/auth/2fa/verify/
+POST http://127.0.0.1:8000/auth/2fa/verify/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNTA3ODU1LCJpYXQiOjE3MzE1MDQyNTUsImp0aSI6IjAzOTZiNzQ5ZGExMDRhOGI4ZTA4MDZkZjBlOThmNThkIiwidXNlcl9pZCI6Mn0.RW4Jqxnn8p-I3vcCBiGQZdC3sIP83dSciCpmAb4FNDo

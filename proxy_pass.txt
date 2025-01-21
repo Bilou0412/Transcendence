@@ -1,0 +1,6 @@
+auth
+chat
+media
+remote
+usermanagement
+wsmanagement
