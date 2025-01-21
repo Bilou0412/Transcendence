@@ -2,7 +2,6 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import random
 from datetime import datetime
-import httpx
 
 class Player:
 	def __init__ (self, id):
@@ -198,8 +197,6 @@ class Game:
 			right_paddle = self.players['right']
 
 			self.ball.move()
-			# left_paddle.move()
-			# right_paddle.move()
 
 			
 			# walls collision 
@@ -210,15 +207,13 @@ class Game:
 			self.handle_collision(right_paddle)
 
 			# score
-			if self.ball.pos['x'] <= left_paddle.pos['x'] - 1:
+			if self.ball.pos['x'] <= left_paddle.pos['x'] - left_paddle.dimension['w'] - 0.1:
 				self.score['left'] += 1
 				self.reset()
-			if self.ball.pos['x'] >= right_paddle.pos['x'] + 1:
+			if self.ball.pos['x'] >= right_paddle.pos['x'] + right_paddle.dimension['w'] + 0.1:
 				self.score['right'] += 1
 				self.reset()
 			
-			# left_paddle.direction = 0
-			# right_paddle.direction = 0
 
 			await self.send_update()
 

@@ -1,12 +1,12 @@
 import json
-from django.conf import settings
+# from django.conf import settings
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .decorators import auth_token
 from .models import Game, Player
 import asyncio
 
-host, port = settings.CHANNEL_LAYERS['default']['CONFIG']['hosts'][0]
-REDIS_URL = f"redis://{host}:{port}"
+# host, port = settings.CHANNEL_LAYERS['default']['CONFIG']['hosts'][0]
+# REDIS_URL = f"redis://{host}:{port}"
 
 games = {}
 game_tasks = {}
@@ -32,9 +32,9 @@ class PongConsumer(AsyncWebsocketConsumer):
 					game_tasks[self.game_name] = asyncio.create_task(game_loop(games[self.game_name]))
 					game_locks[self.game_name] = asyncio.Lock()
 
-				async with game_locks[self.game_name]:
-					await games[self.game_name].add_player(Player(self.userId))
-					self.game = games[self.game_name]
+			async with game_locks[self.game_name]:
+				await games[self.game_name].add_player(Player(self.userId))
+				self.game = games[self.game_name]
 
 			await self.channel_layer.group_add(
 				self.game_name,
@@ -51,11 +51,12 @@ class PongConsumer(AsyncWebsocketConsumer):
 			async with game_locks[self.game_name]:
 				role = self.game.get_player_role(self.userId)
 				await self.game.remove_player(role)
-				if all(player is None for player in self.game.players.values()):
-					del games[self.game_name]
-					game_tasks[self.game_name].cancel()
-					del game_tasks[self.game_name]
-					del game_locks[self.game_name]
+				async with games_lock:
+					if all(player is None for player in self.game.players.values()):
+						del games[self.game_name]
+						game_tasks[self.game_name].cancel()
+						del game_tasks[self.game_name]
+						del game_locks[self.game_name]
 
 			await self.channel_layer.group_discard(
 			    self.game_name,
