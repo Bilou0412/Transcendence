@@ -95,10 +95,8 @@
     <div id="main-menu">
         <div id="logged-in-user"></div>
         <h2>Main Menu</h2>
-        <button onclick="searchGame()">Launch Duel</button>
+        <button onclick="searchGame()">Search and Launch Game</button>
         <button onclick="viewProfile()">View Profile</button>
-        <button onclick="showSettings()">Settings</button>
-        <button onclick="showChat()">Chat</button>
         <button id="logout-button">Logout</button>
         <ul id="user-list"></ul>
         <div id="friend-requests">
@@ -110,108 +108,10 @@
         </div>
         <ul id="friend-request-list"></ul>
         <div id="threejs-container"></div>
-        <div id="profile-info">
-            <h3>Profile Information</h3>
-            <p id="profile-username"></p>
-            <p id="profile-email"></p>
-            <img id="profile-image" src="" alt="Profile Image">
-        </div>
-        <div id="matches-info">
-            <h3>Match Information</h3>
-            <div id="matches-list"></div>
-        </div>
-        <div id="settings-info">
-            <h3>Update Profile Information</h3>
-            <form id="update-profile-form">
-                <input type="text" id="update-username" placeholder="New Username">
-                <input type="email" id="update-email" placeholder="New Email">
-                <button type="submit">Update</button>
-            </form>
-            <h3>Profile Image</h3>
-            <img id="settings-profile-image" src="" alt="Profile Image" style="width: 150px; height: 150px; border-radius: 50%; margin-top: 10px;">
-            <form id="upload-image-form">
-                <input type="file" id="upload-image" accept="image/*">
-                <button type="submit">Upload Image</button>
-            </form>
-            <h3>Change Password</h3>
-            <form id="change-password-form">
-                <input type="password" id="old-password" placeholder="Old Password" required>
-                <input type="password" id="new-password" placeholder="New Password" required>
-                <button type="submit">Change Password</button>
-            </form>
-        </div>
-        <div id="chat-interface">
-            <h3>Chat</h3>
-            <div class="chat-input">
-                <input type="text" id="chat-user-id" placeholder="Enter User ID">
-                <button onclick="startChat()">Connect</button>
-            </div>
-            <div class="chat-messages" id="chat-messages"></div>
-            <div class="chat-input">
-                <input type="text" id="chat-message-input" placeholder="Type your message...">
-                <button onclick="sendChatMessage()">Send</button>
-            </div>
-        </div>
-        <div id="duel-elements">
-            <div id="scoreboard">
-                <span id="score-left">0</span> - <span id="score-right">0</span>
-            </div>
-            <button id="start-game-button">Start Game</button>
-        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        let ball;
-        let paddle1;
-        let paddle2;
-        let playerRole = null;
-        let gameStarted = false;
-        let scoreLeft = 0;
-        let scoreRight = 0;
-        let intervalId = null;
-
-        let remoteWs = null;
         let globalSocket = null;
-        let chatSocket = null;
-
-        function initThreeJs() {
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('threejs-container').appendChild(renderer.domElement);
-
-        // Create the inside background
-        const backgroundGeometry = new THREE.PlaneGeometry(20, 30);
-        const backgroundMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // Blue color
-        const background = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
-        background.position.z = -1; // Position it behind the game objects
-        scene.add(background);
-
-        const paddleWidth = 0.6, paddleHeight = 7;
-        const geometry = new THREE.BoxGeometry(paddleWidth, paddleHeight, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        paddle1 = new THREE.Mesh(geometry, material);
-        paddle2 = new THREE.Mesh(geometry, material);
-        scene.add(paddle1);
-        scene.add(paddle2);
-
-        paddle1.position.x = -10;
-        paddle2.position.x = 10;
-
-        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const ballMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        ball = new THREE.Mesh(ballGeometry, ballMaterial);
-        scene.add(ball);
-
-        camera.position.z = 30;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
 
         document.getElementById('signin-form').addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -602,78 +502,20 @@
         }
 
         function searchGame() {
-            initThreeJs();
-            document.getElementById('duel-elements').classList.add('active');
-            document.getElementById('threejs-container').classList.add('active');
-            document.getElementById('settings-info').classList.remove('active');
-            document.getElementById('profile-info').classList.remove('active');
-            document.getElementById('matches-info').classList.remove('active');
-            document.getElementById('chat-interface').classList.remove('active');
             const accessToken = sessionStorage.getItem('accessToken');
-            if (accessToken) {
-                remoteWs = new WebSocket('ws://localhost:8003/ws/pong/key/', ['Bearer_' + accessToken]);
-				remoteWs.onopen = function () {
-            		console.log('Remote WebSocket connection established');
-        		};
-
-        		remoteWs.onmessage = function (event) {
-            		const message = JSON.parse(event.data);
-            		console.log('Received message:', message);
-            		if (message.event === 'assign_role') {
-            		    playerRole = message.data;
-            		    console.log('Assigned role:', playerRole);
-            		}
-            		if (message.event === 'game_update') {
-            		    ball.position.x = message.data.ball.x;
-            		    ball.position.y = message.data.ball.y;
-            		    paddle1.position.y = message.data.players.left.pos.y;
-            		    paddle2.position.y = message.data.players.right.pos.y;
-            		    if (scoreLeft !== message.data.players.left.score || scoreRight !== message.data.players.right.score) {
-            		        scoreLeft = message.data.players.left.score;
-            		        scoreRight = message.data.players.right.score;
-            		        document.getElementById('score-left').textContent = scoreLeft;
-            		        document.getElementById('score-right').textContent = scoreRight;
-            		    }
-            		}
-            		if (message.event === 'start_game') {
-            		    gameStarted = true;
-            		    console.log('Game started');
-                        if (!intervalId) {
-                            intervalId = setInterval(sendPaddleMovement, 10); // Check and send paddle movement every 10ms
-                        }
-            		}
-            		if (message.event === 'game_ended') {
-            		    gameStarted = false;
-            		    if (message.data.winner === playerRole) {
-            		        alert('You won!');
-            		    } else if (message.data.winner !== 'unfinished') {
-            		        alert('You lost!');
-            		    }
-            		    resetGame();
-            		    console.log('Game ended');
-                        clearInterval(intervalId);
-                        intervalId = null;
-            		}
-        		};
-
-				remoteWs.onclose = function () {
-					console.log('WebSocket connection closed');
-				};
-
-					} else {
-						console.error('No auth token available');
-					}
-				}
-            
-        document.getElementById('start-game-button').addEventListener('click', function () {
-            if (remoteWs.readyState === WebSocket.OPEN) {
-                remoteWs.send(JSON.stringify({ event: 'start_game', data: null }));
-                console.log('Sent start_game message to WebSocket server');
-            } else {
-                console.log('WebSocket connection is not open');
-            }
-        });
-
+            fetch('http://127.0.0.1:8002/api/search-game/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Game search result:', data);
+            })
+            .catch(error => console.error('Error searching game:', error));
+        }
 
         function viewProfile() {
             const accessToken = sessionStorage.getItem('accessToken');

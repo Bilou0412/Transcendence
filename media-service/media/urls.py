@@ -21,9 +21,9 @@ from django.urls import path
 from .views import ImageUpload, ImageServe, ImageDelete
 
 urlpatterns = [
-    path('api/media/upload/', ImageUpload, name='upload-image'),
-    path('api/media/profile-images/', ImageServe, name='profile-image'),
-    path('api/media/delete', ImageDelete, name='delete-image'),
+    path('media/upload/', ImageUpload, name='upload-image'),
+    path('media/profile-images/', ImageServe, name='profile-image'),
+    path('media/delete', ImageDelete, name='delete-image'),
     path('admin/', admin.site.urls),
 ]
 

@@ -80,6 +80,8 @@ WSGI_APPLICATION = 'WebsocketManagement.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.dummy'
@@ -131,6 +133,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'wsmanagement']
 
 ASGI_APPLICATION = "WebsocketManagement.asgi.application"
+
 
 CHANNEL_LAYERS = {
     'default': {

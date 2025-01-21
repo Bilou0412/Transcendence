@@ -40,7 +40,7 @@ def ImageServe(request):
                 content_type = 'image/gif'
             
             truncated_path = image_path.split('/images/')[-1]
-            image_url = request.build_absolute_uri(settings.MEDIA_URL + truncated_path)
+            image_url = request.build_absolute_uri(settings.MEDIA_URL + truncated_path).replace('http://', 'https://')
             images.append({
                 'id': id,
                 'image_url': image_url,
@@ -50,7 +50,7 @@ def ImageServe(request):
         except ObjectDoesNotExist:
             default_path = os.path.join('images', 'default.png')
             if os.path.exists(default_path):
-                default_url = request.build_absolute_uri(settings.MEDIA_URL + 'default.png')
+                default_url = request.build_absolute_uri(settings.MEDIA_URL + 'default.png').replace('http://', 'https://')
                 images.append({
                     'id': id,
                     'image_url': default_url,
