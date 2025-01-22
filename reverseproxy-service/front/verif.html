@@ -5,6 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verification</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #message p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .checkmark {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: green;
+            position: relative;
+            margin: 20px auto;
+            animation: fadeIn 1s forwards;
+        }
+
+        .checkmark::after {
+            content: '✔';
+            color: white;
+            font-size: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -16,8 +70,10 @@
                 .then(response => response.json())
                 .then(data => {
                     const messageContainer = document.getElementById('message');
+                    const checkmark = document.getElementById('checkmark');
                     if (data.detail === "Email successfully verified.") {
                         messageContainer.innerHTML = "<p>Your email has been successfully verified.</p>";
+                        checkmark.style.display = 'block';
                     } else {
                         messageContainer.innerHTML = "<p>There was an error verifying your email. Please try again.</p>";
                     }
@@ -35,6 +91,7 @@
         <div id="message">
             <p>Verifying your email address...</p>
         </div>
+        <div id="checkmark" class="checkmark"></div>
     </div>
 </body>
 </html>

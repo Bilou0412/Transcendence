@@ -3,7 +3,7 @@ POST https://localhost:8443/auth/login/
 Content-Type: application/json
 
 {
-    "email": "a@gmail.com",
+    "email": "bilel.moudache0412@gmail.com",
     "password": "Motdepasse12@@",
     "otp": ""
 }
