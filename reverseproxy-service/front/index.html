@@ -379,7 +379,7 @@
             document.getElementById('chat-interface').classList.remove('active');
             const accessToken = sessionStorage.getItem('accessToken');
             if (accessToken) {
-                remoteWs = new WebSocket('wss://localhost:8443/pong/key/', ['Bearer_' + accessToken]);
+                remoteWs = new WebSocket('wss://localhost:8443/remote/key/', ['Bearer_' + accessToken]);
 				remoteWs.onopen = function () {
             		console.log('Remote WebSocket connection established');
         		};
@@ -501,7 +501,7 @@
         }
 
         function fetchUserMatches(userId, accessToken) {
-            fetch(`https://localhost:8443/user/${userId}/matches/`, {
+            fetch(`https://localhost:8443/usermanagement/${userId}/matches/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + accessToken

@@ -16,6 +16,7 @@ services:
       context: ./docker
     volumes:
       - .:/app
+      # - ./images:/app/images
       - ./docker:/app/docker
     environment:
       - PYTHONUNBUFFERED=1

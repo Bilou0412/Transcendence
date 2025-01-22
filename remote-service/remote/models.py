@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import random
 from datetime import datetime
+import httpx
 
 class Player:
 	def __init__ (self, id):

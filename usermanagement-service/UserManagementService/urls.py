@@ -12,7 +12,7 @@ from .views.UnblockUser import UnblockUser
 from .views.ListRequest import ListRequest
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('usermanagement/admin/', admin.site.urls),
     path('usermanagement/stats/', UserStats, name='userstats'),
 
     # Match History
