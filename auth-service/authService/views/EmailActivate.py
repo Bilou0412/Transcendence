@@ -3,10 +3,12 @@ from django.utils.http import urlsafe_base64_decode
 from ..models import User
 from rest_framework import status
 from rest_framework.response import Response
-from django.utils.encoding import  force_str
-from rest_framework.decorators import api_view
+from django.utils.encoding import force_str
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def EmailActivate(request, uidb64, token):
     """
     View to verify email and activate user.

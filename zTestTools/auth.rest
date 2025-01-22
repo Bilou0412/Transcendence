@@ -13,10 +13,10 @@ POST https://localhost:8443/auth/signup/
 Content-Type: application/json
 
 {
-    "username": "a",
+    "username": "bilel",
     "password": "Motdepasse12@@",
     "password2": "Motdepasse12@@",
-    "email": "a@gmail.com"
+    "email": "bilel.moudache0412@gmail.com"
 }
 
 ### Refresh Token

@@ -5,11 +5,12 @@ from rest_framework.permissions import AllowAny
 from ..serializers import UserSerializer
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -28,10 +29,9 @@ def Signup(request):
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-            # Build the verification URL
-            verification_url = request.build_absolute_uri(
-                reverse('emailactivate', kwargs={'uidb64': uid, 'token': token})
-            )
+            # Use the frontend URL from the Nginx configuration
+            frontend_url = "https://localhost:8443"
+            verification_url = f"{frontend_url}/verify-email/?uid={uid}&token={token}"      
 
             # Send the verification email
             send_verification_email(user.email, verification_url)
