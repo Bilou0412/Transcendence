@@ -27,9 +27,7 @@ def PassReset(request):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             
             # Build reset URL
-            reset_url = request.build_absolute_uri(
-                reverse('passresetconfirm', kwargs={'uidb64': uid, 'token': token})
-            )
+            reset_url = f"https://localhost:8443/password-reset/confirm?uid={uid}&token={token}"
 
             # Send email
             send_mail(

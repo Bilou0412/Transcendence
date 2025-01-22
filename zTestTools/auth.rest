@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### Refresh Token
-POST http://127.0.0.1:8000/auth/token/refresh/
+POST http://localhost:8443/auth/token/refresh/
 Content-Type: application/json
 
 {
@@ -28,11 +28,11 @@ Content-Type: application/json
 }
 
 ### Request Password Reset
-POST http://127.0.0.1:8000/auth/password/reset/
+POST https://localhost:8443/auth/password/reset/
 Content-Type: application/json
 
 {
-    "email": "reset.pass.ponggame@gmail.com"
+    "email": "bilel.moudache0412@gmail.com"
 }
 
 ### Confirm Password Reset
