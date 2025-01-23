@@ -165,9 +165,8 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
             # Generate verification link
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            verification_url = self.context['request'].build_absolute_uri(
-                reverse('emailupdateinfo', kwargs={'uidb64': uid, 'token': token})
-            )
+            frontend_url = "https://localhost:8443"
+            verification_url = f"{frontend_url}/updatemail/?uid={uid}&token={token}" 
 
             # Send verification email
             send_mail(
