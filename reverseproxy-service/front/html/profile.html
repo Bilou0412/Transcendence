@@ -1,0 +1,224 @@
+<head>
+	<title>Profile</title>
+	<meta charset="utf-8">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/profile.css">
+	<link rel="stylesheet" href="../css/xp.css/dist/XP.css"/>
+
+</head>
+
+<body>
+	<div class="title-bar">
+		<div class="title-bar-text">Profile</div>
+		<div class="title-bar-controls">
+			<button aria-label="Close" id="close-button" onclick="route(event, '/')"></button>
+		</div>
+	</div>
+
+	<div class="main-content">
+		<div class="window" id="profileDisplay">
+			<div class="title-bar">
+			  <div class="title-bar-text">User</div>
+			</div>
+			<div class="window-body">
+				<div class="window-header">
+					<img src = "../css/icon/pong_logo.png" id="userIcon">
+					<span id="userID">Username<span class="IDHash">#ID</span></span>
+					<button id="editBtn" onclick="route(event, '/settings')">Edit</button>
+				</div>
+				<div class="flex-tables">
+					<div class="tables">
+						<h2>History</h2>
+						<div class="table-wrapper">
+							<table id="history">
+								<tr>
+								<th>Date</th>
+								<th>Duration</th>
+								<th>GameMode</th>
+								<th>Score</th>
+								</tr>
+								<tr>
+								<td datetime="2024-03-20">29/11/2024</td>
+								<td>04:11</td>
+								<td>Online</td>
+								<td>20-17</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+								<tr>
+									<td datetime="2024-03-20">29/11/2024</td>
+									<td>08:37</td>
+									<td>solo</td>
+									<td>33-12</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="tables">
+						<h2>Statistics</h2>
+						<div class="table-wrapper">
+							<table id="statistics">
+								<tr>
+								<td>Game played</td>
+								<td class="stat">15</td>
+								</tr>
+								<tr>
+									<td>Winrate</td>
+									<td class="stat">66%</td>
+								</tr>
+								<tr>
+									<td>KD</td>
+									<td class="stat">2.1</td>
+								</tr>
+								<tr>
+									<td>Time played</td>
+									<td class="stat">1h34</td>
+								</tr>
+								<tr>
+									<td>Point per game</td>
+									<td class="stat">14.7</td>
+								</tr>
+								<tr>
+									<td>Point taken per game</td>
+									<td class="stat">7.0</td>
+								</tr>
+								<tr>
+									<td>Total point scored</td>
+									<td class="stat">221</td>
+								</tr>
+								<tr>
+									<td>Total point taken</td>
+									<td class="stat">128</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="window" id="friendDisplay">
+			<div class="title-bar">
+			  <div class="title-bar-text">Friends</div>
+			</div>
+			<div class="window-body">
+				<input type="text" placeholder="Search user" id="search_bar">
+			</div>
+			<div class="friend-list-container">
+				<div class="friend-list">
+					<div class="friend-item">
+						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+						<div class="friend-info">
+							<div class="friend-name">John Doe</div>
+						</div>
+						<div class="friend-actions">
+							<button class="btn btn-remove">Remove</button>
+							<button class="btn btn-block">Block</button>
+						</div>
+					</div>
+					<div class="friend-item">
+						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+						<div class="friend-info">
+							<div class="friend-name">Jane Smith</div>
+						</div>
+						<div class="friend-actions">
+							<button class="btn btn-remove">Remove</button>
+							<button class="btn btn-block">Block</button>
+						</div>
+					</div>
+					<div class="friend-item">
+						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+						<div class="friend-info">
+							<div class="friend-name">Mike Johnson</div>
+						</div>
+						<div class="friend-actions">
+							<button class="btn btn-remove">Remove</button>
+							<button class="btn btn-block">Block</button>
+						</div>
+					</div>
+					<div class="friend-item">
+						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+						<div class="friend-info">
+							<div class="friend-name">Emily Brown</div>
+						</div>
+						<div class="friend-actions">
+							<button class="btn btn-remove">Remove</button>
+							<button class="btn btn-block">Block</button>
+						</div>
+					</div>
+					<div class="friend-item">
+						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+						<div class="friend-info">
+							<div class="friend-name">David Wilson</div>
+						</div>
+						<div class="friend-actions">
+							<button class="btn btn-remove">Remove</button>
+							<button class="btn btn-block">Block</button>
+						</div>
+					</div>
+					<div class="friend-item">
+						<img src="/../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+						<div class="friend-info">
+							<div class="friend-name">Sarah Lee</div>
+						</div>
+						<div class="friend-actions">
+							<button class="btn btn-remove">Remove</button>
+							<button class="btn btn-block">Block</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="../js/router.js"></script>
+	<script>
+		document.getElementById('close-button').addEventListener('click', (event) => route(event));
+	</script>
+</body>

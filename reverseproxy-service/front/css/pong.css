@@ -1,0 +1,313 @@
+body {
+	padding-top: 0px;
+	overflow: hidden;
+}
+
+.title-bar {
+	width: calc(100% - 10px);
+	z-index: 1000;
+}
+
+
+#titleBarPong {
+	position: fixed;
+	top: 0;
+}
+
+.title-bar-text {
+	font-family: "XP";
+}
+
+.main-content {
+	position: fixed;
+	display: flex;
+	top: 10%;
+	justify-content: space-evenly;
+	align-items: space-evenly;
+	width: 100%;
+	height: 90%;
+}
+
+#leftWindow {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+	width: 35%;
+	height: 90%;
+}
+
+.gameSettingsBody {
+	height: 90%;
+	width: 90%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+
+
+
+
+
+
+
+
+.localTournament {
+	height: 100%;
+	display: none;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.tournament-bracket {
+	display: flex;
+	justify-content: space-around;
+	padding: 20px;
+	font-family: Arial, sans-serif;
+}
+
+.round {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.match {
+	margin: 10px;
+	display: flex;
+	flex-direction: column;
+}
+
+#round2 {
+	margin: 10px;
+	display: flex;
+	flex-direction: column;
+}
+
+.semi {
+	height: 100%;
+    justify-content: space-evenly;
+}
+
+.player {
+	/* border: 2px solid #333; */
+	padding: 10px;
+	margin: 2px;
+	width: 150px;
+	/* background-color: #f0f0f0; */
+}
+
+
+
+
+
+
+
+
+
+
+
+.remoteTournament {
+	height: 100%;
+	display: none;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+#settTitle {
+	font-family: "XP";
+	font-size: 35px;
+}
+
+#remoteTournamentSelect {
+	width: 140px;
+}
+
+.friend-list {
+	width: 100%;
+	min-width: 500px;
+	max-height: 50%;
+	background-color: #ffffff;
+	overflow: hidden;
+	overflow-y: auto;
+	border: 1px solid black;
+}
+
+.friend-item {
+	display: flex;
+	padding: 8px;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.friend-item img {
+    width: 50px;
+    height: 50px;
+}
+
+#invitePlayers {
+	width: 250px;
+	height: 50px;
+	font-size: medium;
+}
+
+.remote1v1 {
+	height: 100%;
+	display: none;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.localPlayerAI {
+	height: 100%;
+	width: 90%;
+	display: none;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.AISett {
+	height: 100%;
+	width: 90%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.AIOptions {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	font-family: "XP";
+	font-size: 30px;
+	border: 1px solid #d9d9d9 ;
+	background-color: #ffffff;
+	width: 100%;
+	height: 30%;
+}
+
+#aiFieldset {
+    margin-bottom: unset;
+	align-items: center;
+}
+
+.rightWindow {
+	width: 55%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+	gap : 80px;
+}
+
+#pongSettings {
+	width: 100%;
+	height: 50%;
+}
+
+#playerWindow {
+	width: 30%;
+	height: 85%;
+}
+
+.playerSett {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+
+	height: 93%;
+}
+
+.settings-row {
+	width: 90%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.playerKey {
+	width: 50px;
+	height: 50px;
+	border: solid 2px #ffffff;
+	background-color: #ffffff;
+	border-radius: 10px;
+	font-size: 20px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	align-items: center;
+}
+
+.playerColor {
+	height: 50px;
+	width: 50px;
+	border: solid 2px #ffffff;
+	border-radius: 10px;
+}
+
+#player1SideColor {
+	background-color: #222222;
+}
+
+#player1PaddleColor {
+	background-color: #797979;
+}
+
+#player2SideColor {
+	background-color: #222222;
+}
+
+#player2PaddleColor {
+	background-color: #797979;
+}
+
+fieldset {
+	width: 30%;
+	font-family: "XP";
+	font-size: large;
+}
+
+.field-row {
+	margin: 20px;
+}
+
+.field-row label {
+	font-size: medium;
+}
+
+.pongSettBody {
+	display: flex;
+	height: 94%;
+	align-items: center;
+	justify-content: space-evenly;
+}
+
+#startButton {
+	width: 150px;
+	height: 75px;
+	font-size: large;
+}
+
+#gameModeSelect {
+	width: 300px;
+	height: 40px;
+	font-size: large;
+	background-size: 30px;
+}
+
+.waitingScreen {
+	display: none;
+	position: fixed;
+	top: 30%;
+	left: 38%;
+	text-align: center;
+	font-family: "XP";
+}

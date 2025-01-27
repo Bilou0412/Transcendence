@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Pong</title>
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/pong.css">
+	<link rel="stylesheet" href="../css/xp.css/dist/XP.css"/>
+</head>
+
+<body>
+	<div class="title-bar" id="titleBarPong">
+		<div class="title-bar-text">Pong</div>
+		<div class="title-bar-controls">
+			<button aria-label="Close" id="close-button" onclick="route(event, '/')"></button>
+		</div>
+	</div>
+	<div class="main-content">
+		<div class="window" id="leftWindow">
+			<div class="title-bar">
+				<div class="title-bar-text">Game settings</div>
+			</div>
+			<div class="gameSettingsBody">
+				<!-------------------------------- local tournament --------------------------------->
+				<div class="localTournament">
+					<h1 id="settTitle">Local tournament</h1>
+					<div class="tournament-bracket">
+						<div class="round" id="round1">
+							<div class="match">
+								<div class="player active">
+									<input type="text" placeholder="Player 1" class="player-input">
+								</div>
+								<div class="player active">
+									<input type="text" placeholder="Player 2" class="player-input">
+								</div>
+							</div>
+							<div class="match">
+								<div class="player active">
+									<input type="text" placeholder="Player 3" class="player-input">
+								</div>
+								<div class="player active">
+									<input type="text" placeholder="Player 4" class="player-input">
+								</div>
+							</div>
+						</div>
+						<div class="round" id="round2">
+							<div class="match semi">
+								<div class="player semi-winner">
+									<!-- <span class="player-display" id="semifinal1">Semifinal 1 Winner</span> -->
+									<input disabled type="text" placeholder="Semifinal 1 Winner" class="player-input" id="semifinal1">
+								</div>
+								<div class="player semi-winner">
+									<!-- <span class="player-display" id="semifinal2">Semifinal 2 Winner</span> -->
+									<input disabled type="text" placeholder="Semifinal 2 Winner" class="player-input" id="semifinal2">
+								</div>
+							</div>
+						</div>
+						<div class="round" id="round3">
+							<div class="match">
+								<div class="player final-winner">
+									<!-- <span class="player-display" id="final">Champion</span> -->
+									<input disabled type="text" placeholder="Champion" class="player-input" id="final">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-------------------------------- remote tournament --------------------------------->
+				<div class="remoteTournament">
+					<h1 id="settTitle">Remote tournament</h1>
+					<select id="remoteTournamentSelect">
+						<option selected>4 players</option>
+						<option>6 players</option>
+					</select>
+					<div class="friend-list">
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<div class="inviteCheckbox">
+								<input type="checkbox" id="example1">
+								<label for="example1">Invite</label>
+							</div>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<div class="inviteCheckbox">
+								<input type="checkbox" id="example2">
+								<label for="example2">Invite</label>
+							</div>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<div class="inviteCheckbox">
+								<input type="checkbox" id="example3">
+								<label for="example3">Invite</label>
+							</div>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<div class="inviteCheckbox">
+								<input type="checkbox" id="example4">
+								<label for="example4">Invite</label>
+							</div>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<div class="inviteCheckbox">
+								<input type="checkbox" id="example5">
+								<label for="example5">Invite</label>
+							</div>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<div class="inviteCheckbox">
+								<input type="checkbox" id="example6">
+								<label for="example6">Invite</label>
+							</div>
+						</div>
+					</div>
+					<button id="invitePlayers">Invite selected players</button>
+				</div>
+				<!------------------------------------ remote 1v1 ------------------------------------>
+				<div class="remote1v1">
+					<h1 id="settTitle">Remote 1v1</h1>
+					<div class="friend-list">
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<button>Invite</button>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<button>Invite</button>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<button>Invite</button>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<button>Invite</button>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<button>Invite</button>
+						</div>
+						<div class="friend-item">
+							<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
+							<div class="friend-info">
+								<div class="friend-name">John Doe</div>
+							</div>
+							<button>Invite</button>
+						</div>
+					</div>
+				</div>
+				<!------------------------------------- local AI ------------------------------------->
+				<div class="localPlayerAI">
+					<h1 id="settTitle">Player vs AI</h1>
+					<div class="AISett">
+						<div class="AIOptions">
+							<p>AI Difficulty:</p>
+							<fieldset id="aiFieldset">
+								<div class="field-row">
+									<input id="radio1" type="radio" name="fieldset-example2">
+									<label for="radio1">Easy</label>
+								</div>
+								<div class="field-row">
+									<input id="radio2" type="radio" name="fieldset-example2" checked>
+									<label for="radio2">Medium</label>
+								</div>
+								<div class="field-row">
+									<input id="radio3" type="radio" name="fieldset-example2">
+									<label for="radio3">Hard</label>
+								</div>
+							</fieldset>
+						</div>
+						<div class="AIOptions">
+							<p>Play as:</p>
+							<fieldset id="aiFieldset">
+								<div class="field-row">
+									<input id="radio4" type="radio" name="fieldset-example3" checked>
+									<label for="radio4">Player 1</label>
+								</div>
+								<div class="field-row">
+									<input id="radio5" type="radio" name="fieldset-example3">
+									<label for="radio5">Player 2</label>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="rightWindow" id="rightWindow">
+			<div class="window" id="pongSettings">
+				<div class="title-bar">
+					<div class="title-bar-text">Pong settings</div>
+				</div>
+				<div class="pongSettBody">
+					<div class="window" id="playerWindow">
+						<div class="title-bar">
+							<div class="title-bar-text">Player 1</div>
+						</div>
+						<div class="playerSett">
+							<div class="settings-row">
+								<label class="playerKey" id="player1KeyUp"><kbd>W</label>
+								<button id="player1InputUp" class="player1Input">Move Up</button>
+							</div>
+							<div class="settings-row">
+								<label class="playerKey" id="player1KeyDown"><kbd>S</kbd></label>
+								<button id="player1InputDown" class="player1Input">Move Down</button>
+							</div>
+							<div class="settings-row">
+								<div class="playerColor" id="player1SideColor"></div>
+								<button id="player1SideColorBtn" class="player1ColorBtn">Side Color</button>
+							</div>
+							<div class="settings-row">
+								<div class="playerColor" id="player1PaddleColor"></div>
+								<button id="player1PaddleColorBtn" class="player1ColorBtn">Paddle Color</button>
+							</div>
+						</div>
+					</div>
+					<fieldset>
+						<div class="field-row">Play style:</div>
+						<div class="field-row">
+							<input id="radio14" type="radio" name="fieldset-example">
+							<label for="radio14" id="labelMode">slow</label>
+						</div>
+						<div class="field-row">
+							<input id="radio15" type="radio" name="fieldset-example">
+							<label for="radio15">relax</label>
+						</div>
+						<div class="field-row">
+							<input id="radio16" type="radio" name="fieldset-example" checked>
+							<label for="radio16">normal</label>
+						</div>
+						<div class="field-row">
+							<input id="radio17" type="radio" name="fieldset-example">
+							<label for="radio17">fast</label>
+						</div>
+						<div class="field-row">
+							<input id="radio18" type="radio" name="fieldset-example">
+							<label for="radio18">super fast</label>
+						</div>
+						<div class="field-row">
+							<input id="radio19" type="radio" name="fieldset-example">
+							<label for="radio19">super ultra omega fast as f*ck</label>
+						</div>
+						<div class="field-row">
+							<input id="radio20" type="radio" name="fieldset-example">
+							<label for="radio20">butterfly</label>
+						</div>
+					</fieldset>
+					<div class="window" id="playerWindow">
+						<div class="title-bar">
+							<div class="title-bar-text">Player 2</div>
+						</div>
+						<div class="playerSett">
+							<div class="settings-row">
+								<label class="playerKey" id="player2KeyUp"><kbd>↑</label>
+								<button id="player2InputUp" class="player2Input">Move Up</button>
+							</div>
+							<div class="settings-row">
+								<label class="playerKey" id="player2KeyDown"><kbd>↓</kbd></label>
+								<button id="player2InputDown" class="player2Input">Move Down</button>
+							</div>
+							<div class="settings-row">
+								<div class="playerColor" id="player2SideColor"></div>
+								<button id="player2SideColorBtn" class="player2ColorBtn">Side Color</button>
+							</div>
+							<div class="settings-row">
+								<div class="playerColor" id="player2PaddleColor"></div>
+								<button id="player2PaddleColorBtn" class="player2ColorBtn">Paddle Color</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<select id="gameModeSelect">
+				<option selected>local 1v1</option>
+				<option>local tournament</option>
+				<option>player vs AI</option>
+				<option>remote 1v1</option>
+				<option>remote tournament</option>
+				<option>remote random 1v1</option>
+			</select>
+			<button id="startButton">Start Game</button>
+		</div>
+	</div>
+	<div class="waitingScreen" id="waitingScreen">
+		<h1>Please wait ...</h1>
+	</div>
+</body>
+</html>

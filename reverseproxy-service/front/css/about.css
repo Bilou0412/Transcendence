@@ -1,0 +1,19 @@
+.title-bar {
+	width: calc(100% - 10px);
+	position: fixed;
+	top: 0;
+	z-index: 1000;
+}
+
+/* Position tabs at the top of the screen */
+.tabs {
+    position: absolute;
+	font-family: "tahoma";
+    top: 50px; /* Adjust based on title bar height */
+    left: 70%; /* Center horizontally */
+    /* transform: translateX(-50%); Ensure perfect centering */
+    width: calc(100% - 100px); /* Adjust width as needed */
+    max-width: 1500px; /* Maintain original max-width */
+    z-index: 10; /* Ensure it's above other content */
+}
+

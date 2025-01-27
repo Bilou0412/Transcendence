@@ -1,0 +1,418 @@
+///////////////////////////////////////imports////////////////////////////////////////
+import { initBall } from "./ball_init.js";
+import { resetBall, sleep } from "./resetBall.js";
+import { initMiddlePlatform, initSides } from "./roundedBox.js";
+import { updateCubeSelection, updatePlayerPositions } from "./movements.js";
+import { updateBallPosition } from "./ball_physics.js";
+import { updateScoreDisplay, updateClock, initScoreboard, initClock} from "./display.js";
+import { focusGame, initMonitor, focusMonitor, initTable} from "./monitor.js";
+import { onKeyDown, onKeyUp, onMouseWheel } from "./keyEvents.js";
+import { Settings } from "./settings.js";
+import { titleDisplay } from "./monitor_display.js";
+
+// ///////////////////////////////////environment settings///////////////////////////////
+export let settings = null;
+let game_mode = "local 1v1";
+let current_match = 1;
+let players_names = [null, null, null, null, null, null, null];
+export let player1Side = 0x222222;
+export let player2Side = 0x222222;
+export let player1Paddle = 0x797979;
+export let player2Paddle = 0x797979;
+export let player1UpBind = 'w';
+export let player1DownBind = 's';
+export let player2UpBind = 'ArrowUp';
+export let player2DownBind = 'ArrowDown';
+
+let semifinal1Winner = document.getElementById('semifinal1');
+let semifinal2Winner = document.getElementById('semifinal2');
+let finalWinner = document.getElementById('final');
+
+///////////////////////////////////main functions/////////////////////////////////////
+
+function advance(player) {
+    if (current_match === 1) {
+        players_names[4] = players_names[player];
+        semifinal1Winner.value = players_names[player];
+    }
+    else if (current_match === 2) {
+        players_names[5] = players_names[player];
+        semifinal2Winner.value = players_names[player];
+    }
+    else {
+        players_names[6] = players_names[player];
+        finalWinner.value = players_names[player];
+    }
+}
+
+export async function quitPong() {
+    if (game_mode === 'local tournament' && (settings.player1Score === settings.MaxScore || settings.player2Score === settings.MaxScore)) {
+        if (current_match === 1) {
+            if (settings.player1Score > settings.player2Score) {
+                alert(players_names[0] + ' wins the match!');
+                advance(0);
+            }
+            else {
+                alert(players_names[1] + ' wins the match!');
+                advance(1);
+            }
+            current_match++;
+        }
+        else if (current_match === 2) {
+            if (settings.player1Score > settings.player2Score) {
+                alert(players_names[2] + ' wins the match!');
+                advance(2);
+            }
+            else {
+                alert(players_names[3] + ' wins the match!');
+                advance(3);
+            }
+            current_match++;
+        }
+        else {
+            if (settings.player1Score > settings.player2Score) {
+                alert(players_names[4] + ' wins the match!');
+                advance(4);
+            }
+            else {
+                alert(players_names[5] + ' wins the match!');
+                advance(5);
+            }
+            alert(players_names[6] + ' wins the tournament!');
+            current_match = 1;
+        }
+    }
+
+    if (settings) {
+        focusMonitor();
+        await sleep(2000);
+        settings.destroy();
+        settings = null;
+    }
+
+    document.getElementById('nav').style.display = 'block';
+    document.getElementById('Taskbar').style.display = 'flex';
+    document.getElementById('startButton').style.display = 'block';
+    document.getElementById('titleBarPong').style.display = 'flex';
+    document.getElementById('leftWindow').style.display = 'flex';
+    document.getElementById('rightWindow').style.display = 'flex';
+
+    //stop event listeners
+    window.removeEventListener('keydown', onKeyDown, false);
+    window.removeEventListener('keyup', onKeyUp, false);
+    window.removeEventListener('wheel', onMouseWheel, false);
+    //stop animation loop
+    window.cancelAnimationFrame(animate);
+}
+
+// Animation loop
+function animate() {
+    if (settings)
+    {
+        requestAnimationFrame(animate);
+
+        updatePlayerPositions();
+        updateCubeSelection();
+        updateBallPosition();
+
+        // Raise/lower cubes animation
+        settings.cubes.forEach(cube => {
+            if (cube.userData.targetY !== undefined) {
+                cube.position.y += (cube.userData.targetY - cube.position.y) * settings.liftSpeed;
+            }
+        });
+
+        settings.renderer.render(settings.scene, settings.camera);
+    }
+}
+
+function resetGame() {
+    if (!settings) 
+        return;
+    settings.player1Score = 0;
+    settings.player2Score = 0;
+    updateScoreDisplay();
+    resetBall();
+
+}
+
+function initEnvironment() {
+    if (!settings) return;
+    getPlayersNames();
+    initSides();
+    initMiddlePlatform();
+    initScoreboard();
+    initClock();
+}
+
+export async function startGame() {
+    if (!settings) return;
+    settings.gameStatus = 'playing';
+    initBall();
+    updateClock();
+    resetGame();
+}
+
+function progressLoading() {
+    //create a progress bar and puttin it in the middle of the screen
+    const progressBar = document.createElement('progress');
+    progressBar.value = 0;
+    progressBar.style.position = 'absolute';
+    progressBar.style.left = '50%';
+    progressBar.style.top = '50%';
+    progressBar.style.width = '200px';
+    progressBar.style.height = '20px';
+    progressBar.style.transform = 'translate(-50%, -50%)';
+    progressBar.style.zIndex = '1000';
+    document.body.appendChild(progressBar);
+
+    //loading progress over 5 seconds
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 0.1;
+        progressBar.value = progress;
+        if (progress >= 100) {
+            clearInterval(interval);
+            progressBar.remove();
+        }
+    }, 500);
+
+    //remove the progress bar after 5 seconds
+    setTimeout(() => {
+        progressBar.remove();
+    }, 5000);
+}
+
+export async function initializeGame() {
+    document.getElementById('waitingScreen').style.display = 'block';
+    document.getElementById('nav').style.display = 'none';
+    document.getElementById('startButton').style.display = 'none';
+    document.getElementById('leftWindow').style.display = 'none';
+    document.getElementById('rightWindow').style.display = 'none';
+    progressLoading();
+    window.addEventListener('keydown', onKeyDown, false);
+    window.addEventListener('keyup', onKeyUp, false);
+    window.addEventListener('wheel', onMouseWheel, false);
+    settings = new Settings();
+    initMonitor();
+    initTable();
+    titleDisplay();
+    // await sleep(5000);
+    settings.updateTime();
+    animate();
+    initEnvironment();
+    startGame();
+    document.getElementById('Taskbar').style.display = 'none';
+    document.getElementById('titleBarPong').style.display = 'none';
+    document.getElementById('waitingScreen').style.display = 'none';
+    focusGame();
+
+}
+
+
+
+////////////////////////////////////////////////////////Page script////////////////////////////////////////////////////////
+
+//////////////////////////////////////Window Swap//////////////////////////////////////
+// Get the game mode selector and the sections
+const gameModeSelect = document.getElementById('gameModeSelect');
+const sections = {
+    "local tournament": document.querySelector('.localTournament'),
+	"remote tournament": document.querySelector('.remoteTournament'),
+	"remote 1v1": document.querySelector('.remote1v1'),
+	"player vs ai": document.querySelector('.localPlayerAI'),
+};
+
+// Add an event listener for the game mode selection
+gameModeSelect.addEventListener('change', function () {
+	const selectedMode = gameModeSelect.value.toLowerCase();
+    game_mode = selectedMode;
+	// Hide all sections
+	Object.values(sections).forEach(section => {
+		section.style.display = 'none';
+	});
+	console
+
+	// Show the selected section
+	if (sections[selectedMode]) {
+		sections[selectedMode].style.display = 'flex';
+	}
+});
+
+
+//////////////////////////////////////Player Names//////////////////////////////////////
+// Get the player name inputs if the section is visible
+function getPlayersNames() {
+    if (game_mode === 'local tournament') {
+        const playerInputs = document.querySelectorAll('.player-input');
+        
+        playerInputs.forEach((input, index) => {
+            // Immediately capture current input value
+            players_names[index] = input.value || null;
+            
+            // Add input event listener for future changes
+            input.addEventListener('input', () => {
+                players_names[index] = input.value || null;
+            });
+        });
+    }
+}
+
+
+//////////////////////////////////////Game Settings//////////////////////////////////////
+// Track already assigned keys
+const assignedKeys = new Set();
+const keyBindings = {
+    player1Up: "W",
+    player1Down: "S",
+    player2Up: "ArrowUp",
+    player2Down: "ArrowDown"
+};
+
+// Key display mapping
+const keyDisplayMapping = {
+    ArrowUp: "↑",
+    ArrowDown: "↓",
+    ArrowLeft: "←",
+    ArrowRight: "→",
+    ARROWUP: "↑",
+    ARROWDOWN: "↓",
+    ARROWLEFT: "←",
+    ARROWRIGHT: "→",
+    " ": "Space",
+    Enter: "Enter",
+    Backspace: "Backspace"
+};
+
+// Function to reset assigned keys based on current bindings
+function resetAssignedKeys() {
+    assignedKeys.clear();
+    Object.values(keyBindings).forEach(key => assignedKeys.add(key.toUpperCase()));
+}
+
+// Initialize assignedKeys with default keys
+resetAssignedKeys();
+
+// Function to get display value for a key
+function getKeyDisplay(key) {
+    return keyDisplayMapping[key] || key.toUpperCase();
+}
+
+// Handle keybinding updates
+function updateKeybind(buttonId, keyDisplayId, action, buttonDefaultText) {
+    const button = document.getElementById(buttonId);
+    const keyDisplay = document.querySelector(`#${keyDisplayId} kbd`);
+
+    // Set default key display
+    keyDisplay.innerText = getKeyDisplay(keyBindings[action]);
+
+    button.addEventListener("click", () => {
+        button.innerText = "Press a key...";
+
+        const onKeyPress = (event) => {
+            event.preventDefault(); // Prevent default browser actions
+            const key = event.key; // Keep original key case
+            const upperKey = key.toUpperCase(); // Uppercase version for tracking
+
+            // Check if key is already assigned to another action
+            if (assignedKeys.has(upperKey) && keyBindings[action].toUpperCase() !== upperKey) {
+                alert(`The key "${getKeyDisplay(key)}" is already assigned to another action. Please choose a different key.`);
+                button.innerText = buttonDefaultText;
+                document.removeEventListener("keydown", onKeyPress);
+                return;
+            }
+
+            // Update bindings
+            const oldKey = keyBindings[action].toUpperCase();
+            assignedKeys.delete(oldKey); // Remove old key from the set
+            keyBindings[action] = upperKey;
+            assignedKeys.add(upperKey); // Add new key to the set
+
+            keyDisplay.innerText = getKeyDisplay(key);
+            button.innerText = buttonDefaultText;
+            document.removeEventListener("keydown", onKeyPress);
+
+            // Update the keybindings for the game
+            // Preserve the original case for special keys like 'ArrowUp'
+            let bindingKey = key;
+            if (key.startsWith('Arrow')) {
+                bindingKey = key; // Keep original case for arrow keys
+            } else {
+                bindingKey = key.toLowerCase(); // Use lowercase for regular keys
+            }
+
+            // Update the game bindings
+            if (action === 'player1Up') {
+                player1UpBind = bindingKey;
+            } else if (action === 'player1Down') {
+                player1DownBind = bindingKey;
+            } else if (action === 'player2Up') {
+                player2UpBind = bindingKey;
+            } else if (action === 'player2Down') {
+                player2DownBind = bindingKey;
+            }
+
+            console.log('Updated bindings:', {
+                player1UpBind,
+                player1DownBind,
+                player2UpBind,
+                player2DownBind
+            });
+        };
+
+        document.addEventListener("keydown", onKeyPress);
+    });
+}
+
+// Handle color picker updates
+function updateColor(buttonId, colorDisplayId) {
+    const button = document.getElementById(buttonId);
+    const colorDisplay = document.getElementById(colorDisplayId);
+
+    button.addEventListener("click", () => {
+        const colorInput = document.createElement("input");
+        colorInput.type = "color";
+        colorInput.style.display = "none";
+
+        document.body.appendChild(colorInput);
+        colorInput.click();
+
+        colorInput.addEventListener("input", () => {
+            colorDisplay.style.backgroundColor = colorInput.value;
+            
+            // Convert hex color to 0x format and update the corresponding variable
+            const colorValue = parseInt(colorInput.value.replace('#', '0x'));
+            
+            switch(buttonId) {
+                case 'player1SideColorBtn':
+                    player1Side = colorValue;
+                    break;
+                case 'player1PaddleColorBtn':
+                    player1Paddle = colorValue;
+                    break;
+                case 'player2SideColorBtn':
+                    player2Side = colorValue;
+                    break;
+                case 'player2PaddleColorBtn':
+                    player2Paddle = colorValue;
+                    break;
+            }
+
+        });
+
+        colorInput.addEventListener("change", () => {
+            document.body.removeChild(colorInput);
+        });
+    });
+}
+
+// Initialize the functionality for both players
+updateKeybind("player1InputUp", "player1KeyUp", "player1Up", "Move Up");
+updateKeybind("player1InputDown", "player1KeyDown", "player1Down", "Move Down");
+updateKeybind("player2InputUp", "player2KeyUp", "player2Up", "Move Up");
+updateKeybind("player2InputDown", "player2KeyDown", "player2Down", "Move Down");
+
+updateColor("player1SideColorBtn", "player1SideColor");
+updateColor("player1PaddleColorBtn", "player1PaddleColor");
+updateColor("player2SideColorBtn", "player2SideColor");
+updateColor("player2PaddleColorBtn", "player2PaddleColor");

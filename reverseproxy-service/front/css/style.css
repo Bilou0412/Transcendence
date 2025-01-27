@@ -1,0 +1,38 @@
+body {
+	font-family: "XP";
+	display: flex;
+	height: 100%;
+	margin: 0;
+	padding-top: 20px;
+	background-color: #ebe9d9;
+}
+
+.taskbar {
+	display: flex;
+	position: fixed;
+	z-index: 100;
+	bottom: 0;
+}
+
+.clock{
+	display: flex;
+	color: white;
+	font-family: "XP";
+	font-size: 20px;
+	position: fixed;
+	z-index: 150;
+	bottom: 8px;
+    left: 1820px;
+}
+
+
+/*/////////////////////////////////////// Fonts ///////////////////////////////////////*/
+@font-face {
+    font-family: 'Digital-7';
+    src: url('fonts/digital_7/digital-7 (mono).ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'XP';
+	src: url(fonts/xp/xp.ttf) format('truetype');
+}

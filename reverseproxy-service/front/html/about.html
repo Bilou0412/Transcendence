@@ -1,0 +1,77 @@
+<head>
+	<title>Settings</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/about.css">
+	<link rel="stylesheet" href="../css/xp.css/dist/XP.css"/>
+</head>
+
+<body>
+	<div class="title-bar">
+		<div class="title-bar-text">About this project</div>
+		<div class="title-bar-controls">
+			<button aria-label="Close" id="close-button" onclick="route(event, '/')"></button>
+		</div>
+	</div>
+
+	<div id="main-content">
+		<h1>XPongo</h1>
+		<ul class="tree-view">
+			<li style="font-size: 15px">This site is a group project for 42 school</strong></li>
+			<li>subject()</li>
+			<li>We want in here</li>
+		</ul>
+		<section class="tabs" style="max-width: 500px" id = "setting_tabs">
+			<menu role="tablist" aria-label="Sample Tabs">
+			  <button role="tab" aria-selected="true" aria-controls="tab-A">API</button>
+			  <button role="tab" aria-controls="tab-B">Web socket</button>
+			  <button role="tab" aria-controls="tab-C">Frontend</button>
+			</menu>
+			<!-- the tab content -->
+			<article role="tabpanel" id="tab-A">
+			  <h3>Bilel Moudache</h3>
+			  <p>
+				Github: <a href="https://github.com/Bilou0412" target="_blank">Bilou0412</a>
+			  </p>
+			  <p>
+				Module
+			  </p>
+			  <ul>
+				<li>Authentification</li>
+				<li>Backend as microservice</li>
+				<li>User management</li>
+			  </ul>
+			</article>
+
+			<article role="tabpanel" hidden id="tab-B">
+				<h3>Sefir Outin</h3>
+				<p>
+					Github: <a href="https://github.com/SefirOutin" target="_blank">SefirOutin</a>
+				</p>
+				<p>
+					Module
+				</p>
+				<ul>
+					<li>Remote player</li>
+					<li>Chat</li>
+				</ul>
+			</article>
+
+			<article role="tabpanel" hidden id="tab-C">
+				<h3>Jimmy Denis</h3>
+				<p>
+					Github: <a href="https://github.com/molomol0" target="_blank">molomol0</a>
+				</p>
+				<p>
+					Module
+				</p>
+				<ul>
+					<li>UI</li>
+					<li>3D game</li>
+				</ul>
+			</article>
+		  </section>
+	</div>
+
+	<script src="../js/router.js"></script>
+</body>

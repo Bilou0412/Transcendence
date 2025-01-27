@@ -1,0 +1,98 @@
+.title-bar {
+	width: calc(100% - 10px);
+	position: fixed;
+	top: 0;
+	z-index: 1000;
+}
+
+.title-bar-text {
+	font-family: "XP";
+}
+
+
+/* =====================================Profile===================================== */
+#profileWindow {
+    display: flex;
+    width: 65%;
+    height:90%;
+    position: fixed;
+    justify-content: center;
+    top: 50%;
+    left: 34%;
+    transform: translate(-50%, -50%);
+    
+}
+
+.profileBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+/* --------------------------------Preview-------------------------------- */
+.profileView {
+    display: flex;
+    justify-content: center;
+	align-items: center;
+    gap : 50px;
+}
+
+#userIcon {
+	border: 5px solid #ffffff;
+	border-radius: 3%;
+	height: 200px;
+}
+
+#userID {
+	font-size: 50px;
+}
+
+.IDHash {
+	color:rgb(114, 114, 114);
+}
+
+/* --------------------------------Edit-------------------------------- */
+.editFields {
+    border: 3px solid white;
+    display: flex;
+    flex-direction: column;
+    width: 900px; /*!!!!!!!!! A FIXE !!!!!!!!!!!!!*/
+}
+
+.editSet {
+    font-family: "XP";
+    font-size: large;
+    display: flex;
+    justify-content: space-between;
+    margin: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* =====================================Options===================================== */
+
+#optionWindow {
+    width: 31%; 
+    height: 90%;
+    position: fixed;
+    top: 50%;
+    left: 83%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+}
+
+.optionBody {
+    height: 90%;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 60px;
+    justify-content: space-between;
+}
+
+#btn2FA {
+    font-size: 17px;
+    width: 300px;
+    height: 40px;
+}

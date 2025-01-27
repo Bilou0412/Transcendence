@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="../css/lockscreen.css">
+		<link rel="stylesheet" href="xp.css/dist/XP.css" />
+		<link rel="icon" href="texture/icon.png">
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>XPongo</title>
+	</head>
+	<body>
+		<!-- icon left side -->
+		<div class="main-flex-box">
+			<div class="left-flex">
+				<div class="lockscreen-icon">
+					<img src="css/icon/pong_logo.png" alt="XPongo Icon">
+				</div>
+				<div class="lockscreen-text">
+					<h1><span class="orangeText">XP</span>ongo </h1>
+					<p>To begin chose an authentification methode</p>
+				</div>
+			</div>
+			<div class="right-flex">
+				<button class="flex-button loginButton"  id="showLoginForm">
+					<img src="/css/icon/rounded_login.png" alt="login" />
+					<span>Login</span>
+				</button>
+				<button class="flex-button log42Button">
+					<img src="/css/icon/rounded_log42.png" alt="log42" />
+					<span>Login with 42</span>
+				</button>
+				<button class="flex-button guestButton">
+					<img src="/css/icon/rounded_guest.png" alt="guest" />
+					<span>Guest</span>
+				</button>
+			</div>
+		</div>
+
+		<div class="bottom-flex-box">
+			<button class="register-button" id="showRegisterForm">
+				<img src="/css/icon/register.png" alt="register" />
+				<span>No account yet? Register here</span>
+			</button>
+		</div>
+		
+
+		<div class="login-form" id="loginFormContainer">
+			<form action="/login" method="POST">
+				<div class="login-flex">
+					<div class="field-row-flex">
+						<div class="field-row-stacked username">
+							<label for="usrnameField">Email</label>
+							<input id="usrnameField" name="username" type="text" placeholder="Enter your email" autocomplete="username" required />
+						</div>
+						<div class="field-row-stacked password">
+							<label for="pswrdField">Password</label>
+							<input id="pswrdField" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+						</div>
+						<div class="field-row-stacked 2fa">
+							<label for="usrnameField">Code 2FA</label>
+							<input id="2faField" name="2fa" type="text" placeholder="code (optional)" autocomplete="username"/>
+						</div>
+						<button type="submit" class="submitBtn">
+							<img src="/css/icon/enter.png" alt="green_arrow" />
+						</button>
+					</div>
+					<button class="forgot-password">Forgot password</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="register-form" id="registerFormContainer">
+			<div class="window" style="width: 400px">
+				<div class="title-bar">
+				  <div class="title-bar-text">Register</div>
+				  <div class="title-bar-controls">
+					<button aria-label="Close" id="closeRegister"></button>
+				  </div>
+				</div>
+					<form id="registerFormElement">
+					<div class="regi-form-flex">
+						<div class="register-flex">
+							<div class="regi_field_row">
+								<div class="regi_field-row-stacked mail">
+									<label for="emailRegiField">Email</label>
+									<input id="emailRegiField" name="email" type="email" placeholder="Enter your email" autocomplete="email" required />
+								</div>
+								<div class="regi_field-row-stacked username">
+									<label for="usrnameRegiField">Username</label>
+									<input id="usrnameRegiField" name="username" type="text" placeholder="Enter your username" autocomplete="username" required />
+								</div>
+								<div class="regi_field-row-stacked password">
+									<label for="pswrdRegiField">Password</label>
+									<input id="pswrdRegiField" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+								</div>
+								<div class="regi_field-row-stacked repassword">
+									<label for="repswrdRegiField">Confirm Password</label>
+									<input id="repswrdRegiField" name="repassword" type="password" placeholder="Confirm your password" autocomplete="valid-password" required />
+								</div>
+							</div>
+							<button type="button" class="submitRegiBtn" id="submitRegiBtn">
+								<img src="/css/icon/enter.png" alt="green_arrow" />
+							</button>
+						</div>
+						<div class="pass_message" id="pass_message">
+							<p> 1 lowercase letter </p>
+							<p> 1 uppercase letter </p>
+							<p> 1 number</p>
+							<p> 8 characters </p>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- Popup for notifications -->
+		<div id="popup" class="popup">
+			<span id="popupMessage"></span>
+			<button id="closePopup">Close</button>
+		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				//////////////////////////// Show/Hide Login Form ////////////////////////////
+				// Get references to the login button and login form
+				const loginButton = document.getElementById('showLoginForm');
+				const loginForm = document.getElementById('loginFormContainer');
+
+				// Add click event listener to the login button
+				loginButton.addEventListener('click', function() {
+					// Toggle the 'show' class to display/hide the login form
+					loginForm.classList.toggle('show');
+					
+					// Set button opacity based on form visibility
+					if (loginForm.classList.contains('show')) {
+						loginButton.style.opacity = '1';
+					} else {
+						loginButton.style.opacity = '0.5';  // or whatever your default opacity is
+					}
+				});
+
+				//////////////////////////// Show/Hide Register Form ////////////////////////////
+				// Get references to the register button and register form
+				const registerButton = document.getElementById('showRegisterForm');
+				const registerClose = document.getElementById('closeRegister');
+				const registerForm = document.getElementById('registerFormContainer');
+
+				// Add click event listener to the register button
+				registerButton.addEventListener('click', function() {
+					// Toggle the 'show' class to display/hide the register form
+					registerForm.classList.toggle('show');
+				});
+
+				registerClose.addEventListener('click', function() {
+					// Toggle the 'show' class to display/hide the register form
+					registerForm.classList.toggle('show');
+				});
+
+				//////////////////////////// Password Validation ////////////////////////////
+				const submitRegiBtn = document.getElementById('submitRegiBtn');
+				const pswrdRegiField = document.getElementById('pswrdRegiField');
+				const repswrdRegiField = document.getElementById('repswrdRegiField');
+				const registerFormElement = document.getElementById('registerFormElement');
+
+				pswrdRegiField.onfocus = function() {
+					document.getElementById('pass_message').style.display = 'block';
+				};
+
+				pswrdRegiField.onblur = function() {
+					document.getElementById('pass_message').style.display = 'none';
+				};
+
+				let pass_ok	= [false, false, false, false];
+				//////////////////////////// Password Security Validation ////////////////////////////
+				pswrdRegiField.addEventListener('input', function() {
+					const pass_message = document.getElementById('pass_message');
+					const lowerCaseLetters = /[a-z]/g;
+					const upperCaseLetters = /[A-Z]/g;
+					const numbers = /[0-9]/g;
+
+					if (pswrdRegiField.value.match(lowerCaseLetters)) {
+						pass_message.children[0].style.color = 'green';
+						pass_ok[0] = true;
+					} else {
+						pass_message.children[0].style.color = 'red';
+						pass_ok[0] = false;
+					}
+
+					if (pswrdRegiField.value.match(upperCaseLetters)) {
+						pass_message.children[1].style.color = 'green';
+						pass_ok[1] = true;
+					} else {
+						pass_message.children[1].style.color = 'red';
+						pass_ok[1] = false;
+					}
+
+					if (pswrdRegiField.value.match(numbers)) {
+						pass_message.children[2].style.color = 'green';
+						pass_ok[2] = true;
+					} else {
+						pass_message.children[2].style.color = 'red';
+						pass_ok[2] = false;
+					}
+
+					if (pswrdRegiField.value.length >= 8) {
+						pass_message.children[3].style.color = 'green';
+						pass_ok[3] = true;
+					} else {
+						pass_message.children[3].style.color = 'red';
+						pass_ok[3] = false;
+					}
+				});
+
+				//////////////////////////// Password Matching ////////////////////////////
+				submitRegiBtn.addEventListener('click', function() {
+					if (pass_ok.some(value => value === false)) {
+						pswrdRegiField.setCustomValidity('Password does not meet the requirements');
+					}
+					if (pswrdRegiField.value !== repswrdRegiField.value) {
+						pswrdRegiField.setCustomValidity('Passwords do not match');
+						return;
+					}
+					
+					if (registerFormElement.checkValidity()) {
+						const data = {
+							username: document.getElementById('usrnameRegiField').value,
+							password: pswrdRegiField.value,
+							password2: repswrdRegiField.value,
+							email: document.getElementById('emailRegiField').value
+						};
+
+						fetch('https://localhost:8443/auth/signup/', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify(data)
+						})
+						.then(response => {
+							if (response.status === 201) {
+								showPopup('Account created successfully. Please check your email to validate your account.');
+							} else {
+								return response.json().then(data => {
+									showPopup(`Signup failed: ${data.email || data.password || data.username|| 'Unknown error'}`);
+								});
+							}
+						})
+						.catch((error) => {
+							showPopup('Signup failed. Please check the form and try again.');
+							console.error('Error:', error);
+						});
+					}
+				});
+
+				//////////////////////////// Login Form Submission ////////////////////////////
+				const loginFormElement = document.querySelector('#loginFormContainer form');
+				loginFormElement.addEventListener('submit', function(event) {
+					event.preventDefault(); // Prevent the default form submission
+
+					const data = {
+						email: document.getElementById('usrnameField').value,
+						password: document.getElementById('pswrdField').value,
+						otp: document.getElementById('2faField').value
+					};
+
+					fetch('https://localhost:8443/auth/login/', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(data)
+					})
+					.then(response => {
+						if (response.status === 200) {
+							return response.json().then(data => {
+								showPopup('Login successful');
+								// Redirect to home page using the router
+								window.history.pushState({}, '', '/home');
+								window.dispatchEvent(new Event('popstate'));
+							});
+						} else {
+							return response.json().then(data => {
+								showPopup(`Login failed: ${data.detail || 'Unknown error'}`);
+							});
+						}
+					})
+					.catch((error) => {
+						showPopup('Login failed. Please check the form and try again.');
+						console.error('Error:', error);
+					});
+				});
+
+				//////////////////////////// Popup Functionality ////////////////////////////
+				const popup = document.getElementById('popup');
+				const popupMessage = document.getElementById('popupMessage');
+				const closePopup = document.getElementById('closePopup');
+
+				function showPopup(message) {
+					popupMessage.textContent = message;
+					popup.style.display = 'block';
+				}
+
+				closePopup.addEventListener('click', function() {
+					popup.style.display = 'none';
+				});
+			});
+		</script>
+		<script src="js/router.js" type="module"></script>
+</html>

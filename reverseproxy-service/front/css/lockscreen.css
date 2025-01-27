@@ -1,0 +1,235 @@
+body {
+	font-family: "XP";
+	background-image: url('../texture/lockscreen_clean.png');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-position: center;
+}
+
+h1, p {
+	font-family: "XP";
+}
+
+input{
+	width: 200px;
+}
+
+.orangeText {
+	color: #ff8c00;
+}
+
+/* =====================================Middle Box===================================== */
+.main-flex-box {
+	display: flex;
+	position: absolute;
+	top: 27%;
+	width: 100%;
+}
+
+/* =====================================Left Box===================================== */
+.left-flex {
+	display: flex;
+	width: 50%;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: flex-end;
+}
+
+/* --------------------------------Logo-------------------------------- */
+.left-flex img{
+	padding-bottom: 30px;
+	width: 150px;
+	text-align: end;
+}
+
+/* --------------------------------Name-------------------------------- */
+.left-flex h1{
+	text-align: end;
+	font-size: 45px;
+	color: white;
+}
+
+/* ----------------------------Instructions---------------------------- */
+.left-flex p{
+	font-size: 18px;
+	color: white;
+}
+
+
+
+/* =====================================Right Box===================================== */
+.right-flex {
+	display: flex;
+	width: 50%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding-left: 10%;
+	gap: 30%;
+}
+
+/* ------------------------------Buttons------------------------------ */
+.flex-button {
+	all: unset;
+	width: 60px;
+	height: 60px;
+	display: flex;
+	opacity: 0.5;
+}
+
+.flex-button:hover {
+	opacity: 1;
+}
+
+/* -----------------------Icons----------------------- */
+.flex-button img {
+	all: unset;
+	width: 60px;
+	height: 60px;
+}
+
+/* -----------------------Text------------------------ */
+.flex-button span {
+	color: white;
+	font-family: "XP";
+	font-size: 30px;
+	position: relative;
+	padding-left: 20px;
+	white-space: nowrap;
+	
+}
+
+
+/* =====================================Bottom Box===================================== */
+.bottom-flex-box {
+	all: unset;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	width: 100%;
+	position: absolute;
+	top: 88%;
+}
+
+.register-button {
+	all: unset;
+	display: flex;
+	align-items: center;
+	padding-left: 50px;
+}
+
+/* -----------------------Icons----------------------- */
+.register-button img {
+	width: 70px;
+	height: 70px;
+}
+
+/* -----------------------Text------------------------ */
+.register-button span{
+	color: white;
+	font-family: "XP";
+	font-size: 15px;
+	white-space: nowrap;
+}
+
+
+
+/* =====================================Login form===================================== */
+
+.login-form {
+	display: none; /* Hide login form by default */
+}
+
+.login-form.show {
+	display: flex; /* Show login form when 'show' class is added */
+}
+
+
+/* ------------------------------Login Box------------------------------ */
+.login-flex {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+	position: absolute;
+	top: 30%;
+    left: 64%;
+	gap: 10px;
+}
+
+/* -----------------------Input fields----------------------- */
+.field-row-flex {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: flex-end;
+
+	gap: 10px;
+}
+
+/* -----------------------Submit Button----------------------- */
+.submitBtn {
+	all : unset;
+	width: 30px;
+	height: 30px;
+}
+
+.submitBtn img {
+	width: 30px;
+	height: 30px;
+}
+
+
+/* ====================================Register form==================================== */
+.register-form {
+	display: none;
+	position: absolute;
+	top: 15%;
+    left: 5%;
+}
+
+.register-form.show {
+	display: flex;
+}
+
+/* -------------------Register Box (with psswrd guide)------------------- */
+.regi-form-flex {
+	display: flex;
+	flex-direction: column;
+	padding-top: 20px;
+	padding-left: 20px;
+}
+
+/* -----------------------Register Box----------------------- */
+.register-flex {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 30px;
+}
+
+/* -----------------------Input fields----------------------- */
+.regi_field_row {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: space-evenly;
+	gap : 10px;
+}
+
+/* -----------------------Submit Button----------------------- */
+.submitRegiBtn {
+	all : unset;
+	width: 25px;
+	height: 25px;
+}
+
+.submitRegiBtn img {
+	width: 25px;
+	height: 25px;
+}
+
+/* ------------------------Password instructions------------------------ */
+.pass_message {
+	padding: 15px;
+}
