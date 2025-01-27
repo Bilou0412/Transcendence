@@ -71,7 +71,7 @@ def OAuth(request):
 def get_access_token(code):
     """Helper function to get the access token from the 42 API."""
     token_url = 'https://api.intra.42.fr/oauth/token'
-    redirect_uri = 'http://127.0.0.1:3000/zTestTools/succes.html'
+    redirect_uri = 'https://localhost:8443/succes/'
     response = requests.post(token_url, data={
         'grant_type': 'authorization_code',
         'client_id': os.environ.get('CLIENT_ID'),
