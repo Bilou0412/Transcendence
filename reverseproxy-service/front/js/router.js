@@ -1,80 +1,75 @@
-// Configuration constants
-const ROUTES = {
-    404: "/html/404.html",
-    "/": "/html/index.html",
-    "/settings": "/html/settings.html",
-    "/profile": "/html/profile.html",
-    "/pong": "/html/pong.html",
-    "/about": "/html/about.html",
-    "/chat": "/html/chat.html"
-};
-
-const ROUTE_MODULE_PATHS = {
-    '/pong': '../js/pong/main.js',
-    '/about': '../js/page_script/tabs.js'
-};
-
+// Double click handler
+const lastClickTimes = new Map();
 const DOUBLE_CLICK_DELAY = 300;
 
-// State management for routes
-const state = {
-    lastClickTimes: new Map(),
-    routeScripts: new Map(),
-    routeModules: new Map(),
-    routeScriptListeners: new Map()
-};
+// Keep track of scripts and modules for different routes
+const routeScripts = new Map();
+const routeModules = new Map();
+const routeScriptListeners = new Map();
 
-// Utility function to handle tab switching
-function handleTabs() {
-    const tabButtons = document.querySelectorAll('[role="tab"]');
-    const tabPanels = document.querySelectorAll('[role="tabpanel"]');
-    
-    const switchTab = (event) => {
-        tabButtons.forEach(button => button.setAttribute('aria-selected', 'false'));
-        tabPanels.forEach(panel => panel.hidden = true);
-        
-        const clickedTab = event.target;
-        clickedTab.setAttribute('aria-selected', 'true');
-        
-        const tabPanelId = clickedTab.getAttribute('aria-controls');
-        document.getElementById(tabPanelId).hidden = false;
-    };
-    
-    tabButtons.forEach(button => button.addEventListener('click', switchTab));
-}
-
-// Clean up route-specific resources
-async function cleanupRouteScript(path) {
-    const { routeScripts, routeModules, routeScriptListeners } = state;
+const cleanupRouteScript = async (path) => {
     const script = routeScripts.get(path);
     const module = routeModules.get(path);
     const scriptListeners = routeScriptListeners.get(path);
 
-    if (module?.quit) await module.quit();
+    // If the route has a custom cleanup function, call it
+    if (module && typeof module.quit === 'function') {
+        await module.quit();
+    }
 
-    scriptListeners?.forEach(({ element, event, listener }) => {
-        element.removeEventListener(event, listener);
-    });
+    // Remove any specific event listeners
+    if (scriptListeners) {
+        scriptListeners.forEach(({ element, event, listener }) => {
+            element.removeEventListener(event, listener);
+        });
+    }
 
+    // Remove the script
     if (script) {
         script.remove();
         routeScripts.delete(path);
     }
 
-    if (module) routeModules.delete(path);
+    // Clear the module
+    if (module) {
+        routeModules.delete(path);
+    }
+
+    // Clear listeners
     routeScriptListeners.delete(path);
+};
+
+function handleTabs() {
+    const tabButtons = document.querySelectorAll('[role="tab"]');
+    const tabPanels = document.querySelectorAll('[role="tabpanel"]');
+    
+    function switchTab(event) {
+        tabButtons.forEach(button => {
+            button.setAttribute('aria-selected', 'false');
+        });
+        tabPanels.forEach(panel => {
+            panel.hidden = true;
+        });
+        const clickedTab = event.target;
+        clickedTab.setAttribute('aria-selected', 'true');
+        const tabPanelId = clickedTab.getAttribute('aria-controls');
+        const tabPanel = document.getElementById(tabPanelId);
+        tabPanel.hidden = false;
+    }
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', switchTab);
+    });
 }
 
-// Attach route-specific event listeners
-async function attachRouteScriptListeners(path, module) {
-    const { routeScriptListeners } = state;
-
+const attachRouteScriptListeners = async (path, module) => {
     if (path === '/pong') {
         const startButton = document.getElementById('startButton');
-        if (startButton && module?.initializeGame) {
+        if (startButton && module && typeof module.initializeGame === 'function') {
             const listener = () => module.initializeGame();
             startButton.addEventListener('click', listener);
             
+            // Store the listener for potential cleanup
             const currentListeners = routeScriptListeners.get(path) || [];
             routeScriptListeners.set(path, [
                 ...currentListeners, 
@@ -82,61 +77,85 @@ async function attachRouteScriptListeners(path, module) {
             ]);
         }
     }
-
-    if (['/settings', '/about'].includes(path)) {
+    if (path === '/settings' || path === '/about') {
         handleTabs();
     }
-}
+};
 
-// Dynamically load route-specific module
-async function loadRouteModule(path) {
+const loadRouteModule = async (path) => {
     try {
-        const modulePath = ROUTE_MODULE_PATHS[path];
+        // Dynamically map routes to their corresponding JS modules
+        const routeModulePaths = {
+            '/pong': '../js/pong/main.js',
+            '/about': '../js/page_script/tabs.js',
+            '/': '../js/page_script/home.js',
+        };
+
+        const modulePath = routeModulePaths[path];
         if (!modulePath) return null;
 
         const module = await import(modulePath);
-        state.routeModules.set(path, module);
+        routeModules.set(path, module);
         return module;
     } catch (error) {
-        console.error(`Route module load error: ${path}`, error);
+        console.error(`Error loading module for route ${path}:`, error);
         return null;
     }
-}
+};
 
-// Insert route-specific script
-async function insertRouteScript(path) {
-    const scriptPath = ROUTE_MODULE_PATHS[path];
+const insertRouteScript = async (path) => {
+    // Dynamically map routes to their corresponding JS scripts
+    const routeScriptPaths = {
+        '/pong': '../js/pong/main.js',
+        '/about': '../js/page_script/tabs.js',
+        '/': '../js/page_script/home.js',
+    };
+
+    const scriptPath = routeScriptPaths[path];
     if (!scriptPath) return;
 
     const script = document.createElement('script');
     script.src = scriptPath;
     script.type = 'module';
-    state.routeScripts.set(path, script);
+    routeScripts.set(path, script);
     document.getElementById("main-page").appendChild(script);
 
+    // Load the corresponding module
     const module = await loadRouteModule(path);
-    if (module) await attachRouteScriptListeners(path, module);
-}
+    
+    // Attach any route-specific script listeners
+    if (module) {
+        await attachRouteScriptListeners(path, module);
+    }
+};
 
-// Handle route navigation
+// Double click handler
 export const route = (event = null, forcedPath = null) => {
     event = event || window.event;
-    event?.preventDefault();
+    if (event) {
+        event.preventDefault();
+    }
 
     let path = forcedPath;
-    let link = event?.target.closest('a');
-    path = path || link?.href;
+    let link = null;
+
+    if (!path) {
+        link = event?.target.closest('a');
+        if (link) {
+            path = link.href;
+        }
+    }
 
     if (path && link) {
-        const currentTime = Date.now();
-        const lastClickTime = state.lastClickTimes.get(path) || 0;
+        const currentTime = new Date().getTime();
+        const lastClickTime = lastClickTimes.get(path) || 0;
         
         if (currentTime - lastClickTime <= DOUBLE_CLICK_DELAY) {
             window.history.pushState({}, "", path);
             handleLocation();
-            state.lastClickTimes.delete(path);
+            lastClickTimes.delete(path);
         } else {
-            state.lastClickTimes.set(path, currentTime);
+            lastClickTimes.set(path, currentTime);
         }
     } else if (forcedPath) {
         window.history.pushState({}, "", path);
@@ -144,32 +163,39 @@ export const route = (event = null, forcedPath = null) => {
     }
 };
 
-// Primary location handler
-async function handleLocation() {
+const routes = {
+    404: "/html/404.html",
+    "/": "/html/home.html",
+    "/settings": "/html/settings.html",
+    "/profile": "/html/profile.html",
+    "/pong": "/html/pong.html",
+    "/about": "/html/about.html",
+    "/chat": "/html/chat.html"
+};
+
+const handleLocation = async () => {
     const path = window.location.pathname;
+    // console.log(path);
     
-    // Cleanup previous route scripts
-    for (let [routePath] of state.routeScripts) {
+    // Cleanup any previous route-specific scripts
+    for (let [routePath] of routeScripts) {
         if (routePath !== path) {
             await cleanupRouteScript(routePath);
         }
     }
     
-    const route = ROUTES[path] || ROUTES[404];
+    const route = routes[path] || routes[404];
     const html = await fetch(route).then((data) => data.text());
     
-    const mainPageElement = document.getElementById("main-page");
-    if (mainPageElement) {
-        mainPageElement.innerHTML = html;
-    } else {
-        console.error('Element with id "main-page" not found.');
-        return;
-    }
+    // Insert HTML for the route
+    document.getElementById("main-page").innerHTML = html;
     
+    // Load route-specific script if applicable
     await insertRouteScript(path);
     
+    // Update navbar visibility
     document.body.setAttribute('data-show-navbar', path === '/');
-}
+};
 
 window.onpopstate = handleLocation;
 window.route = route;

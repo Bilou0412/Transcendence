@@ -196,7 +196,7 @@ input{
 .regi-form-flex {
 	display: flex;
 	flex-direction: column;
-	padding-top: 20px;
+	padding: 20px;
 	padding-left: 20px;
 }
 
@@ -231,5 +231,10 @@ input{
 
 /* ------------------------Password instructions------------------------ */
 .pass_message {
+	display: none;
 	padding: 15px;
+}
+
+.pass_conditions {
+	color: red;
 }

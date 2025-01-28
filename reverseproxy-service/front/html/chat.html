@@ -21,14 +21,14 @@
 			<div class="title-bar">
 			  <div class="title-bar-text">Chat</div>
 			</div>
-			<div class="window-body">
+			<div class="window-body" id="chat-body">
 				<!-- Chat -->
 				<div class="chat-interface">
 					<div class="text-area">
 
 						<div class="chat-history">
-							<div class="window" id="chatHistoyDisplay">
-								<div class="title-bar">
+							<div class="window" id="chatHistoryDisplay">
+								<div class="title-bar title-bar-chat">
 								  <div class="title-bar-text">Chat History</div>
 								</div>
 								<div class="window-body">
@@ -38,12 +38,13 @@
 						</div>
 
 						<div class="chat-input">
-							<input type="text" placeholder="Type a message..." id="chat-input">
+							<textarea id="mess-input"  placeholder="Type a message..."></textarea>
 							<button class="btn btn-send">Send</button>
 						</div>
 					</div>
 					<div class="picture-area">
-
+						<img src="../css/icon/rounded_login.png" alt="Avatar" class="chat-avatar">
+						<img src="../css/icon/rounded_login.png" alt="Avatar" class="chat-avatar">
 					</div>
 				</div>
 			</div>

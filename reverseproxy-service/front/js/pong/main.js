@@ -14,7 +14,8 @@ import { titleDisplay } from "./monitor_display.js";
 export let settings = null;
 let game_mode = "local 1v1";
 let current_match = 1;
-let players_names = [null, null, null, null, null, null, null];
+let players_names = ["player 1", "player 2", "player 3", "player 4", null, null, null];
+// let players_names = [null, null, null, null, null, null, null];
 export let player1Side = 0x222222;
 export let player2Side = 0x222222;
 export let player1Paddle = 0x797979;
@@ -45,42 +46,40 @@ function advance(player) {
     }
 }
 
+function annonceWinner(player1, player2) {
+    if (settings.player1Score > settings.player2Score) {
+        alert(players_names[player1] + ' wins the match!');
+        advance(player1);
+    }
+    else {
+        alert(players_names[player2] + ' wins the match!');
+        advance(player2);
+    }
+}
+
 export async function quitPong() {
-    if (game_mode === 'local tournament' && (settings.player1Score === settings.MaxScore || settings.player2Score === settings.MaxScore)) {
-        if (current_match === 1) {
-            if (settings.player1Score > settings.player2Score) {
-                alert(players_names[0] + ' wins the match!');
-                advance(0);
+    if (settings.player1Score === settings.maxScore || settings.player2Score === settings.maxScore) {
+        if (game_mode === 'local tournament' ) {
+            if (current_match === 1) {
+                annonceWinner(0, 1);
+                current_match++;
+            }
+            else if (current_match === 2) {
+                annonceWinner(2, 3);
+                current_match++;
             }
             else {
-                alert(players_names[1] + ' wins the match!');
-                advance(1);
+                annonceWinner(4, 5);
+                alert(players_names[6] + ' wins the tournament!');
+                current_match = 1;
             }
-            current_match++;
-        }
-        else if (current_match === 2) {
-            if (settings.player1Score > settings.player2Score) {
-                alert(players_names[2] + ' wins the match!');
-                advance(2);
-            }
-            else {
-                alert(players_names[3] + ' wins the match!');
-                advance(3);
-            }
-            current_match++;
         }
         else {
-            if (settings.player1Score > settings.player2Score) {
-                alert(players_names[4] + ' wins the match!');
-                advance(4);
-            }
-            else {
-                alert(players_names[5] + ' wins the match!');
-                advance(5);
-            }
-            alert(players_names[6] + ' wins the tournament!');
-            current_match = 1;
-        }
+            if (settings.player1Score > settings.player2Score)
+                alert(players_names[0] + ' wins the match!');
+            else
+                alert(players_names[1] + ' wins the match!');
+        }  
     }
 
     if (settings) {
@@ -197,7 +196,7 @@ export async function initializeGame() {
     initMonitor();
     initTable();
     titleDisplay();
-    // await sleep(5000);
+    await sleep(5000);
     settings.updateTime();
     animate();
     initEnvironment();
@@ -245,10 +244,10 @@ gameModeSelect.addEventListener('change', function () {
 function getPlayersNames() {
     if (game_mode === 'local tournament') {
         const playerInputs = document.querySelectorAll('.player-input');
-        
         playerInputs.forEach((input, index) => {
             // Immediately capture current input value
-            players_names[index] = input.value || null;
+            if (input.value)
+                players_names[index] = input.value;
             
             // Add input event listener for future changes
             input.addEventListener('input', () => {

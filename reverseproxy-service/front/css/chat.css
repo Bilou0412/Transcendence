@@ -20,6 +20,7 @@
 	display: flex;
 	justify-content: space-between;
 	gap: 10px;
+	padding: 10px;
 }
 
 #chatDisplay {
@@ -35,24 +36,47 @@
     transform: translate(-50%, -50%);
 }
 
+#chat-body {
+		min-width: 0;
+		height: 94%;
+		display: flex;
+		flex-direction: column;
+		padding-top: 15px;
+}
+
 .text-area {
-	width: 100%;
+	width: 80%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
 	gap: 10px;
-	padding: 10px;
 	overflow-y: auto;
 }
 
 .chat-history {
 	display: flex;
 	flex-direction: column;
+	height: 100%;
+	width: 100%;
 	gap: 10px;
 }
 
-#chat-input {
+#chatHistoryDisplay {
+	height: 100%;
+	width: 100%;
+}
+
+.title-bar-chat {
+	position : relative;
+}
+
+.chat-input {
+	display: flex;
+	justify-content: space-between;
+}
+
+#mess-input {
 	width: 90%;
 	height: 50px;
 	border: 1px solid black;
@@ -60,6 +84,21 @@
 
 .btn-send {
 	height: 50px;
+}
+
+.picture-area {
+	width: 20%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.chat-avatar {
+	width: 150px;
+    height: 150px;
 }
 
 

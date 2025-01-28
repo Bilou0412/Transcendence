@@ -10,3 +10,7 @@ correct log in 42
 param vitesse balle
 collisions à chier
 doc API
+
+fix router 
+fix hidden/show homepage lockPage
+
