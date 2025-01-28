@@ -2,60 +2,60 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/home.css">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/home.css">
 	<link rel="stylesheet" href="../xp.css/dist/XP.css" />
-    <link rel="icon" href="../css/icon/pong_logo.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XPongo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
-    <!-- import of GLTF for model import -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <!-- import gasp.js for camera transition -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
-    <!-- import RoomEnvironment for better lighting -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
-    <!-- import RGBELoader for background -->
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/RGBELoader.js"></script>
+	<link rel="icon" href="../css/icon/pong_logo.png">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>XPongo</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
+	<!-- import of GLTF for model import -->
+	<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+	<!-- import gasp.js for camera transition -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
+	<!-- import RoomEnvironment for better lighting -->
+	<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
+	<!-- import RGBELoader for background -->
+	<script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/RGBELoader.js"></script>
 </head>
 
 <body data-show-navbar="true">
-    <div class="home-page hidden" id="HomePage">
-        <div id="nav">
-            <nav id="main-nav" class="sidebar">
-                <a href="/profile" class="nav-icon" onclick="route()">
-                    <img src="css/icon/profile.ico" alt="Profile Icon" />
-                    <span>Profile</span>
-                </a>
-                <a href="/settings" class="nav-icon" onclick="route()">
-                    <img src="css/icon/gear.ico" alt="Settings Icon" />
-                    <span>Settings</span>
-                </a>
-                <a href="/pong" class="nav-icon" onclick="route()">
-                    <img src="css/icon/game.png" alt="Pong" />
-                    <span>Pong</span>
-                </a>
-                <a href="/chat" class="nav-icon" onclick="route()">
-                    <img src="css/icon/msn.png" alt="Chat" />
-                    <span>Chat</span>
-                </a>
-                <a href="/about" class="nav-icon" onclick="route()">
-                    <img src="css/icon/about.png" alt="About" />
-                    <span>About</span>
-                </a>
-            </nav>
-        </div>
-        <div id="main-page"></div>
-        <div class="taskbar" id="Taskbar">
-            <img src="texture/taskbar.png" alt="Taskbar" id="taskbar"/>
-            <div id="clock" class="clock"></div>
-        </div>
-    </div>
+	<div class="home-page hidden" id="HomePage">
+		<div id="nav">
+			<nav id="main-nav" class="sidebar">
+				<a href="/profile" class="nav-icon" onclick="route()">
+					<img src="css/icon/profile.ico" alt="Profile Icon" />
+					<span>Profile</span>
+				</a>
+				<a href="/settings" class="nav-icon" onclick="route()">
+					<img src="css/icon/gear.ico" alt="Settings Icon" />
+					<span>Settings</span>
+				</a>
+				<a href="/pong" class="nav-icon" onclick="route()">
+					<img src="css/icon/game.png" alt="Pong" />
+					<span>Pong</span>
+				</a>
+				<a href="/chat" class="nav-icon" onclick="route()">
+					<img src="css/icon/msn.png" alt="Chat" />
+					<span>Chat</span>
+				</a>
+				<a href="/about" class="nav-icon" onclick="route()">
+					<img src="css/icon/about.png" alt="About" />
+					<span>About</span>
+				</a>
+			</nav>
+		</div>
+		<div id="main-page"></div>
+		<div class="taskbar" id="Taskbar">
+			<img src="texture/taskbar.png" alt="Taskbar" id="taskbar" />
+			<div id="clock" class="clock"></div>
+		</div>
+	</div>
 
-    <div class="lockscreen-page showing" id="LockPage">
-        <!-- icon left side -->
+	<div class="lockscreen-page showing" id="LockPage">
+		<!-- icon left side -->
 		<div class="main-flex-box">
 			<div class="left-flex">
 				<div class="lockscreen-icon">
@@ -67,7 +67,7 @@
 				</div>
 			</div>
 			<div class="right-flex">
-				<button class="flex-button loginButton"  id="showLoginForm">
+				<button class="flex-button loginButton" id="showLoginForm">
 					<img src="css/icon/rounded_login.png" alt="login" />
 					<span>Login</span>
 				</button>
@@ -88,23 +88,26 @@
 				<span>No account yet? Register here</span>
 			</button>
 		</div>
-		
+
 
 		<div class="login-form" id="loginFormContainer">
-			<form action="/login" method="POST">
+			<form action="/login" method="POST" id="loginForm">
 				<div class="login-flex">
 					<div class="field-row-flex">
 						<div class="field-row-stacked username">
 							<label for="usrnameField">Email</label>
-							<input id="usrnameField" name="username" type="text" placeholder="Enter your email" autocomplete="username" required />
+							<input id="usrnameField" name="username" type="text" placeholder="Enter your email"
+								autocomplete="username" required />
 						</div>
 						<div class="field-row-stacked password">
 							<label for="pswrdField">Password</label>
-							<input id="pswrdField" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+							<input id="pswrdField" name="password" type="password" placeholder="Enter your password"
+								autocomplete="current-password" required />
 						</div>
 						<div class="field-row-stacked 2fa">
 							<label for="usrnameField">Code 2FA</label>
-							<input id="2faField" name="2fa" type="text" placeholder="code (optional)" autocomplete="username"/>
+							<input id="2faField" name="2fa" type="text" placeholder="code (optional)"
+								autocomplete="2fa" />
 						</div>
 						<button type="submit" class="submitBtn">
 							<img src="css/icon/enter.png" alt="green_arrow" />
@@ -118,10 +121,10 @@
 		<div class="register-form" id="registerFormContainer">
 			<div class="window" style="width: 400px">
 				<div class="title-bar">
-				  <div class="title-bar-text">Register</div>
-				  <div class="title-bar-controls">
-					<button aria-label="Close" id="closeRegister"></button>
-				  </div>
+					<div class="title-bar-text">Register</div>
+					<div class="title-bar-controls">
+						<button aria-label="Close" id="closeRegister"></button>
+					</div>
 				</div>
 				<form action="/register" method="POST">
 					<div class="regi-form-flex">
@@ -129,19 +132,23 @@
 							<div class="regi_field_row">
 								<div class="regi_field-row-stacked mail">
 									<label for="emailRegiField">Email</label>
-									<input id="emailRegiField" name="email" type="email" placeholder="Enter your email" autocomplete="email" required />
+									<input id="emailRegiField" name="email" type="email" placeholder="Enter your email"
+										autocomplete="email" required />
 								</div>
 								<div class="regi_field-row-stacked username">
 									<label for="usrnameRegiField">Username</label>
-									<input id="usrnameRegiField" name="username" type="text" placeholder="Enter your username" autocomplete="username" required />
+									<input id="usrnameRegiField" name="username" type="text"
+										placeholder="Enter your username" autocomplete="username" required />
 								</div>
 								<div class="regi_field-row-stacked password">
 									<label for="pswrdRegiField">Password</label>
-									<input id="pswrdRegiField" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+									<input id="pswrdRegiField" name="password" type="password"
+										placeholder="Enter your password" autocomplete="current-password" required />
 								</div>
 								<div class="regi_field-row-stacked repassword">
 									<label for="repswrdRegiField">Confirm Password</label>
-									<input id="repswrdRegiField" name="repassword" type="password" placeholder="Confirm your password" autocomplete="valid-password" required />
+									<input id="repswrdRegiField" name="repassword" type="password"
+										placeholder="Confirm your password" autocomplete="valid-password" required />
 								</div>
 							</div>
 							<button type="submit" class="submitRegiBtn" id="submitRegiBtn">
@@ -159,13 +166,13 @@
 				</form>
 			</div>
 		</div>
-    </div>
+	</div>
 
-    <script src="../js/page_script/lockscreen.js"></script>
+	<script src="../js/page_script/lockscreen.js"></script>
 
-    <script src="../js/page_script/clock.js"></script>
+	<!-- <script src="../js/page_script/clock.js"></script>
 
-    <script src="../js/router.js" type="module"></script>
+    <script src="../js/router.js" type="module"></script> -->
 
 </body>
 

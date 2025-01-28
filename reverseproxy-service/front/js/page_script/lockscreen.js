@@ -16,20 +16,41 @@ loginButton.addEventListener('click', function() {
 	}
 });
 
+// Function to dynamically load a script
+function loadScript(src) {
+	const script = document.createElement('script');
+	script.src = src;
+	document.body.appendChild(script);
+}
+
 const guestBtn = document.getElementById('guestButton');
 const lockscreenPage = document.getElementById('LockPage');
 const homePage = document.getElementById('HomePage');
-guestBtn.addEventListener('click', function() {
 
+guestBtn.addEventListener('click', function () {
+  // Transition between pages
+  homePage.classList.remove('hidden');
+  homePage.classList.add('showing');
 
-    homePage.classList.remove('hidden');
-    homePage.classList.add('showing');
+  lockscreenPage.classList.remove('showing');
+  lockscreenPage.classList.add('hidden');
 
-	lockscreenPage.classList.remove('showing');
-	lockscreenPage.classList.add('hidden');
-	// lockscreenPage.style.display = 'none';
-	// homePage.style.display = 'block';
+  // Dynamically load the other scripts
+  loadScript('../js/page_script/clock.js'); // Load clock.js
+  loadScript('../js/router.js', true); // Load router.js as a module
+
+  // Optionally, remove this script after it has done its work
+  const lockscreenScript = document.querySelector('script[src="../js/page_script/lockscreen.js"]');
+  if (lockscreenScript) lockscreenScript.remove();
 });
+
+// Function to dynamically load a script
+function loadScript(src, isModule = false) {
+  const script = document.createElement('script');
+  script.src = src;
+  if (isModule) script.type = 'module'; // Add type="module" if needed
+  document.body.appendChild(script);
+}
 
 //////////////////////////// Show/Hide Register Form ////////////////////////////
 // Get references to the register button and register form
@@ -121,4 +142,41 @@ submitRegiBtn.addEventListener('click', function() {
 		console.log(pswrdRegiField.value);
 		console.log(repswrdRegiField.value);
 	}
+});
+
+////////////////////////// Post Login Form Data ////////////////////////////
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+   event.preventDefault();
+   const email = document.getElementById('usrnameField').value;
+   const password = document.getElementById('pswrdField').value;
+   const otp = document.getElementById('2faField').value;
+   console.log('Email:', email);
+   console.log('Password:', password);
+   console.log('OTP:', otp);
+   
+   fetch('https://localhost:8443/auth/login/', {
+       method: 'POST',
+       headers: {
+           'Content-Type': 'application/json'
+       },
+       body: JSON.stringify({
+           email: email,
+           password: password,
+           otp: otp // Correctly send the OTP value
+       })
+   }).then(response => {
+       if (response.ok) {
+           // Handle successful login
+           response.json().then(data => {
+               console.log('Login successful:', data);
+               // Redirect to home page or perform other actions
+           });
+       } else {
+           console.log('Login failed:', response.statusText);
+           // Handle login error
+       }
+   }).catch(error => {
+       console.error('Network error:', error);
+       // Handle network error
+   });
 });

@@ -196,7 +196,7 @@ export async function initializeGame() {
     initMonitor();
     initTable();
     titleDisplay();
-    await sleep(5000);
+    // await sleep(5000);
     settings.updateTime();
     animate();
     initEnvironment();

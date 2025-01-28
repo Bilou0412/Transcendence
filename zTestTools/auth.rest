@@ -15,8 +15,8 @@ Content-Type: application/json
 {
     "username": "bilel",
     "password": "Motdepasse12@@",
-    "password2": "Motdepasse12@",
-    "email": "bilel@gmail.com"
+    "password2": "Motdepasse12@@",
+    "email": "jimmy.denis1133@gmail.com"
 }
 
 ### Refresh Token
