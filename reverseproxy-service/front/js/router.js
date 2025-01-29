@@ -192,7 +192,20 @@ const handleLocation = async () => {
     // console.log('Loading route:', path);
     // console.log('Route HTML:', html);
     // Insert HTML for the route
-    document.getElementById("main-page").innerHTML = html;
+    if (path === '/'){
+
+        // Create a temporary DOM element to parse the HTML
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+
+        // Extract only the content inside #main-page
+        const mainPageContent = tempDiv.querySelector("#main-page")?.innerHTML || "";
+
+        // Set it to the main-page element
+        document.getElementById("main-page").innerHTML = mainPageContent;
+    }
+    else
+        document.getElementById("main-page").innerHTML = html;
     
     // Load route-specific script if applicable
     await insertRouteScript(path);

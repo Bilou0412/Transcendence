@@ -26,6 +26,7 @@ function loadScript(src) {
 const guestBtn = document.getElementById('guestButton');
 const lockscreenPage = document.getElementById('LockPage');
 const homePage = document.getElementById('HomePage');
+const lockLog = document.getElementById('lockLogo');
 
 guestBtn.addEventListener('click', function () {
   // Transition between pages
@@ -34,6 +35,8 @@ guestBtn.addEventListener('click', function () {
 
   lockscreenPage.classList.remove('showing');
   lockscreenPage.classList.add('hidden');
+
+  lockLog.style.display = 'none';
 
   // Dynamically load the other scripts
   loadScript('../js/page_script/clock.js'); // Load clock.js
