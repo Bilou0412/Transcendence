@@ -88,6 +88,7 @@ const loadRouteModule = async (path) => {
         const routeModulePaths = {
             '/pong': '../js/pong/main.js',
             '/about': '../js/page_script/tabs.js',
+            '/profile': '../js/page_script/profile.js',
             '/': '../js/page_script/home.js',
         };
 
@@ -108,6 +109,7 @@ const insertRouteScript = async (path) => {
     const routeScriptPaths = {
         '/pong': '../js/pong/main.js',
         '/about': '../js/page_script/tabs.js',
+        '/profile': '../js/page_script/profile.js',
         '/': '../js/page_script/home.js',
     };
 
@@ -187,6 +189,8 @@ const handleLocation = async () => {
     const route = routes[path] || routes[404];
     const html = await fetch(route).then((data) => data.text());
     
+    // console.log('Loading route:', path);
+    // console.log('Route HTML:', html);
     // Insert HTML for the route
     document.getElementById("main-page").innerHTML = html;
     

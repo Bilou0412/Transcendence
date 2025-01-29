@@ -38,6 +38,7 @@ guestBtn.addEventListener('click', function () {
   // Dynamically load the other scripts
   loadScript('../js/page_script/clock.js'); // Load clock.js
   loadScript('../js/router.js', true); // Load router.js as a module
+//   loadScript('../js/page_script/profile.js')
 
   // Optionally, remove this script after it has done its work
   const lockscreenScript = document.querySelector('script[src="../js/page_script/lockscreen.js"]');
@@ -168,7 +169,12 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
        if (response.ok) {
            // Handle successful login
            response.json().then(data => {
-               console.log('Login successful:', data);
+            	console.log('Login successful:', data);
+				sessionStorage.setItem('accessToken', data.access);
+            	sessionStorage.setItem('refreshToken', data.refresh);
+            	sessionStorage.setItem('userId', data.user.id);
+            	sessionStorage.setItem('username', data.user.username);
+				sessionStorage.setItem('email', data.user.email);
                // Redirect to home page or perform other actions
            });
        } else {
