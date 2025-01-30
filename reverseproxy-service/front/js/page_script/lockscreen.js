@@ -181,7 +181,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 				homePage.classList.add('showing');
 				lockscreenPage.classList.remove('showing');
 				lockscreenPage.classList.add('hidden');
-				lockLog.style.display = 'none';
+				lockLogo.style.display = 'none';
 				
 				// Dynamically load the other scripts
 				loadScript('../js/page_script/clock.js'); // Load clock.js
@@ -301,7 +301,7 @@ log42Button.addEventListener('click', function () {
 							homePage.classList.add('showing');
 							lockscreenPage.classList.remove('showing');
 							lockscreenPage.classList.add('hidden');
-							lockLog.style.display = 'none';
+							lockLogo.style.display = 'none';
 							
 							// Dynamically load the other scripts
 							loadScript('../js/page_script/clock.js'); // Load clock.js
