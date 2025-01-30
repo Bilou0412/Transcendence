@@ -19,6 +19,7 @@ Content-Type: application/json
     "email": "bilel.moudache0412@gmail.com"
 }
 
+
 ### Refresh Token
 POST http://localhost:8443/auth/token/refresh/
 Content-Type: application/json
