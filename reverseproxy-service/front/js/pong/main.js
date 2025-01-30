@@ -15,7 +15,6 @@ export let settings = null;
 let game_mode = "local 1v1";
 let current_match = 1;
 let players_names = ["player 1", "player 2", "player 3", "player 4", null, null, null];
-// let players_names = [null, null, null, null, null, null, null];
 export let player1Side = 0x222222;
 export let player2Side = 0x222222;
 export let player1Paddle = 0x797979;
@@ -205,42 +204,36 @@ export async function initializeGame() {
     document.getElementById('titleBarPong').style.display = 'none';
     document.getElementById('waitingScreen').style.display = 'none';
     focusGame();
-
 }
 
-
-
 ////////////////////////////////////////////////////////Page script////////////////////////////////////////////////////////
-
 //////////////////////////////////////Window Swap//////////////////////////////////////
-// Get the game mode selector and the sections
-const gameModeSelect = document.getElementById('gameModeSelect');
-const sections = {
-    "local tournament": document.querySelector('.localTournament'),
-	"remote tournament": document.querySelector('.remoteTournament'),
-	"remote 1v1": document.querySelector('.remote1v1'),
-	"player vs ai": document.querySelector('.localPlayerAI'),
-};
+function setupGameModeSelect() {
+    const gameModeSelect = document.getElementById('gameModeSelect');
+    const sections = {
+        "local tournament": document.querySelector('.localTournament'),
+        "remote tournament": document.querySelector('.remoteTournament'),
+        "remote 1v1": document.querySelector('.remote1v1'),
+        "player vs ai": document.querySelector('.localPlayerAI'),
+    };
+    if (gameModeSelect) {
+        gameModeSelect.addEventListener('change', function () {
+            const selectedMode = gameModeSelect.value.toLowerCase();
+            game_mode = selectedMode;
+            // Hide all sections
+            Object.values(sections).forEach(section => {
+                section.style.display = 'none';
+            });
 
-// Add an event listener for the game mode selection
-gameModeSelect.addEventListener('change', function () {
-	const selectedMode = gameModeSelect.value.toLowerCase();
-    game_mode = selectedMode;
-	// Hide all sections
-	Object.values(sections).forEach(section => {
-		section.style.display = 'none';
-	});
-	console
-
-	// Show the selected section
-	if (sections[selectedMode]) {
-		sections[selectedMode].style.display = 'flex';
-	}
-});
-
+            // Show the selected section
+            if (sections[selectedMode]) {
+                sections[selectedMode].style.display = 'flex';
+            }
+        });
+    }
+}
 
 //////////////////////////////////////Player Names//////////////////////////////////////
-// Get the player name inputs if the section is visible
 function getPlayersNames() {
     if (game_mode === 'local tournament') {
         const playerInputs = document.querySelectorAll('.player-input');
@@ -257,161 +250,166 @@ function getPlayersNames() {
     }
 }
 
-
 //////////////////////////////////////Game Settings//////////////////////////////////////
-// Track already assigned keys
-const assignedKeys = new Set();
-const keyBindings = {
-    player1Up: "W",
-    player1Down: "S",
-    player2Up: "ArrowUp",
-    player2Down: "ArrowDown"
-};
+function setupKeyBindings() {
+    // Track already assigned keys
+    const assignedKeys = new Set();
+    const keyBindings = {
+        player1Up: "W",
+        player1Down: "S",
+        player2Up: "ArrowUp",
+        player2Down: "ArrowDown"
+    };
 
-// Key display mapping
-const keyDisplayMapping = {
-    ArrowUp: "↑",
-    ArrowDown: "↓",
-    ArrowLeft: "←",
-    ArrowRight: "→",
-    ARROWUP: "↑",
-    ARROWDOWN: "↓",
-    ARROWLEFT: "←",
-    ARROWRIGHT: "→",
-    " ": "Space",
-    Enter: "Enter",
-    Backspace: "Backspace"
-};
+    // Key display mapping
+    const keyDisplayMapping = {
+        ArrowUp: "↑",
+        ArrowDown: "↓",
+        ArrowLeft: "←",
+        ArrowRight: "→",
+        ARROWUP: "↑",
+        ARROWDOWN: "↓",
+        ARROWLEFT: "←",
+        ARROWRIGHT: "→",
+        " ": "Space",
+        Enter: "Enter",
+        Backspace: "Backspace"
+    };
 
-// Function to reset assigned keys based on current bindings
-function resetAssignedKeys() {
-    assignedKeys.clear();
-    Object.values(keyBindings).forEach(key => assignedKeys.add(key.toUpperCase()));
-}
+    // Function to reset assigned keys based on current bindings
+    function resetAssignedKeys() {
+        assignedKeys.clear();
+        Object.values(keyBindings).forEach(key => assignedKeys.add(key.toUpperCase()));
+    }
 
-// Initialize assignedKeys with default keys
-resetAssignedKeys();
+    // Initialize assignedKeys with default keys
+    resetAssignedKeys();
 
-// Function to get display value for a key
-function getKeyDisplay(key) {
-    return keyDisplayMapping[key] || key.toUpperCase();
-}
+    // Function to get display value for a key
+    function getKeyDisplay(key) {
+        return keyDisplayMapping[key] || key.toUpperCase();
+    }
 
-// Handle keybinding updates
-function updateKeybind(buttonId, keyDisplayId, action, buttonDefaultText) {
-    const button = document.getElementById(buttonId);
-    const keyDisplay = document.querySelector(`#${keyDisplayId} kbd`);
+    // Handle keybinding updates
+    function updateKeybind(buttonId, keyDisplayId, action, buttonDefaultText) {
+        const button = document.getElementById(buttonId);
+        const keyDisplay = document.querySelector(`#${keyDisplayId} kbd`);
 
-    // Set default key display
-    keyDisplay.innerText = getKeyDisplay(keyBindings[action]);
+        // Set default key display
+        keyDisplay.innerText = getKeyDisplay(keyBindings[action]);
 
-    button.addEventListener("click", () => {
-        button.innerText = "Press a key...";
+        button.addEventListener("click", () => {
+            button.innerText = "Press a key...";
 
-        const onKeyPress = (event) => {
-            event.preventDefault(); // Prevent default browser actions
-            const key = event.key; // Keep original key case
-            const upperKey = key.toUpperCase(); // Uppercase version for tracking
+            const onKeyPress = (event) => {
+                event.preventDefault(); // Prevent default browser actions
+                const key = event.key; // Keep original key case
+                const upperKey = key.toUpperCase(); // Uppercase version for tracking
 
-            // Check if key is already assigned to another action
-            if (assignedKeys.has(upperKey) && keyBindings[action].toUpperCase() !== upperKey) {
-                alert(`The key "${getKeyDisplay(key)}" is already assigned to another action. Please choose a different key.`);
+                // Check if key is already assigned to another action
+                if (assignedKeys.has(upperKey) && keyBindings[action].toUpperCase() !== upperKey) {
+                    alert(`The key "${getKeyDisplay(key)}" is already assigned to another action. Please choose a different key.`);
+                    button.innerText = buttonDefaultText;
+                    document.removeEventListener("keydown", onKeyPress);
+                    return;
+                }
+
+                // Update bindings
+                const oldKey = keyBindings[action].toUpperCase();
+                assignedKeys.delete(oldKey); // Remove old key from the set
+                keyBindings[action] = upperKey;
+                assignedKeys.add(upperKey); // Add new key to the set
+
+                keyDisplay.innerText = getKeyDisplay(key);
                 button.innerText = buttonDefaultText;
                 document.removeEventListener("keydown", onKeyPress);
-                return;
-            }
 
-            // Update bindings
-            const oldKey = keyBindings[action].toUpperCase();
-            assignedKeys.delete(oldKey); // Remove old key from the set
-            keyBindings[action] = upperKey;
-            assignedKeys.add(upperKey); // Add new key to the set
+                // Update the keybindings for the game
+                // Preserve the original case for special keys like 'ArrowUp'
+                let bindingKey = key;
+                if (key.startsWith('Arrow')) {
+                    bindingKey = key; // Keep original case for arrow keys
+                } else {
+                    bindingKey = key.toLowerCase(); // Use lowercase for regular keys
+                }
 
-            keyDisplay.innerText = getKeyDisplay(key);
-            button.innerText = buttonDefaultText;
-            document.removeEventListener("keydown", onKeyPress);
+                // Update the game bindings
+                if (action === 'player1Up') {
+                    player1UpBind = bindingKey;
+                } else if (action === 'player1Down') {
+                    player1DownBind = bindingKey;
+                } else if (action === 'player2Up') {
+                    player2UpBind = bindingKey;
+                } else if (action === 'player2Down') {
+                    player2DownBind = bindingKey;
+                }
 
-            // Update the keybindings for the game
-            // Preserve the original case for special keys like 'ArrowUp'
-            let bindingKey = key;
-            if (key.startsWith('Arrow')) {
-                bindingKey = key; // Keep original case for arrow keys
-            } else {
-                bindingKey = key.toLowerCase(); // Use lowercase for regular keys
-            }
+                console.log('Updated bindings:', {
+                    player1UpBind,
+                    player1DownBind,
+                    player2UpBind,
+                    player2DownBind
+                });
+            };
 
-            // Update the game bindings
-            if (action === 'player1Up') {
-                player1UpBind = bindingKey;
-            } else if (action === 'player1Down') {
-                player1DownBind = bindingKey;
-            } else if (action === 'player2Up') {
-                player2UpBind = bindingKey;
-            } else if (action === 'player2Down') {
-                player2DownBind = bindingKey;
-            }
+            document.addEventListener("keydown", onKeyPress);
+        });
+    }
 
-            console.log('Updated bindings:', {
-                player1UpBind,
-                player1DownBind,
-                player2UpBind,
-                player2DownBind
+    // Handle color picker updates
+    function updateColor(buttonId, colorDisplayId) {
+        const button = document.getElementById(buttonId);
+        const colorDisplay = document.getElementById(colorDisplayId);
+
+        button.addEventListener("click", () => {
+            const colorInput = document.createElement("input");
+            colorInput.type = "color";
+            colorInput.style.display = "none";
+
+            document.body.appendChild(colorInput);
+            colorInput.click();
+
+            colorInput.addEventListener("input", () => {
+                colorDisplay.style.backgroundColor = colorInput.value;
+                
+                // Convert hex color to 0x format and update the corresponding variable
+                const colorValue = parseInt(colorInput.value.replace('#', '0x'));
+                
+                switch(buttonId) {
+                    case 'player1SideColorBtn':
+                        player1Side = colorValue;
+                        break;
+                    case 'player1PaddleColorBtn':
+                        player1Paddle = colorValue;
+                        break;
+                    case 'player2SideColorBtn':
+                        player2Side = colorValue;
+                        break;
+                    case 'player2PaddleColorBtn':
+                        player2Paddle = colorValue;
+                        break;
+                }
+
             });
-        };
 
-        document.addEventListener("keydown", onKeyPress);
-    });
+            colorInput.addEventListener("change", () => {
+                document.body.removeChild(colorInput);
+            });
+        });
+    }
+
+    // Initialize the functionality for both players
+    updateKeybind("player1InputUp", "player1KeyUp", "player1Up", "Move Up");
+    updateKeybind("player1InputDown", "player1KeyDown", "player1Down", "Move Down");
+    updateKeybind("player2InputUp", "player2KeyUp", "player2Up", "Move Up");
+    updateKeybind("player2InputDown", "player2KeyDown", "player2Down", "Move Down");
+
+    updateColor("player1SideColorBtn", "player1SideColor");
+    updateColor("player1PaddleColorBtn", "player1PaddleColor");
+    updateColor("player2SideColorBtn", "player2SideColor");
+    updateColor("player2PaddleColorBtn", "player2PaddleColor");
 }
 
-// Handle color picker updates
-function updateColor(buttonId, colorDisplayId) {
-    const button = document.getElementById(buttonId);
-    const colorDisplay = document.getElementById(colorDisplayId);
-
-    button.addEventListener("click", () => {
-        const colorInput = document.createElement("input");
-        colorInput.type = "color";
-        colorInput.style.display = "none";
-
-        document.body.appendChild(colorInput);
-        colorInput.click();
-
-        colorInput.addEventListener("input", () => {
-            colorDisplay.style.backgroundColor = colorInput.value;
-            
-            // Convert hex color to 0x format and update the corresponding variable
-            const colorValue = parseInt(colorInput.value.replace('#', '0x'));
-            
-            switch(buttonId) {
-                case 'player1SideColorBtn':
-                    player1Side = colorValue;
-                    break;
-                case 'player1PaddleColorBtn':
-                    player1Paddle = colorValue;
-                    break;
-                case 'player2SideColorBtn':
-                    player2Side = colorValue;
-                    break;
-                case 'player2PaddleColorBtn':
-                    player2Paddle = colorValue;
-                    break;
-            }
-
-        });
-
-        colorInput.addEventListener("change", () => {
-            document.body.removeChild(colorInput);
-        });
-    });
-}
-
-// Initialize the functionality for both players
-updateKeybind("player1InputUp", "player1KeyUp", "player1Up", "Move Up");
-updateKeybind("player1InputDown", "player1KeyDown", "player1Down", "Move Down");
-updateKeybind("player2InputUp", "player2KeyUp", "player2Up", "Move Up");
-updateKeybind("player2InputDown", "player2KeyDown", "player2Down", "Move Down");
-
-updateColor("player1SideColorBtn", "player1SideColor");
-updateColor("player1PaddleColorBtn", "player1PaddleColor");
-updateColor("player2SideColorBtn", "player2SideColor");
-updateColor("player2PaddleColorBtn", "player2PaddleColor");
+// Call the setup functions when the script is executed
+setupGameModeSelect();
+setupKeyBindings();

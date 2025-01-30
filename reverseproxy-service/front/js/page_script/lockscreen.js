@@ -26,22 +26,19 @@ function loadScript(src) {
 const guestBtn = document.getElementById('guestButton');
 const lockscreenPage = document.getElementById('LockPage');
 const homePage = document.getElementById('HomePage');
-const lockLog = document.getElementById('lockLogo');
 
 guestBtn.addEventListener('click', function () {
-  // Transition between pages
+document.body.style.backgroundImage = "url('../../texture/backSefir.jpeg')";
+// Transition between pages
   homePage.classList.remove('hidden');
   homePage.classList.add('showing');
 
   lockscreenPage.classList.remove('showing');
   lockscreenPage.classList.add('hidden');
 
-  lockLog.style.display = 'none';
-
   // Dynamically load the other scripts
   loadScript('../js/page_script/clock.js'); // Load clock.js
   loadScript('../js/router.js', true); // Load router.js as a module
-//   loadScript('../js/page_script/profile.js')
 
   // Optionally, remove this script after it has done its work
   const lockscreenScript = document.querySelector('script[src="../js/page_script/lockscreen.js"]');
