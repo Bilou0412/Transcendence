@@ -11,6 +11,6 @@ param vitesse balle
 collisions à chier
 doc API
 
-(fix router)
-fix hidden/show homepage lockPage
 fix les swap tabs qui marche pas quand tu quittes puis reviens
+fix background unis sur les pages secondaires
+les links avec le back disparaissent quand tu fermes et reouvre la page

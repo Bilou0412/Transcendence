@@ -105,7 +105,6 @@ const loadRouteModule = async (path) => {
 };
 
 const insertRouteScript = async (path) => {
-    // Dynamically map routes to their corresponding JS scripts
     const routeScriptPaths = {
         '/pong': '../js/pong/main.js',
         '/about': '../js/page_script/tabs.js',
@@ -116,11 +115,20 @@ const insertRouteScript = async (path) => {
     const scriptPath = routeScriptPaths[path];
     if (!scriptPath) return;
 
+    // Remove the old script if it exists
+    const oldScript = routeScripts.get(path);
+    if (oldScript) {
+        oldScript.remove();
+        routeScripts.delete(path);
+    }
+
+    // Create and append the new script
     const script = document.createElement('script');
-    script.src = scriptPath;
+    script.src = `${scriptPath}?v=${Date.now()}`; // Cache-busting
     script.type = 'module';
     routeScripts.set(path, script);
     document.getElementById("main-page").appendChild(script);
+
 
     // Load the corresponding module
     const module = await loadRouteModule(path);
@@ -177,7 +185,6 @@ const routes = {
 
 const handleLocation = async () => {
     const path = window.location.pathname;
-    // console.log(path);
     
     // Cleanup any previous route-specific scripts
     for (let [routePath] of routeScripts) {
@@ -189,8 +196,6 @@ const handleLocation = async () => {
     const route = routes[path] || routes[404];
     const html = await fetch(route).then((data) => data.text());
     
-    // console.log('Loading route:', path);
-    // console.log('Route HTML:', html);
     // Insert HTML for the route
     if (path === '/'){
 
