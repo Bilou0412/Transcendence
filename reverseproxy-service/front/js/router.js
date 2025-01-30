@@ -198,7 +198,7 @@ const handleLocation = async () => {
     
     // Insert HTML for the route
     if (path === '/'){
-
+        document.body.style.backgroundImage = "url('../../texture/backSefir.jpeg')";
         // Create a temporary DOM element to parse the HTML
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = html;
@@ -209,8 +209,10 @@ const handleLocation = async () => {
         // Set it to the main-page element
         document.getElementById("main-page").innerHTML = mainPageContent;
     }
-    else
+    else {
+        document.body.style.backgroundImage = "url('../../texture/backColor.jpg')";
         document.getElementById("main-page").innerHTML = html;
+    }
     
     // Load route-specific script if applicable
     await insertRouteScript(path);
