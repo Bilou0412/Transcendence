@@ -16,7 +16,7 @@ Content-Type: application/json
     "username": "bilel",
     "password": "Motdepasse12@@",
     "password2": "Motdepasse12@@",
-    "email": "sefiroutin@gmail.com"
+    "email": "bilel.moudache0412@gmail.com"
 }
 
 ### Refresh Token
@@ -78,9 +78,9 @@ Authorization: Bearer eyJhbGciiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYW
 
 ### 2FA
 
-GET http://127.0.0.1:8000/auth/2fa/enable/
+GET https://localhost:8443/auth/2fa/enable/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxOTUzNTY3LCJpYXQiOjE3MzE5NDk5NjcsImp0aSI6IjU1ODBmZmM2OWI5NjQwNDY5NGRkZjhmZDM1OTFlYjY5IiwidXNlcl9pZCI6Mn0.O_sJEk5LbjnK8wNLNzHWazseDOFzE5_gLn1LZsxX9LQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4MTk4OTA3LCJpYXQiOjE3MzgxOTUzMDcsImp0aSI6ImM1MTI5YTBiOTEzMjQ3M2Y5NzRkZTk5OGNlZTQ5NWMxIiwidXNlcl9pZCI6Mn0.fbGfpwOiiUULkMLbFnPJZSfnFllXUOpCeG89LJ083xc
 
 ###
 

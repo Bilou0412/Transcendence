@@ -178,7 +178,17 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             	sessionStorage.setItem('userId', data.user.id);
             	sessionStorage.setItem('username', data.user.username);
 				sessionStorage.setItem('email', data.user.email);
-               // Redirect to home page or perform other actions
+				
+				// Transition to home page
+				homePage.classList.remove('hidden');
+				homePage.classList.add('showing');
+				lockscreenPage.classList.remove('showing');
+				lockscreenPage.classList.add('hidden');
+				lockLog.style.display = 'none';
+				
+				// Dynamically load the other scripts
+				loadScript('../js/page_script/clock.js'); // Load clock.js
+				loadScript('../js/router.js', true); // Load router.js as a module
            });
        } else {
            console.log('Login failed:', response.statusText);
@@ -188,4 +198,130 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
        console.error('Network error:', error);
        // Handle network error
    });
+});
+
+////////////////////////// Forgot Password ////////////////////////////
+document.querySelector('.forgot-password').addEventListener('click', function(event) {
+	event.preventDefault();
+	const email = document.getElementById('usrnameField').value;
+	if (!email) {
+		alert('Please enter your email address.');
+		return;
+	}
+	
+	fetch('https://localhost:8443/auth/password/reset/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ email: email })
+	}).then(response => {
+		if (response.ok) {
+			alert('Password reset email sent. Please check your inbox.');
+		} else {
+			response.json().then(data => {
+				const errorMessage = Object.values(data).flat().join('\n');
+				alert(errorMessage || 'Failed to send password reset email.');
+			});
+		}
+	}).catch(error => {
+		console.error('Network error:', error);
+		alert('Network error. Please try again later.');
+	});
+});
+
+////////////////////////// Post Register Form Data ////////////////////////////
+document.querySelector('#registerFormContainer form').addEventListener('submit', function(event) {
+	event.preventDefault();
+	const username = document.getElementById('usrnameRegiField').value;
+	const password = document.getElementById('pswrdRegiField').value;
+	const password2 = document.getElementById('repswrdRegiField').value;
+	const email = document.getElementById('emailRegiField').value;
+	console.log('Username:', username);
+	console.log('Password:', password);
+	console.log('Confirm Password:', password2);
+	console.log('Email:', email);
+
+	fetch('https://localhost:8443/auth/signup/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			username: username,
+			password: password,
+			password2: password2,
+			email: email
+		})
+	}).then(response => {
+		if (response.ok) {
+			// Handle successful registration
+			response.json().then(data => {
+				console.log('Registration successful:', data);
+				alert(data.message || 'Registration successful! Please verify your email.');
+				// Redirect to login page or perform other actions
+			});
+		} else {
+			response.json().then(data => {
+				console.log('Registration failed:', data);
+				const errorMessage = Object.values(data).flat().join('\n');
+				alert(errorMessage || 'Registration failed.');
+			});
+		}
+	}).catch(error => {
+		console.error('Network error:', error);
+		alert('Network error. Please try again later.');
+	});
+});
+
+
+
+const log42Button = document.getElementById('log42Button');
+
+log42Button.addEventListener('click', function () {
+	const oauthUrl = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fsucces%2F&response_type=code';
+	const popup = window.open(oauthUrl, 'OAuth Login', 'width=600,height=600');
+	const interval = setInterval(function () {
+		try {
+			if (popup.location.href.indexOf('code=') !== -1) {
+				const urlParams = new URLSearchParams(popup.location.search);
+				const code = urlParams.get('code');
+				if (code) {
+					fetch(`https://localhost:8443/auth/oauth/?code=${code}`, {
+						method: 'GET'
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.access) {
+							sessionStorage.setItem('accessToken', data.access);
+							sessionStorage.setItem('refreshToken', data.refresh);
+							sessionStorage.setItem('userId', data.user.id);
+							sessionStorage.setItem('username', data.user.username);
+							sessionStorage.setItem('email', data.user.email);
+							
+							// Transition to home page
+							homePage.classList.remove('hidden');
+							homePage.classList.add('showing');
+							lockscreenPage.classList.remove('showing');
+							lockscreenPage.classList.add('hidden');
+							lockLog.style.display = 'none';
+							
+							// Dynamically load the other scripts
+							loadScript('../js/page_script/clock.js'); // Load clock.js
+							loadScript('../js/router.js', true); // Load router.js as a module
+						} else {
+							alert('OAuth failed');
+						}
+					})
+					.catch(error => {
+						console.error('Error during OAuth request:', error);
+					});
+					popup.close();
+					clearInterval(interval);
+				}
+			}
+		} catch (error) {
+			console.error('Error checking popup URL:', error);
+		}
+	}, 1000);
 });
