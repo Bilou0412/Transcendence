@@ -29,9 +29,9 @@ export class Settings {
         this.targetHeight = 0.6; // Lift height for the cubes
         this.liftSpeed = 0.1; // Speed of the cubes lift
         this.moveSpeed = 0.3; // Speed of the paddles
-        this.initialBallSpeed = 0.5; // Initial speed of the ball
+        this.initialBallSpeed = 1; // Initial speed of the ball
         this.ballSizeScale = 2; // Ball size
-        this.speedIncreaseFactor = 1.3; // Speed increase factor after each hit
+        this.speedIncreaseFactor = 1; // Speed increase factor after each hit
         this.superChargeCount = 5; // Number of hits to supercharge the ball
         this.platformWidth = 50; // Width of the platform
         this.platformLength = 30; // Length of the platform
@@ -43,7 +43,7 @@ export class Settings {
         this.ballVelocity = new THREE.Vector3(this.ballSpeed, 0, this.ballSpeed);
         this.player1Score = 0;
         this.player2Score = 0;
-        this.maxScore = 2; // Max score to win the game
+        this.maxScore = 5; // Max score to win the game
         this.player1HitCounter = 0; // Number of hits by player 1 for supercharge
         this.player2HitCounter = 0; // Number of hits by player 2 for supercharge
         this.ServSide = 2; // Wich player will serve

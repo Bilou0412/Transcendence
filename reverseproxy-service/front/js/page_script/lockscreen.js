@@ -28,29 +28,29 @@ const lockscreenPage = document.getElementById('LockPage');
 const homePage = document.getElementById('HomePage');
 
 guestBtn.addEventListener('click', function () {
-document.body.style.backgroundImage = "url('../../texture/backSefir.jpeg')";
-// Transition between pages
-  homePage.classList.remove('hidden');
-  homePage.classList.add('showing');
+	document.body.style.backgroundImage = "url('../../texture/backSefir.jpeg')";
+	// Transition between pages
+	homePage.classList.remove('hidden');
+	homePage.classList.add('showing');
 
-  lockscreenPage.classList.remove('showing');
-  lockscreenPage.classList.add('hidden');
+	lockscreenPage.classList.remove('showing');
+	lockscreenPage.classList.add('hidden');
 
-  // Dynamically load the other scripts
-  loadScript('../js/page_script/clock.js'); // Load clock.js
-  loadScript('../js/router.js', true); // Load router.js as a module
+	// Dynamically load the other scripts
+	loadScript('../js/page_script/clock.js'); // Load clock.js
+	loadScript('../js/router.js', true); // Load router.js as a module
 
-  // Optionally, remove this script after it has done its work
-  const lockscreenScript = document.querySelector('script[src="../js/page_script/lockscreen.js"]');
-  if (lockscreenScript) lockscreenScript.remove();
+	// Optionally, remove this script after it has done its work
+	const lockscreenScript = document.querySelector('script[src="../js/page_script/lockscreen.js"]');
+	if (lockscreenScript) lockscreenScript.remove();
 });
 
 // Function to dynamically load a script
 function loadScript(src, isModule = false) {
-  const script = document.createElement('script');
-  script.src = src;
-  if (isModule) script.type = 'module'; // Add type="module" if needed
-  document.body.appendChild(script);
+	const script = document.createElement('script');
+	script.src = src;
+	if (isModule) script.type = 'module'; // Add type="module" if needed
+	document.body.appendChild(script);
 }
 
 //////////////////////////// Show/Hide Register Form ////////////////////////////

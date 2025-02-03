@@ -181,6 +181,45 @@ function progressLoading() {
     }, 5000);
 }
 
+function changePlayStyle()
+{
+    if (game_mode !== 'local 1v1')
+        return;
+
+    // Get the currently checked play style
+    const checkedRadio = document.querySelector('input[name="fieldset-example"]:checked');
+
+    if (!checkedRadio) {
+        console.log("No play style button is checked.");
+    } 
+    else {
+        const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
+        const playStyle = label.textContent.toLowerCase();
+        if (playStyle === 'slow') {
+            settings.initialBallSpeed = 0.3
+        }
+        
+        else if (playStyle === 'normal') {
+            settings.initialBallSpeed = 0.5
+        }
+
+        else if (playStyle === 'fast') {
+            settings.initialBallSpeed = 1;
+        }
+
+        else if (playStyle === 'super fast') {
+            settings.initialBallSpeed = 1.3;
+        }
+
+        else if (playStyle === 'butterfly') {
+            settings.initialBallSpeed = 0.3;
+            settings.speedIncreaseFactor = 1.3;
+        }
+
+        console.log("Selected play style:", playStyle);
+    }
+}
+
 export async function initializeGame() {
     document.getElementById('waitingScreen').style.display = 'block';
     document.getElementById('nav').style.display = 'none';
@@ -192,6 +231,7 @@ export async function initializeGame() {
     window.addEventListener('keyup', onKeyUp, false);
     window.addEventListener('wheel', onMouseWheel, false);
     settings = new Settings();
+    changePlayStyle();
     initMonitor();
     initTable();
     titleDisplay();
