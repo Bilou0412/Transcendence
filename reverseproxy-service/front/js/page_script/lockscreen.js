@@ -182,6 +182,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 				lockscreenPage.classList.remove('showing');
 				lockscreenPage.classList.add('hidden');
 				lockLogo.style.display = 'none';
+				// alert('Login successful');
+            	
 				
 				// Dynamically load the other scripts
 				loadScript('../js/page_script/clock.js'); // Load clock.js

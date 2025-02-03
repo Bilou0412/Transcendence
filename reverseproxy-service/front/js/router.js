@@ -89,6 +89,7 @@ const loadRouteModule = async (path) => {
             '/pong': '../js/pong/main.js',
             '/about': '../js/page_script/tabs.js',
             '/profile': '../js/page_script/profile.js',
+            '/settings': '../js/page_script/profile-settings.js',
             '/': '../js/page_script/home.js',
         };
 
@@ -109,6 +110,7 @@ const insertRouteScript = async (path) => {
         '/pong': '../js/pong/main.js',
         '/about': '../js/page_script/tabs.js',
         '/profile': '../js/page_script/profile.js',
+        '/settings': '../js/page_script/profile-settings.js',
         '/': '../js/page_script/home.js',
     };
 

@@ -8,7 +8,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf  # Configuration Nginx
       - ./nginx/ssl:/etc/nginx/ssl          # Volume pour les certificats SSL générés
-      - ../media-service/images:/www/images         # Volume pour les images
+      - ../media-service/images:/etc/front/images         # Volume pour les images
     networks:
       my_network:
         aliases:
