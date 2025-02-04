@@ -102,24 +102,58 @@ td, th {
     transform: translate(-50%, -50%);
 }
 
-#search_bar {
-	position: absolute;
-	top:5%;
-	left: 2.5%;
-	width: 95%;
+.friend-window {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 20px;
+    height: 90%;
+    align-items: center;
+    padding-top: 5%;;
+}
+/* --------------------------------Search Bar-------------------------------- */
+.search-bar {
+    width: 90%;
 }
 
-/* --------------------------------Friends list-------------------------------- */
-.friend-list-container {
-	position: fixed;
-	top: 10%;
+#search_bar {
+	width: 100%;
+}
+
+/* --------------------------------User Search Display-------------------------------- */
+.user-search-container {
 	left: 5%;
 	width: 90%;
+    height: 22%;
 	background-color: #ffffff;
 	overflow: hidden;
+    overflow-y: auto;
 	border: 1px solid black;
 }
 
+/* --------------------------------Friend Request-------------------------------- */
+.friend-request-container {
+	left: 5%;
+	width: 90%;
+    height: 10%;
+	background-color: #ffffff;
+	overflow: hidden;
+    overflow-y: auto;
+	border: 1px solid black;
+}
+
+/* --------------------------------Friend List-------------------------------- */
+.friend-list-container {
+	left: 5%;
+	width: 90%;
+    height: 45%;
+	background-color: #ffffff;
+	overflow: hidden;
+    overflow-y: auto;
+	border: 1px solid black;
+}
+
+/* --------------------------------User Items-------------------------------- */
 .friend-item {
 	display: flex;
 	padding: 8px;
@@ -132,16 +166,14 @@ td, th {
     height: 50px;
 }
 
-.friend-list {
-	max-height: 1000px;
-	overflow-y: auto;
-	padding: 10px;
-}
-
 .friend-actions {
 	display: flex;
 	gap: 10px;
 }
+
+
+
+
 
 @media screen and (max-width: 480px) {
     body {
