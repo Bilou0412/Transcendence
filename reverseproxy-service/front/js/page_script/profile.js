@@ -2,17 +2,9 @@ function profileNav() {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (!accessToken) {
 		console.error('Access token not found');
-		// return;
+		return;
 	}
 	const userId = sessionStorage.getItem('userId');
-	const username = sessionStorage.getItem('username');
-	const email = sessionStorage.getItem('email');
-
-	// document.getElementById('profile-username').innerText = username;
-	// document.getElementById('profile-id').innerText = userId;
-	// document.getElementById('profile-email').innerText = `Email: ${email}`;
-	// document.getElementById('userID').innerText = username;
-	
 
 	fetch('https://localhost:8443/auth/users/info/', {
 		method: 'POST',
@@ -27,17 +19,87 @@ function profileNav() {
 		const user = data[userId];
 		document.getElementById('profile-username').innerText = user.username;
 		document.getElementById('profile-id').innerText = user.id;
-		// document.getElementById('profile-email').innerText = `Email: ${user.email}`;
 		fetchProfileImages(user.id, accessToken, ['profile-image']);
 		fetchUserMatches(user.id, accessToken);
 		fetchUserStatistics(user.id, accessToken);
 		fetchUserFriends(user.id, accessToken);
 	})
 	.catch(error => console.error('Error viewing profile:', error));
-};
+}
 
 profileNav();
 
+document.getElementById('search_bar').addEventListener('input', function(event) {
+	const query = event.target.value;
+	if (query.length > 0) {
+		fetch(`https://localhost:8443/auth/search_user/?username=${query}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
+			}
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.users) {
+				console.log('Search results:', data.users);
+				displaySearchResults(data.users);
+			} else {
+				console.error('No users found');
+			}
+		})
+		.catch(error => console.error('Error searching users:', error));
+	} else {
+		clearSearchResults();
+	}
+});
+
+function displaySearchResults(users) {
+	const resultsContainer = document.getElementById('searchResults');
+	resultsContainer.innerHTML = '';
+	users.forEach(user => {
+		const userElement = document.createElement('div');
+		userElement.className = 'friend-item';
+		
+		const avatar = document.createElement('img');
+		avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+		avatar.alt = 'User Avatar';
+		avatar.className = 'friend-avatar';
+		
+		const userInfo = document.createElement('div');
+		userInfo.className = 'friend-info';
+		const userName = document.createElement('div');
+		userName.className = 'friend-name';
+		userName.innerText = `${user.username} (#${user.id})`;
+		userInfo.appendChild(userName);
+		
+		const userActions = document.createElement('div');
+		userActions.className = 'friend-actions';
+		const inviteButton = document.createElement('button');
+		inviteButton.className = 'btn btn-invite';
+		inviteButton.innerText = 'Invite';
+		const removeButton = document.createElement('button');
+		removeButton.className = 'btn btn-remove';
+		removeButton.innerText = 'Remove';
+		const blockButton = document.createElement('button');
+		blockButton.className = 'btn btn-block';
+		blockButton.innerText = 'Block';
+		userActions.appendChild(inviteButton);
+		userActions.appendChild(removeButton);
+		userActions.appendChild(blockButton);
+		
+		userElement.appendChild(avatar);
+		userElement.appendChild(userInfo);
+		userElement.appendChild(userActions);
+		
+		resultsContainer.appendChild(userElement);
+	});
+}
+
+function clearSearchResults() {
+	const resultsContainer = document.getElementById('searchResults');
+	resultsContainer.innerHTML = '';
+}
 
 function fetchProfileImages(userId, accessToken, imageElementIds) {
     // Fetch and display profile images
@@ -54,3 +116,4 @@ function fetchUserStatistics(userId, accessToken) {
 function fetchUserFriends(userId, accessToken) {
     // Fetch and display user friends
 }
+
