@@ -1,10 +1,9 @@
-function profileNav() {
+function profileNav(idToSearch) {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (!accessToken) {
 		console.error('Access token not found');
 		return;
 	}
-	const userId = sessionStorage.getItem('userId');
 
 	fetch('https://localhost:8443/auth/users/info/', {
 		method: 'POST',
@@ -12,11 +11,11 @@ function profileNav() {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + accessToken
 		},
-		body: JSON.stringify({ user_ids: [userId] })
+		body: JSON.stringify({ user_ids: [idToSearch] })
 	})
 	.then(response => response.json())
 	.then(data => {
-		const user = data[userId];
+		const user = data[idToSearch];
 		document.getElementById('profile-username').innerText = user.username;
 		document.getElementById('profile-id').innerText = user.id;
 		fetchProfileImages(user.id, accessToken, ['userIcon']);
@@ -29,7 +28,9 @@ function profileNav() {
 	.catch(error => console.error('Error viewing profile:', error));
 }
 
-profileNav();
+if (sessionStorage.getItem('userId')) {
+	profileNav(sessionStorage.getItem('userId'));
+}
 
 document.getElementById('search_bar').addEventListener('input', function(event) {
 	const query = event.target.value;
@@ -67,12 +68,18 @@ function displaySearchResults(users) {
 		avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
 		avatar.alt = 'User Avatar';
 		avatar.className = 'friend-avatar';
+		avatar.onclick = function () {
+            profileNav(user.id);
+        };
 		
 		const userInfo = document.createElement('div');
 		userInfo.className = 'friend-info';
 		const userName = document.createElement('div');
 		userName.className = 'friend-name';
 		userName.innerText = `${user.username} (#${user.id})`;
+		userName.onclick = function () {
+            profileNav(user.id);
+        };
 		userInfo.appendChild(userName);
 		
 		const userActions = document.createElement('div');
@@ -128,7 +135,7 @@ function fetchProfileImages(userIds, accessToken, imageElementIds) {
 }
 
 function fetchUserMatches(userId, accessToken) {
-	fetch(`https://127.0.0.1:8443/user/${userId}/matches/`, {
+	fetch(`https://localhost:8443/usermanagement/${userId}/matches/`, {
 		method: 'GET',
 		headers: {
 			'Authorization': 'Bearer ' + accessToken
@@ -147,24 +154,29 @@ function fetchUserMatches(userId, accessToken) {
 		return response.json();
 	})
 	.then(data => {
-		const matchesList = document.getElementById('history');
-		matchesList.innerHTML = '';
+		const historyTable = document.getElementById('history');
+		const historyHeader = document.getElementById('history-header');
+		
+		while (historyTable.rows.length > 1) {
+            historyTable.deleteRow(1);
+        }
+
 		data.matches.forEach(match => {
-			const matchElement = document.createElement('tr');
-			matchElement.className = 'match';
-			matchElement.innerHTML = `
-				<p>Match ID: ${match.match_id}</p>
-				<p>Player 1 ID: ${match.player_1_id}</p>
-				<p>Player 2 ID: ${match.player_2_id}</p>
-				<p>Start Time: ${match.start_time}</p>
-				<p>End Time: ${match.end_time}</p>
-				<p>Score Player 1: ${match.score_player_1}</p>
-				<p>Score Player 2: ${match.score_player_2}</p>
-				<p>Created At: ${match.created_at}</p>
+			const newRow = historyTable.insertRow();
+			newRow.className = 'match';
+			newRow.innerHTML = `
+				<td>Match ID: ${match.match_id}</td>
+				<td>Player 1 ID: ${match.player_1_id}</td>
+				<td>Player 2 ID: ${match.player_2_id}</td>
+				<td>Start Time: ${match.start_time}</td>
+				<td>End Time: ${match.end_time}</td>
+				<td>Score Player 1: ${match.score_player_1}</td>
+				<td>Score Player 2: ${match.score_player_2}</td>
+				<td>Created At: ${match.created_at}</td>
 			`;
-			matchesList.appendChild(matchElement);
+			
+			// historyTable.insertBefore(newRow, historyHeader.nextSibling);
 		});
-		document.getElementById('matches-info').classList.add('active');
 	})
 	.catch(error => console.error('Error fetching user matches:', error));
 }
@@ -318,12 +330,18 @@ function fetchFriendList(accessToken) {
 					avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
 					avatar.alt = 'User Avatar';
 					avatar.className = 'friend-avatar';
+					avatar.onclick = function () {
+						profileNav(friendId);
+					};
 					
 					const userInfo = document.createElement('div');
 					userInfo.className = 'friend-info';
 					const userName = document.createElement('div');
 					userName.className = 'friend-name';
 					userName.innerText = `${userData[friendId].username} (#${friendId})`;
+					userName.onclick = function () {
+						profileNav(friendId);
+					};
 					userInfo.appendChild(userName);
 					
 					const userActions = document.createElement('div');
