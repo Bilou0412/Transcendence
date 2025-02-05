@@ -23,6 +23,7 @@ function profileNav() {
 		fetchUserMatches(user.id, accessToken);
 		fetchUserStatistics(user.id, accessToken);
 		fetchUserFriends(user.id, accessToken);
+		fetchFriendRequests(user.id, accessToken);
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 }
@@ -115,5 +116,91 @@ function fetchUserStatistics(userId, accessToken) {
 
 function fetchUserFriends(userId, accessToken) {
     // Fetch and display user friends
+}
+
+function fetchFriendRequests() {
+	const accessToken = sessionStorage.getItem('accessToken');
+	fetch('https://localhost:8443/usermanagement/friends/listrequests/', {
+		headers: {
+			'Authorization': `Bearer ${accessToken}`
+		}
+	})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then(data => {
+		const requestContainer = document.getElementById('requestResults');
+		requestContainer.innerHTML = '';
+		data.pending_requests.forEach(request => {
+			const requestElement = document.createElement('div');
+			requestElement.className = 'friend-item';
+			
+			const avatar = document.createElement('img');
+			avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+			avatar.alt = 'User Avatar';
+			avatar.className = 'friend-avatar';
+			
+			const userInfo = document.createElement('div');
+			userInfo.className = 'friend-info';
+			const userName = document.createElement('div');
+			userName.className = 'friend-name';
+			userName.innerText = `Friend request from User ID: ${request}`;
+			userInfo.appendChild(userName);
+			
+			const userActions = document.createElement('div');
+			userActions.className = 'friend-actions';
+			const acceptButton = document.createElement('button');
+			acceptButton.className = 'btn btn-accept-request';
+			acceptButton.innerText = 'Accept';
+			acceptButton.onclick = function () {
+				respondToFriendRequest(request, true);
+				requestElement.remove();
+			};
+			const rejectButton = document.createElement('button');
+			rejectButton.className = 'btn btn-reject-request';
+			rejectButton.innerText = 'Reject';
+			rejectButton.onclick = function () {
+				respondToFriendRequest(request, false);
+				requestElement.remove();
+			};
+			userActions.appendChild(acceptButton);
+			userActions.appendChild(rejectButton);
+			
+			requestElement.appendChild(avatar);
+			requestElement.appendChild(userInfo);
+			requestElement.appendChild(userActions);
+			
+			requestContainer.appendChild(requestElement);
+		});
+	})
+	.catch(error => console.error('Error fetching friend requests:', error));
+}
+
+function respondToFriendRequest(friendId, accept) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	fetch('https://localhost:8443/usermanagement/friends/update/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({
+			friend_id: friendId,
+			status: accept ? 'accepted' : 'refused'
+		})
+	})
+	.then(response => response.json())
+	.then(data => {
+		console.log(`Friend request ${accept ? 'accepted' : 'refused'}:`, data);
+		alert(`Friend request ${accept ? 'accepted' : 'refused'} successfully!`);
+		fetchFriendRequests(); // Refresh friend requests
+	})
+	.catch(error => {
+		console.error(`Error responding to friend request:`, error);
+		alert(`Failed to respond to friend request`);
+	});
 }
 
