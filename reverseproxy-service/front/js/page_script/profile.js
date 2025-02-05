@@ -22,9 +22,9 @@ function profileNav() {
 		fetchProfileImages(user.id, accessToken, ['profile-image']);
 		fetchUserMatches(user.id, accessToken);
 		fetchUserStatistics(user.id, accessToken);
-		fetchUserFriends(user.id, accessToken);
-		fetchFriendRequests(user.id, accessToken);
-		fetchFriendList(accessToken); // Add this line
+		fetchUserFriends(user.id, accessToken); // Ensure this function is called correctly
+		fetchFriendRequests();
+		fetchFriendList(accessToken);
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 }
@@ -110,6 +110,9 @@ function fetchUserStatistics(userId, accessToken) {
     // Fetch and display user statistics
 }
 
+function fetchUserFriends(userId, accessToken) {
+    // Fetch and display user friends
+}
 
 function fetchFriendRequests() {
 	const accessToken = sessionStorage.getItem('accessToken');
@@ -125,6 +128,7 @@ function fetchFriendRequests() {
 		return response.json();
 	})
 	.then(data => {
+		console.log('Friend requests data:', data); // Debugging line
 		const requestContainer = document.getElementById('requestResults');
 		requestContainer.innerHTML = '';
 		data.pending_requests.forEach(request => {
@@ -266,9 +270,17 @@ function fetchFriendList(accessToken) {
 					removeButton.onclick = () => {
 						updateFriendRequest(friendId, 'refused');
 						li.remove();
+						};
+					const blockButton = document.createElement('button');
+					blockButton.className = 'btn btn-block';
+					blockButton.innerText = 'Block';
+					blockButton.onclick = () => {
+						blockUser(friendId);
+						li.remove();
 					};
 					
 					userActions.appendChild(removeButton);
+					userActions.appendChild(blockButton);
 					li.appendChild(avatar);
 					li.appendChild(userInfo);
 					li.appendChild(userActions);
@@ -302,6 +314,29 @@ function updateFriendRequest(friendId, status) {
 	.catch(error => {
 		console.error(`Error updating friend request to ${status}:`, error);
 		alert(`Failed to ${status} friend request`);
+	});
+}
+
+function blockUser(userId) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	fetch('https://localhost:8443/usermanagement/block/request/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({
+			user_to_block: userId
+		})
+	})
+	.then(response => response.json())
+	.then(data => {
+		console.log('User blocked:', data);
+		alert('User blocked successfully!');
+	})
+	.catch(error => {
+		console.error('Error blocking user:', error);
+		alert('Failed to block user');
 	});
 }
 
