@@ -24,6 +24,7 @@ function profileNav() {
 		fetchUserStatistics(user.id, accessToken);
 		fetchUserFriends(user.id, accessToken);
 		fetchFriendRequests(user.id, accessToken);
+		fetchFriendList(accessToken); // Add this line
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 }
@@ -85,9 +86,16 @@ function displaySearchResults(users) {
 		const blockButton = document.createElement('button');
 		blockButton.className = 'btn btn-block';
 		blockButton.innerText = 'Block';
+		const friendRequestButton = document.createElement('button');
+		friendRequestButton.className = 'btn btn-friend-request';
+		friendRequestButton.innerText = 'Send Friend Request';
+		friendRequestButton.onclick = function () {
+			sendFriendRequest(user.id);
+		};
 		userActions.appendChild(inviteButton);
 		userActions.appendChild(removeButton);
 		userActions.appendChild(blockButton);
+		userActions.appendChild(friendRequestButton);
 		
 		userElement.appendChild(avatar);
 		userElement.appendChild(userInfo);
@@ -202,5 +210,89 @@ function respondToFriendRequest(friendId, accept) {
 		console.error(`Error responding to friend request:`, error);
 		alert(`Failed to respond to friend request`);
 	});
+}
+
+function sendFriendRequest(receiverId) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	fetch('https://localhost:8443/usermanagement/friends/request/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({
+			friend_id: receiverId
+		})
+	})
+	.then(response => response.json())
+	.then(data => {
+		console.log('Friend request sent:', data);
+		alert('Friend request sent successfully!');
+	})
+	.catch(error => {
+		console.error('Error sending friend request:', error);
+		alert('Failed to send friend request');
+	});
+}
+
+function fetchFriendList(accessToken) {
+	fetch('https://localhost:8443/usermanagement/friends/', {
+		headers: {
+			'Authorization': `Bearer ${accessToken}`
+		}
+	})
+	.then(response => response.json())
+	.then(data => {
+		const friendIds = data.friends;
+		if (friendIds.length > 0) {
+			fetch('https://localhost:8443/auth/users/info/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${accessToken}`
+				},
+				body: JSON.stringify({ user_ids: friendIds })
+			})
+			.then(response => response.json())
+			.then(userData => {
+				const friendList = document.getElementById('friendList');
+				friendList.innerHTML = '';
+				friendIds.forEach(friendId => {
+					const li = document.createElement('div');
+					li.className = 'friend-item';
+					
+					const avatar = document.createElement('img');
+					avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+					avatar.alt = 'User Avatar';
+					avatar.className = 'friend-avatar';
+					
+					const userInfo = document.createElement('div');
+					userInfo.className = 'friend-info';
+					const userName = document.createElement('div');
+					userName.className = 'friend-name';
+					userName.innerText = `${userData[friendId].username} (#${friendId})`;
+					userInfo.appendChild(userName);
+					
+					const userActions = document.createElement('div');
+					userActions.className = 'friend-actions';
+					const removeButton = document.createElement('button');
+					removeButton.className = 'btn btn-remove';
+					removeButton.innerText = 'Remove Friend';
+					removeButton.onclick = () => {
+						updateFriendRequest(friendId, 'refused');
+						li.remove();
+					};
+					
+					userActions.appendChild(removeButton);
+					li.appendChild(avatar);
+					li.appendChild(userInfo);
+					li.appendChild(userActions);
+					friendList.appendChild(li);
+				});
+			})
+			.catch(error => console.error('Error fetching friend details:', error));
+		}
+	})
+	.catch(error => console.error('Error fetching friend list:', error));
 }
 
