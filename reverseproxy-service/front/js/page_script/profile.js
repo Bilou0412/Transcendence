@@ -77,24 +77,12 @@ function displaySearchResults(users) {
 		
 		const userActions = document.createElement('div');
 		userActions.className = 'friend-actions';
-		const inviteButton = document.createElement('button');
-		inviteButton.className = 'btn btn-invite';
-		inviteButton.innerText = 'Invite';
-		const removeButton = document.createElement('button');
-		removeButton.className = 'btn btn-remove';
-		removeButton.innerText = 'Remove';
-		const blockButton = document.createElement('button');
-		blockButton.className = 'btn btn-block';
-		blockButton.innerText = 'Block';
 		const friendRequestButton = document.createElement('button');
 		friendRequestButton.className = 'btn btn-friend-request';
 		friendRequestButton.innerText = 'Send Friend Request';
 		friendRequestButton.onclick = function () {
 			sendFriendRequest(user.id);
 		};
-		userActions.appendChild(inviteButton);
-		userActions.appendChild(removeButton);
-		userActions.appendChild(blockButton);
 		userActions.appendChild(friendRequestButton);
 		
 		userElement.appendChild(avatar);
@@ -122,9 +110,6 @@ function fetchUserStatistics(userId, accessToken) {
     // Fetch and display user statistics
 }
 
-function fetchUserFriends(userId, accessToken) {
-    // Fetch and display user friends
-}
 
 function fetchFriendRequests() {
 	const accessToken = sessionStorage.getItem('accessToken');
@@ -294,5 +279,29 @@ function fetchFriendList(accessToken) {
 		}
 	})
 	.catch(error => console.error('Error fetching friend list:', error));
+}
+
+function updateFriendRequest(friendId, status) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	fetch('https://localhost:8443/usermanagement/friends/update/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({
+			friend_id: friendId,
+			status: status
+		})
+	})
+	.then(response => response.json())
+	.then(data => {
+		console.log(`Friend request ${status}:`, data);
+		alert(`Friend request ${status} successfully!`);
+	})
+	.catch(error => {
+		console.error(`Error updating friend request to ${status}:`, error);
+		alert(`Failed to ${status} friend request`);
+	});
 }
 
