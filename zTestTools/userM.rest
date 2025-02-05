@@ -33,9 +33,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
   "status": "accepted"
 }
 ###
-GET http://127.0.0.1:8004/usermanagement/friends/
+GET https://localhost:8443/usermanagement/friends/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzOTM2NDIwLCJpYXQiOjE3MzM5MzI4MjAsImp0aSI6ImM1Y2QyOGEyMTY0MTQ1NDY4YmIzYjQzZDQyNzlkNDRlIiwidXNlcl9pZCI6M30.Dw1lS_Az_MhzJDKMiIqua0cFQ71jmBjGx5IH4f3YwM8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4NzY1NzEwLCJpYXQiOjE3Mzg3NjIxMTAsImp0aSI6IjU3ZTYzMWY5ZmNmODRiYzQ5MDdmYzRhNjgwNjViMDkwIiwidXNlcl9pZCI6M30.w2j-W70_4lbc7-qWec4kW5haWBfB6m894mlcYJPvvIg
 
 ###
 
@@ -47,9 +47,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
   "user_to_block": 4
 }
 ###
-GET http://127.0.0.1:8001/usermanagement/block/
+GET https://localhost:8443/usermanagement/block/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyODg2ODI2LCJpYXQiOjE3MzI4ODMyMjYsImp0aSI6ImVlODc5OTMwYjhjNjQ5NjM4MTgwMWQ5ZmZhNTRmNWY3IiwidXNlcl9pZCI6Mn0.lAWc_AIATAlFqdm7IEZabFw9Kq_L2IZqU_7ZX9vNvPI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4NzY2NDgwLCJpYXQiOjE3Mzg3NjI4ODAsImp0aSI6IjBjYWU2MTIxNGJhNTQ4Y2JhOTJhNTE2Mzc5OTMzNTAzIiwidXNlcl9pZCI6Mn0.oWfhl-dGItPo5wJtUukhOJdE8IYMuXcl7X2CUf3WP2c
 
 ###
 POST http://127.0.0.1:8001/usermanagement/unblock/

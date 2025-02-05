@@ -234,6 +234,7 @@ function fetchFriendList(accessToken) {
 	.then(data => {
 		const friendIds = data.friends;
 		if (friendIds.length > 0) {
+			console.log('Friend list:', data);
 			fetch('https://localhost:8443/auth/users/info/', {
 				method: 'POST',
 				headers: {
