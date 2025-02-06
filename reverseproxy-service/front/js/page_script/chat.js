@@ -1,3 +1,5 @@
+import { fetchProfileImages } from './profile.js';
+
 console.log('chat.js loaded');
 
 function loadChatPage() {
@@ -38,11 +40,10 @@ function fetchFriendList(accessToken) {
 					li.className = 'friend-item';
 					
 					const avatar = document.createElement('img');
-					avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-					avatar.alt = 'User Avatar';
 					avatar.className = 'friend-avatar';
+					avatar.id = `chat-avatar-${friendId}`;
 					avatar.onclick = function () {
-						profileNav(friendId);
+						Chat(friendId);
 					};
 					
 					const userInfo = document.createElement('div');
@@ -51,7 +52,7 @@ function fetchFriendList(accessToken) {
 					userName.className = 'friend-name';
 					userName.innerText = `${userData[friendId].username} (#${friendId})`;
 					userName.onclick = function () {
-						profileNav(friendId);
+						Chat(friendId);
 					};
 					userInfo.appendChild(userName);
 					
@@ -85,12 +86,18 @@ function fetchFriendList(accessToken) {
 					li.appendChild(userInfo);
 					li.appendChild(userActions);
 					friendList.appendChild(li);
+					
 				});
+				fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `chat-avatar-${friendId}`));
 			})
 			.catch(error => console.error('Error fetching friend details:', error));
 		}
 	})
 	.catch(error => console.error('Error fetching friend list:', error));
+}
+
+function Chat(friendId) {
+
 }
 
 function inviteToChat(friendId) {

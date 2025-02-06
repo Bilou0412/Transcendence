@@ -47,7 +47,7 @@ function fetchProfileImages(userIds, accessToken, imageElementIds) {
 			} else {
 				// const imageUrl = URL.createObjectURL(image.image);
 				console.log(image);
-				const imgElement = document.getElementById(imageElementIds);
+				const imgElement = document.getElementById(imageElementIds[index]);
 				imgElement.src = image.image_url;
 				imgElement.alt = `Image ${image.id}`;
 				imgElement.type = image.content_type;
