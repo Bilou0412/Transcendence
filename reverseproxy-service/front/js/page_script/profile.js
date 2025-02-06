@@ -29,6 +29,7 @@ function profileNav(idToSearch) {
 }
 
 if (sessionStorage.getItem('userId')) {
+	console.log('ok');
 	profileNav(sessionStorage.getItem('userId'));
 }
 

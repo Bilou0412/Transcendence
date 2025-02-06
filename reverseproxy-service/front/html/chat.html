@@ -5,10 +5,9 @@
 	<link rel="stylesheet" href="../css/style.css">
 	<link rel="stylesheet" href="../css/chat.css">
 	<link rel="stylesheet" href="../css/xp.css/dist/XP.css"/>
-
 </head>
 
-<body>
+<body onload="loadChatPage()">
 	<div class="title-bar">
 		<div class="title-bar-text">Chat</div>
 		<div class="title-bar-controls">
@@ -25,7 +24,6 @@
 				<!-- Chat -->
 				<div class="chat-interface">
 					<div class="text-area">
-
 						<div class="chat-history">
 							<div class="window" id="chatHistoryDisplay">
 								<div class="title-bar title-bar-chat">
@@ -57,73 +55,8 @@
 				<input type="text" placeholder="Search user" id="search_bar">
 			</div>
 			<div class="friend-list-container">
-				<div class="friend-list">
-					<div class="friend-item">
-						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
-						<div class="friend-info">
-							<div class="friend-name">John Doe</div>
-						</div>
-						<div class="friend-actions">
-							<button class="btn btn-invite">Invite</button>
-							<button class="btn btn-remove">Remove</button>
-							<button class="btn btn-block">Block</button>
-						</div>
-					</div>
-					<div class="friend-item">
-						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
-						<div class="friend-info">
-							<div class="friend-name">Jane Smith</div>
-						</div>
-						<div class="friend-actions">
-							<button class="btn btn-invite">Invite</button>
-							<button class="btn btn-remove">Remove</button>
-							<button class="btn btn-block">Block</button>
-						</div>
-					</div>
-					<div class="friend-item">
-						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
-						<div class="friend-info">
-							<div class="friend-name">Mike Johnson</div>
-						</div>
-						<div class="friend-actions">
-							<button class="btn btn-invite">Invite</button>
-							<button class="btn btn-remove">Remove</button>
-							<button class="btn btn-block">Block</button>
-						</div>
-					</div>
-					<div class="friend-item">
-						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
-						<div class="friend-info">
-							<div class="friend-name">Emily Brown</div>
-						</div>
-						<div class="friend-actions">
-							<button class="btn btn-invite">Invite</button>
-							<button class="btn btn-remove">Remove</button>
-							<button class="btn btn-block">Block</button>
-						</div>
-					</div>
-					<div class="friend-item">
-						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
-						<div class="friend-info">
-							<div class="friend-name">David Wilson</div>
-						</div>
-						<div class="friend-actions">
-							<button class="btn btn-invite">Invite</button>
-							<button class="btn btn-remove">Remove</button>
-							<button class="btn btn-block">Block</button>
-						</div>
-					</div>
-					<div class="friend-item">
-						<img src="../css/icon/rounded_login.png" alt="Friend Avatar" class="friend-avatar">
-						<div class="friend-info">
-							<div class="friend-name">Sarah Lee</div>
-						</div>
-						<div class="friend-actions">
-							<button class="btn btn-invite">Invite</button>
-							<button class="btn btn-remove">Remove</button>
-							<button class="btn btn-block">Block</button>
-						</div>
-					</div>
+					<div id="friendList" class="friend-list">
+					<!-- Friend list will be dynamically inserted here -->
 				</div>
 			</div>
 		</div>
