@@ -18,9 +18,6 @@ function connectWebSocket(accessToken, username, userId) {
         console.log('Received WebSocket message:', data);
 
         switch (data.type) {
-            case 'list_user_connected':
-                handleUserList(data, userList, userId, socket);
-                break;
             case 'invite_code':
                 displayInviteCode(data);
                 break;

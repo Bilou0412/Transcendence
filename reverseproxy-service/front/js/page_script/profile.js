@@ -322,7 +322,69 @@ function fetchFriendList(accessToken) {
 			.then(userData => {
 				const friendList = document.getElementById('friendList');
 				friendList.innerHTML = '';
-				friendIds.forEach(friendId => {
+				fetchBlockedUsers(accessToken, blockedUserIds => {
+					friendIds.forEach(friendId => {
+						const li = document.createElement('div');
+						li.className = 'friend-item';
+						
+						const avatar = document.createElement('img');
+						avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+						avatar.alt = 'User Avatar';
+						avatar.className = 'friend-avatar';
+						avatar.onclick = function () {
+							profileNav(friendId);
+						};
+						
+						const userInfo = document.createElement('div');
+						userInfo.className = 'friend-info';
+						const userName = document.createElement('div');
+						userName.className = 'friend-name';
+						userName.innerText = `${userData[friendId].username} (#${friendId})`;
+						userName.onclick = function () {
+							profileNav(friendId);
+						};
+						userInfo.appendChild(userName);
+						
+						const userActions = document.createElement('div');
+						userActions.className = 'friend-actions';
+						const removeButton = document.createElement('button');
+						removeButton.className = 'btn btn-remove';
+						removeButton.innerText = 'Remove Friend';
+						removeButton.onclick = () => {
+							updateFriendRequest(friendId, 'refused');
+							li.remove();
+						};
+						const blockButton = document.createElement('button');
+						blockButton.className = 'btn';
+						if (blockedUserIds.has(friendId)) {
+							blockButton.innerText = 'Unblock';
+							blockButton.onclick = () => {
+								unblockUser(friendId);
+								li.remove();
+							};
+						} else {
+							blockButton.innerText = 'Block';
+							blockButton.onclick = () => {
+								blockUser(friendId);
+								li.remove();
+							};
+						}
+						
+						userActions.appendChild(removeButton);
+						userActions.appendChild(blockButton);
+						li.appendChild(avatar);
+						li.appendChild(userInfo);
+						li.appendChild(userActions);
+						friendList.appendChild(li);
+					});
+				});
+			})
+			.catch(error => console.error('Error fetching friend details:', error));
+		} else {
+			fetchBlockedUsers(accessToken, blockedUserIds => {
+				const friendList = document.getElementById('friendList');
+				friendList.innerHTML = '';
+				blockedUserIds.forEach(blockedId => {
 					const li = document.createElement('div');
 					li.className = 'friend-item';
 					
@@ -331,48 +393,54 @@ function fetchFriendList(accessToken) {
 					avatar.alt = 'User Avatar';
 					avatar.className = 'friend-avatar';
 					avatar.onclick = function () {
-						profileNav(friendId);
+						profileNav(blockedId);
 					};
 					
 					const userInfo = document.createElement('div');
 					userInfo.className = 'friend-info';
 					const userName = document.createElement('div');
 					userName.className = 'friend-name';
-					userName.innerText = `${userData[friendId].username} (#${friendId})`;
+					userName.innerText = `${blockedUserData[blockedId].username} (#${blockedId})`;
 					userName.onclick = function () {
-						profileNav(friendId);
+						profileNav(blockedId);
 					};
 					userInfo.appendChild(userName);
 					
 					const userActions = document.createElement('div');
 					userActions.className = 'friend-actions';
-					const removeButton = document.createElement('button');
-					removeButton.className = 'btn btn-remove';
-					removeButton.innerText = 'Remove Friend';
-					removeButton.onclick = () => {
-						updateFriendRequest(friendId, 'refused');
-						li.remove();
-						};
-					const blockButton = document.createElement('button');
-					blockButton.className = 'btn btn-block';
-					blockButton.innerText = 'Block';
-					blockButton.onclick = () => {
-						blockUser(friendId);
+					const unblockButton = document.createElement('button');
+					unblockButton.className = 'btn btn-unblock';
+					unblockButton.innerText = 'Unblock';
+					unblockButton.onclick = () => {
+						unblockUser(blockedId);
 						li.remove();
 					};
 					
-					userActions.appendChild(removeButton);
-					userActions.appendChild(blockButton);
+					userActions.appendChild(unblockButton);
 					li.appendChild(avatar);
 					li.appendChild(userInfo);
 					li.appendChild(userActions);
 					friendList.appendChild(li);
 				});
-			})
-			.catch(error => console.error('Error fetching friend details:', error));
+			});
 		}
 	})
 	.catch(error => console.error('Error fetching friend list:', error));
+}
+
+function fetchBlockedUsers(accessToken, callback) {
+	fetch('https://localhost:8443/usermanagement/block/', {
+		headers: {
+			'Authorization': `Bearer ${accessToken}`,
+			'Content-Type': 'application/json'
+		}
+	})
+	.then(response => response.json())
+	.then(data => {
+		const blockedUserIds = new Set(data.blocked_users);
+		callback(blockedUserIds);
+	})
+	.catch(error => console.error('Error fetching blocked users:', error));
 }
 
 function updateFriendRequest(friendId, status) {
@@ -419,6 +487,29 @@ function blockUser(userId) {
 	.catch(error => {
 		console.error('Error blocking user:', error);
 		alert('Failed to block user');
+	});
+}
+
+function unblockUser(userId) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	fetch('https://localhost:8443/usermanagement/unblock/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({
+			user_to_unblock: userId
+		})
+	})
+	.then(response => response.json())
+	.then(data => {
+		console.log('User unblocked:', data);
+		alert('User unblocked successfully!');
+	})
+	.catch(error => {
+		console.error('Error unblocking user:', error);
+		alert('Failed to unblock user');
 	});
 }
 
