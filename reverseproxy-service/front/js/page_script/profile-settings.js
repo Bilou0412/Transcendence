@@ -87,50 +87,63 @@ document.getElementById('upload-image-form').addEventListener('submit', async fu
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('editBtnUsername').addEventListener('click', function () {
-        toggleEditForm('username');
-    });
-    document.getElementById('saveBtnUsername').addEventListener('click', function () {
-        saveField('username');
-    });
-    document.getElementById('cancelBtnUsername').addEventListener('click', function () {
-        toggleEditForm('username');
-    });
-
-    document.getElementById('editBtnUserpwrd').addEventListener('click', function () {
-        toggleEditForm('userpwrd');
-    });
-    document.getElementById('saveBtnUserpwrd').addEventListener('click', function () {
-        saveField('userpwrd');
-    });
-    document.getElementById('cancelBtnUserpwrd').addEventListener('click', function () {
-        toggleEditForm('userpwrd');
-    });
-
-    document.getElementById('editBtnUserMail').addEventListener('click', function () {
-        toggleEditForm('userMail');
-    });
-    document.getElementById('saveBtnUserMail').addEventListener('click', function () {
-        saveField('userMail');
-    });
-    document.getElementById('cancelBtnUserMail').addEventListener('click', function () {
-        toggleEditForm('userMail');
-    });
+    console.log('DOM fully loaded and parsed');
 });
+
+document.getElementById('editBtnUsername').addEventListener('click', function () {
+    console.log('edit button clicked');
+    toggleEditForm('username');
+});
+document.getElementById('saveBtnUsername').addEventListener('click', function () {
+    saveField('username');
+});
+document.getElementById('cancelBtnUsername').addEventListener('click', function () {
+    toggleEditForm('username');
+});
+
+document.getElementById('editBtnUserpwrd').addEventListener('click', function () {
+    toggleEditForm('userpwrd');
+});
+document.getElementById('saveBtnUserpwrd').addEventListener('click', function () {
+    saveField('userpwrd');
+});
+document.getElementById('cancelBtnUserpwrd').addEventListener('click', function () {
+    toggleEditForm('userpwrd');
+});
+
+document.getElementById('editBtnUserMail').addEventListener('click', function () {
+    toggleEditForm('userMail');
+});
+document.getElementById('saveBtnUserMail').addEventListener('click', function () {
+    saveField('userMail');
+});
+document.getElementById('cancelBtnUserMail').addEventListener('click', function () {
+    toggleEditForm('userMail');
+});
+
 
 function toggleEditForm(fieldId) {
     const form = document.getElementById(`${fieldId}-form`);
     const span = document.getElementById(fieldId);
+    const input = document.getElementById(`${fieldId}-input`);
     const button = document.getElementById(`editBtn${capitalizeFirstLetter(fieldId)}`);
+    const saveButton = document.getElementById(`saveBtn${capitalizeFirstLetter(fieldId)}`);
+
+	console.log(`BEFORE:: form : ${form.style.display} span : ${span.style.display} input : ${input.style.display} button : ${button.style.display} saveButton : ${saveButton.style.display}`);
     if (form.style.display === 'none') {
+        input.placeholder = span.innerText;
         form.style.display = 'block';
         span.style.display = 'none';
         button.style.display = 'none';
+        saveButton.style.display = 'inline';
     } else {
         form.style.display = 'none';
         span.style.display = 'inline';
         button.style.display = 'inline';
+        saveButton.style.display = 'none';
     }
+	console.log(`AFTER:: form : ${form.style.display} span : ${span.style.display} input : ${input.style.display} button : ${button.style.display} saveButton : ${saveButton.style.display}`);
+    
 }
 
 function saveField(fieldId) {
