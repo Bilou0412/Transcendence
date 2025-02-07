@@ -1,5 +1,6 @@
 ///////////////////////////////////////imports////////////////////////////////////////
 import { settings } from './main.js';
+import { sleep } from './resetBall.js';
 
 /////////////////////////////////////Table////////////////////////////////////////
 export function initTable()
@@ -46,13 +47,21 @@ export function initMonitor(){
 
 
 /////////////////////////////////////View Focus///////////////////////////////////////
-export function focusGame() {
+export async function focusGame() {
 	// Define target positions and orientations for each focus
 	const gameView = {
 		position: { x: 0, y: settings.platformWidth * 0.6, z: settings.platformLength * 1},
 		rotation: { x: -0.9, y: 0, z: 0 }
 	};
 
+    gsap.to(settings.camera.position, {
+        duration: 1.5,  // Duration of the animation in seconds
+        x: settings.camera.position.x,
+        y: settings.camera.position.y,
+        z: settings.camera.position.z + 3,
+        ease: "power2.inOut"
+    });
+    await sleep(1000);
     gsap.to(settings.camera.position, {
         duration: 2,  // Duration of the animation in seconds
         x: gameView.position.x,

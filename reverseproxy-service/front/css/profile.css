@@ -128,14 +128,12 @@ td, th {
     width: 90%;
     height: 22%;
 }
-.user-search-container {
-	left: 5%;
-	width: 90%;
-    height: 22%;
-	background-color: #ffffff;
-	overflow: hidden;
+
+#searchResults-body {
+    display: flex;
+    flex-direction: column;
+    max-height: 85%;
     overflow-y: auto;
-	border: 1px solid black;
 }
 
 /* --------------------------------Friend Request-------------------------------- */
@@ -144,14 +142,11 @@ td, th {
     height: 15%;
 }
 
-.friend-request-container {
-	left: 5%;
-	width: 90%;
-    height: 10%;
-	background-color: #ffffff;
-	overflow: hidden;
+#requestResults-body {
+    display: flex;
+    flex-direction: column;
+    max-height: 70%;
     overflow-y: auto;
-	border: 1px solid black;
 }
 
 /* --------------------------------Friend List-------------------------------- */
@@ -160,14 +155,11 @@ td, th {
     height: 47%;
 }
 
-.friend-list-container {
-	left: 5%;
-	width: 90%;
-    height: 45%;
-	background-color: #ffffff;
-	overflow: hidden;
+#friendList-body {
+    display: flex;
+    flex-direction: column;
+    max-height: 90%;
     overflow-y: auto;
-	border: 1px solid black;
 }
 
 /* --------------------------------User Items-------------------------------- */

@@ -130,8 +130,8 @@ function resetGame() {
     settings.player1Score = 0;
     settings.player2Score = 0;
     updateScoreDisplay();
-    resetBall();
 
+    resetBall();
 }
 
 function initEnvironment() {
@@ -146,6 +146,7 @@ function initEnvironment() {
 export async function startGame() {
     if (!settings) return;
     settings.gameStatus = 'playing';
+    await sleep(1000);
     initBall();
     updateClock();
     resetGame();
@@ -169,16 +170,16 @@ function progressLoading() {
     const interval = setInterval(() => {
         progress += 0.1;
         progressBar.value = progress;
-        if (progress >= 100) {
+        if (progress >= 50) {
             clearInterval(interval);
             progressBar.remove();
         }
-    }, 500);
+    }, 300);
 
     //remove the progress bar after 5 seconds
     setTimeout(() => {
         progressBar.remove();
-    }, 5000);
+    }, 3000);
 }
 
 function changePlayStyle()
@@ -235,7 +236,7 @@ export async function initializeGame() {
     initMonitor();
     initTable();
     titleDisplay();
-    // await sleep(5000);
+    await sleep(3000);
     settings.updateTime();
     animate();
     initEnvironment();
@@ -451,5 +452,5 @@ function setupKeyBindings() {
 }
 
 // Call the setup functions when the script is executed
-setupGameModeSelect();
-setupKeyBindings();
+// setupGameModeSelect();
+// setupKeyBindings();

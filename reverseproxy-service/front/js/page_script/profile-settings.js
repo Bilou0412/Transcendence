@@ -106,6 +106,8 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 			otpInput.placeholder = 'Enter OTP';
 			const verifyButton = document.createElement('button');
 			verifyButton.innerText = 'Verify';
+			//texte color
+			verifyButton.style.color = 'black';
 			verifyButton.addEventListener('click', async function () {
 				const otpCode = otpInput.value;
 				try {

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/RGBELoader.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        
+        #gameContainer {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+        }
+
+        #startScreen {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        #startButton {
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #startButton:hover {
+            background-color: #45a049;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Hide all game UI elements by default */
+        #nav, #Taskbar, #titleBarPong, #leftWindow, #rightWindow, #waitingScreen {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <button id="startButton">Start Pong Game</button>
+    </div>
+
+    <div id="gameContainer">
+        <!-- Game UI elements -->
+        <div id="nav"></div>
+        <div id="Taskbar"></div>
+        <div id="titleBarPong"></div>
+        <div id="leftWindow"></div>
+        <div id="rightWindow"></div>
+        <div id="waitingScreen"></div>
+        
+        <!-- Tournament winners -->
+        <input type="hidden" id="semifinal1">
+        <input type="hidden" id="semifinal2">
+        <input type="hidden" id="final">
+    </div>
+
+    <script type="module">
+        import { initializeGame } from '../js/pong/main.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const startButton = document.getElementById('startButton');
+            const startScreen = document.getElementById('startScreen');
+            const gameContainer = document.getElementById('gameContainer');
+
+            startButton.addEventListener('click', () => {
+                // Hide start screen
+                startScreen.classList.add('hidden');
+                // Show game container
+                gameContainer.style.display = 'block';
+                // Initialize the game
+                initializeGame();
+            });
+        });
+    </script>
+</body>
+</html>

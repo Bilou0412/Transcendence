@@ -59,7 +59,7 @@ document.getElementById('search_bar').addEventListener('input', function(event) 
 });
 
 function displaySearchResults(users) {
-	const resultsContainer = document.getElementById('searchResults');
+	const resultsContainer = document.getElementById('searchResults-body');
 	resultsContainer.innerHTML = '';
 	users.forEach(user => {
 		const userElement = document.createElement('div');
@@ -102,7 +102,7 @@ function displaySearchResults(users) {
 }
 
 function clearSearchResults() {
-	const resultsContainer = document.getElementById('searchResults');
+	const resultsContainer = document.getElementById('searchResults-body');
 	resultsContainer.innerHTML = '';
 }
 
@@ -205,7 +205,7 @@ function fetchFriendRequests() {
 	})
 	.then(data => {
 		console.log('Friend requests data:', data); // Debugging line
-		const requestContainer = document.getElementById('requestResults');
+		const requestContainer = document.getElementById('requestResults-body');
 		requestContainer.innerHTML = '';
 		data.pending_requests.forEach(request => {
 			const requestElement = document.createElement('div');
@@ -321,7 +321,7 @@ function fetchFriendList(accessToken) {
 			})
 			.then(response => response.json())
 			.then(userData => {
-				const friendList = document.getElementById('friendList');
+				const friendList = document.getElementById('friendList-body');
 				friendList.innerHTML = '';
 				fetchBlockedUsers(accessToken, blockedUserIds => {
 					friendIds.forEach(friendId => {
@@ -383,7 +383,7 @@ function fetchFriendList(accessToken) {
 			.catch(error => console.error('Error fetching friend details:', error));
 		} else {
 			fetchBlockedUsers(accessToken, blockedUserIds => {
-				const friendList = document.getElementById('friendList');
+				const friendList = document.getElementById('friendList-body');
 				friendList.innerHTML = '';
 				blockedUserIds.forEach(blockedId => {
 					const li = document.createElement('div');
