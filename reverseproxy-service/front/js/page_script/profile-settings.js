@@ -86,6 +86,59 @@ document.getElementById('upload-image-form').addEventListener('submit', async fu
 	}
 });
 
+document.getElementById('btn2FA').addEventListener('click', async function (event) {
+	event.preventDefault();
+	const accessToken = sessionStorage.getItem('accessToken');
+	try {
+		const response = await fetch('https://localhost:8443/auth/2fa/enable/', {
+			method: 'GET',
+			headers: {
+				'Authorization': 'Bearer ' + accessToken
+			}
+		});
+		if (response.ok) {
+			const data = await response.json();
+			document.getElementById('qrCodeContainer').innerHTML = `<img src="data:image/png;base64,${data.qr_code}" alt="QR Code">`;
+			const otpSecret = data.otp_secret;
+			const otpInput = document.createElement('input');
+			otpInput.type = 'text';
+			otpInput.id = 'otpInput';
+			otpInput.placeholder = 'Enter OTP';
+			const verifyButton = document.createElement('button');
+			verifyButton.innerText = 'Verify';
+			verifyButton.addEventListener('click', async function () {
+				const otpCode = otpInput.value;
+				try {
+					const verifyResponse = await fetch('https://localhost:8443/auth/2fa/verify/', {
+						method: 'POST',
+						headers: {
+							'Authorization': 'Bearer ' + accessToken,
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ otp: otpCode, otp_secret: otpSecret })
+					});
+					if (verifyResponse.ok) {
+						alert('2FA enabled successfully.');
+						document.getElementById('qrCodeContainer').innerHTML = '';
+					} else {
+						alert('Failed to verify OTP. Please try again.');
+					}
+				} catch (error) {
+					console.error('Error verifying OTP:', error);
+					alert('Failed to verify OTP. Please try again.');
+				}
+			});
+			document.getElementById('qrCodeContainer').appendChild(otpInput);
+			document.getElementById('qrCodeContainer').appendChild(verifyButton);
+		} else {
+			alert('Failed to initiate 2FA. Please try again.');
+		}
+	} catch (error) {
+		console.error('Error initiating 2FA:', error);
+		alert('Failed to initiate 2FA. Please try again.');
+	}
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('editBtnUsername').addEventListener('click', function () {
         toggleEditForm('username');
@@ -117,7 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleEditForm('userMail');
     });
 });
-
 function toggleEditForm(fieldId) {
     const form = document.getElementById(`${fieldId}-form`);
     const span = document.getElementById(fieldId);

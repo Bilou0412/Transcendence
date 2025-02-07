@@ -15,17 +15,14 @@ def enable_2fa(request):
     """
     user = request.user
 
-    # Vérifie si la 2FA est déjà activée
     if user.otp_secret:
         return Response(
             {"detail": "2FA is already enabled."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Générer une clé secrète OTP unique
+    # Générer une clé secrète OTP unique (mais ne pas l'enregistrer encore)
     otp_secret = pyotp.random_base32()
-    user.otp_secret = otp_secret
-    user.save()
 
     # URL pour l'application d'authentification
     otp_uri = pyotp.totp.TOTP(otp_secret).provisioning_uri(
@@ -44,34 +41,40 @@ def enable_2fa(request):
     img.save(buffer, format="PNG")
     qr_code_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-    # Ne pas inclure `otp_secret` dans la réponse
+    # Retourner le QR code et la clé temporaire (à envoyer dans `verify_2fa`)
     return Response({
-        "qr_code": qr_code_base64,  # QR code sous forme d'image
-        "detail": "Scan this QR code with your 2FA app."
+        "qr_code": qr_code_base64,
+        "otp_secret": otp_secret,  # À envoyer avec `verify_2fa`
+        "detail": "Scan this QR code and enter the first OTP to confirm activation."
     }, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # L'utilisateur doit être authentifié
+@permission_classes([IsAuthenticated])
 def verify_2fa(request):
     """
-    Vérifie le code OTP fourni par l'utilisateur et active la 2FA.
+    Vérifie le code OTP fourni par l'utilisateur et active la 2FA définitivement.
     """
     user = request.user
     otp_code = request.data.get("otp")
+    otp_secret = request.data.get("otp_secret")  # Récupérer la clé temporaire
 
-    if not user.otp_secret:
+    if not otp_secret:
         return Response(
-            {"detail": "2FA has not been initialized for this user."},
+            {"detail": "OTP secret is required."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
     # Vérifier le code OTP
-    totp = pyotp.TOTP(user.otp_secret)
+    totp = pyotp.TOTP(otp_secret)
     if totp.verify(otp_code):
-        # Si le code OTP est valide, la 2FA reste activée (clé déjà définie)
+        # ✅ Si le code est valide, on enregistre la clé
+        user.otp_secret = otp_secret
+        user.save()
         return Response({"detail": "2FA enabled successfully."}, status=status.HTTP_200_OK)
     else:
         return Response({"detail": "Invalid OTP code."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['DELETE'])
