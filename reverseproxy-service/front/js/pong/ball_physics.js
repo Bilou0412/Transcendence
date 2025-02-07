@@ -84,6 +84,9 @@ function paddleCollision(closestIntersection, closestCube, potentialPosition)
 
 export function updateBallPosition() 
 {
+    if (settings.gameMode === 'remote') {
+        return;
+    }
     if (settings.gameStatus === 'paused')
         return;
 

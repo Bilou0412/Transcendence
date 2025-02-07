@@ -1,5 +1,5 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { initBall } from "./ball_init.js";
+import { ball, initBall } from "./ball_init.js";
 import { resetBall, sleep } from "./resetBall.js";
 import { initMiddlePlatform, initSides } from "./roundedBox.js";
 import { updateCubeSelection, updatePlayerPositions } from "./movements.js";
@@ -27,6 +27,7 @@ export let player2DownBind = 'ArrowDown';
 let semifinal1Winner = document.getElementById('semifinal1');
 let semifinal2Winner = document.getElementById('semifinal2');
 let finalWinner = document.getElementById('final');
+export let remoteWs = null;
 
 ///////////////////////////////////main functions/////////////////////////////////////
 
@@ -130,8 +131,9 @@ function resetGame() {
     settings.player1Score = 0;
     settings.player2Score = 0;
     updateScoreDisplay();
-    resetBall();
-
+    if (settings.gameStatus === 'started') {
+        resetBall();
+    }
 }
 
 function initEnvironment() {
@@ -146,9 +148,68 @@ function initEnvironment() {
 export async function startGame() {
     if (!settings) return;
     settings.gameStatus = 'playing';
+    if (game_mode === 'remote 1v1') {
+        settings.gameMode = 'remote';
+        remote_game();
+    }
     initBall();
     updateClock();
     resetGame();
+}
+
+export async function remote_game() {
+    settings.gameMode = 'remote';
+
+    const accessToken = sessionStorage.getItem('accessToken');
+
+    if (accessToken) {
+        remoteWs = new WebSocket('wss://localhost:8443/remote/key/', ['Bearer_' + accessToken]);
+        remoteWs.onopen = function () {
+            console.log('Remote WebSocket connection established');
+        };
+        remoteWs.onmessage = function (event) {
+            const message = JSON.parse(event.data);
+            console.log('Received message:', message);
+            if (message.event === 'assign_role') {
+                settings.remoteRole = message.data;
+                console.log('Assigned role:', settings.remoteRole);
+            }
+            if (message.event === 'game_update') {
+                ball.position.x = message.data.ball.x;
+                ball.position.y = message.data.ball.y;
+                if (settings.player1Score !== message.data.players.left.score || settings.player2Score !== message.data.players.right.score) {
+
+                    settings.updatePlayer1Score(message.data.players.left.score);
+                    settings.updatePlayer2Score(message.data.players.right.score);
+                    updateScoreDisplay();
+                    settings.updateServSide(1);
+                    if (settings.player2Score >= settings.maxScore || settings.player1Score >= settings.maxScore)
+                        quitPong();
+                    resetBall();
+                }
+
+            }
+            if (message.event === 'start_game') {
+                settings.gameStatus = 'started';
+                console.log('Game started');
+                // if (!intervalId) {
+                //     intervalId = setInterval(sendPaddleMovement, 10); // Check and send paddle movement every 10ms
+                // }
+            }
+            if (message.event === 'game_ended') {
+                settings.gameStatus = 'finished';
+                if (message.data.winner === settings.remoteRole) {
+                    alert('You won!');
+                } else if (message.data.winner !== 'unfinished') {
+                    alert('You lost!');
+                }
+                // resetGame();
+                console.log('Game ended');
+                // clearInterval(intervalId);
+                // intervalId = null;
+            }
+        };
+    }
 }
 
 function progressLoading() {

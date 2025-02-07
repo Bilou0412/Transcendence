@@ -158,7 +158,6 @@ function fetchUserMatches(userId, accessToken) {
 	})
 	.then(data => {
 		const historyTable = document.getElementById('history');
-		const historyHeader = document.getElementById('history-header');
 		
 		while (historyTable.rows.length > 1) {
             historyTable.deleteRow(1);
@@ -168,17 +167,16 @@ function fetchUserMatches(userId, accessToken) {
 			const newRow = historyTable.insertRow();
 			newRow.className = 'match';
 			newRow.innerHTML = `
-				<td>Match ID: ${match.match_id}</td>
-				<td>Player 1 ID: ${match.player_1_id}</td>
-				<td>Player 2 ID: ${match.player_2_id}</td>
-				<td>Start Time: ${match.start_time}</td>
-				<td>End Time: ${match.end_time}</td>
-				<td>Score Player 1: ${match.score_player_1}</td>
-				<td>Score Player 2: ${match.score_player_2}</td>
-				<td>Created At: ${match.created_at}</td>
+				<td>${match.match_id}</td>
+				<td>${match.player_1_id}</td>
+				<td>${match.player_2_id}</td>
+				<td>${match.start_time}</td>
+				<td>${match.end_time}</td>
+				<td>${match.score_player_1}</td>
+				<td>${match.score_player_2}</td>
+				<td>${match.created_at}</td>
 			`;
 			
-			// historyTable.insertBefore(newRow, historyHeader.nextSibling);
 		});
 	})
 	.catch(error => console.error('Error fetching user matches:', error));

@@ -50,7 +50,8 @@ export class Settings {
         this.lastHit = 1; // Last player to hit the ball
         this.gameStatus = 'title';
         this.displayStatus = 'start';
-        this.gameMode = '30x50';
+        this.remoteRole = 'none';
+        this.gameMode = 'local';
 		this.gameStartTime = Date.now();
 
         ///////////////////////////////////paddle settings////////////////////////////////////

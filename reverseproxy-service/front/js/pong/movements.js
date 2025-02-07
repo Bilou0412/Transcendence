@@ -55,10 +55,39 @@ export function updatePlayerPositions() {
     if (settings.gameStatus === 'paused') {
         return;
     }
+    if (settings.gameMode === 'remote') {
+        let direction = 'none';
+        if (pressedKeys[player1UpBind] || pressedKeys[player2UpBind]) {
 
+            if (settings.remoteRole === 'left') {
+                settings.updatePlayer1Positions(movePlayer(settings.player1Positions, -1));
+            } else {
+                settings.updatePlayer2Positions(movePlayer(settings.player2Positions, -1));
+            }
+        } else if (pressedKeys[player1DownBind] || pressedKeys[player2DownBind]) {
+            if (settings.remoteRole === 'left') {
+                settings.updatePlayer1Positions(movePlayer(settings.player1Positions, 1));
+            } else {
+                settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
+            }
+        }
+        if (direction !== 'none') {
+            remoteWs.send(JSON.stringify({
+                event: 'paddle_moved',
+                data: { direction: direction, role: settings.remoteRole }
+            }));
+        }
+        return;
+    }
     // Player 1 movement
     if (pressedKeys[player1UpBind]) {
 		settings.updatePlayer1Positions(movePlayer(settings.player1Positions, -1));
+        if (settings.gameMode === 'remote') {
+            remoteWs.send(JSON.stringify({
+                event: 'paddle_moved',
+                data: { direction: direction, role: playerRole }
+            }));
+        }
     }
     if (pressedKeys[player1DownBind]) {
 		settings.updatePlayer1Positions(movePlayer(settings.player1Positions, 1));

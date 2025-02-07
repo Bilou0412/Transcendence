@@ -1,6 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import random
+import time
 from datetime import datetime
 import httpx
 
@@ -46,6 +47,10 @@ class Game:
 		else:
 			print('Error: Game is full')
 		print(f'player added at role {self.get_player_role(player.id)}')
+		# print(f'len players: {len([p for p in self.players.values() if p is not None])}')
+		if len([p for p in self.players.values() if p is not None]) == 2:
+			time.sleep(10)
+			await self.start()
 
 	async def remove_player (self, role):
 		if role not in self.players or self.players[role] is None:
