@@ -324,3 +324,29 @@ log42Button.addEventListener('click', function () {
 		}
 	}, 1000);
 });
+
+
+////////////////////////// Logout ////////////////////////////
+const logoutButton = document.getElementById('logoutButton');
+logoutButton.addEventListener('click', function() {
+	sessionStorage.clear();
+
+	////////Avec reload////////
+	window.location.reload();
+
+	////////Sans reload////////
+	// document.body.style.backgroundImage = "url('../../texture/lockscreen_clean.png')";
+
+	// homePage.classList.remove('showing');
+	// homePage.classList.add('hidden');
+
+	// lockscreenPage.classList.remove('hidden');
+	// lockscreenPage.classList.add('showing');
+
+	// loadScript('../js/page_script/lockscreen.js'); // Load clock.js
+
+	// const routerScript = document.querySelector('script[src="../js/router.js"]');
+	// const clockScript = document.querySelector('script[src="../js/page_script/clock.js"]');
+	// if (routerScript) routerScript.remove();
+	// if (clockScript) clockScript.remove();
+});

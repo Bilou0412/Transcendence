@@ -106,10 +106,9 @@ td, th {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    gap: 20px;
-    height: 90%;
+    height: 95%;
     align-items: center;
-    padding-top: 5%;;
+    padding-top: 3%;
 }
 /* --------------------------------Search Bar-------------------------------- */
 .search-bar {
@@ -120,7 +119,15 @@ td, th {
 	width: 100%;
 }
 
+.title-bar-user {
+	position : relative;
+}
+
 /* --------------------------------User Search Display-------------------------------- */
+.searchUser-window {
+    width: 90%;
+    height: 22%;
+}
 .user-search-container {
 	left: 5%;
 	width: 90%;
@@ -132,6 +139,11 @@ td, th {
 }
 
 /* --------------------------------Friend Request-------------------------------- */
+.friendRequest-window {
+    width: 90%;
+    height: 15%;
+}
+
 .friend-request-container {
 	left: 5%;
 	width: 90%;
@@ -143,6 +155,11 @@ td, th {
 }
 
 /* --------------------------------Friend List-------------------------------- */
+.friendsList-window {
+    width: 90%;
+    height: 47%;
+}
+
 .friend-list-container {
 	left: 5%;
 	width: 90%;

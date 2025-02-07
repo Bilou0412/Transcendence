@@ -185,7 +185,6 @@ const routes = {
     "/pong": "/html/pong.html",
     "/about": "/html/about.html",
     "/chat": "/html/chat.html",
-    "/logout": "/html/404.html",
 };
 
 const handleLocation = async () => {
