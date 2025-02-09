@@ -2,7 +2,7 @@
 import { ball, initBall } from "./ball_init.js";
 import { resetBall, sleep } from "./resetBall.js";
 import { initMiddlePlatform, initSides } from "./roundedBox.js";
-import { updateCubeSelection, updatePlayerPositions } from "./movements.js";
+import { updateCubeSelection, updatePlayerPositions, movePlayerRemote } from "./movements.js";
 import { updateBallPosition } from "./ball_physics.js";
 import { updateScoreDisplay, updateClock, initScoreboard, initClock} from "./display.js";
 import { focusGame, initMonitor, focusMonitor, initTable} from "./monitor.js";
@@ -10,9 +10,10 @@ import { onKeyDown, onKeyUp, onMouseWheel } from "./keyEvents.js";
 import { Settings } from "./settings.js";
 import { titleDisplay } from "./monitor_display.js";
 
+
 // ///////////////////////////////////environment settings///////////////////////////////
 export let settings = null;
-let game_mode = "local 1v1";
+let selectedMode = null;
 let current_match = 1;
 let players_names = ["player 1", "player 2", "player 3", "player 4", null, null, null];
 export let player1Side = 0x222222;
@@ -27,8 +28,8 @@ export let player2DownBind = 'ArrowDown';
 let semifinal1Winner = document.getElementById('semifinal1');
 let semifinal2Winner = document.getElementById('semifinal2');
 let finalWinner = document.getElementById('final');
-export let remoteWs = null;
 
+export let remoteWs = null;
 ///////////////////////////////////main functions/////////////////////////////////////
 
 function advance(player) {
@@ -59,7 +60,7 @@ function annonceWinner(player1, player2) {
 
 export async function quitPong() {
     if (settings.player1Score === settings.maxScore || settings.player2Score === settings.maxScore) {
-        if (game_mode === 'local tournament' ) {
+        if (settings.gameMode === 'local tournament' ) {
             if (current_match === 1) {
                 annonceWinner(0, 1);
                 current_match++;
@@ -147,9 +148,9 @@ function initEnvironment() {
 
 export async function startGame() {
     if (!settings) return;
+    console.log(`Starting game in mode: ${settings.gameMode}`);
     settings.gameStatus = 'playing';
-    if (game_mode === 'remote 1v1') {
-        settings.gameMode = 'remote';
+    if (settings.gameMode === 'remote 1v1') {
         remote_game();
     }
     initBall();
@@ -158,14 +159,15 @@ export async function startGame() {
 }
 
 export async function remote_game() {
-    settings.gameMode = 'remote';
-
     const accessToken = sessionStorage.getItem('accessToken');
 
     if (accessToken) {
         remoteWs = new WebSocket('wss://localhost:8443/remote/key/', ['Bearer_' + accessToken]);
         remoteWs.onopen = function () {
             console.log('Remote WebSocket connection established');
+        };
+        remoteWs.onerror = function (error) {
+            console.error('Remote WebSocket error:', error);
         };
         remoteWs.onmessage = function (event) {
             const message = JSON.parse(event.data);
@@ -175,8 +177,13 @@ export async function remote_game() {
                 console.log('Assigned role:', settings.remoteRole);
             }
             if (message.event === 'game_update') {
+                console.log(`Ball position: ${ball.position.x}, ${ball.position.z}`);
                 ball.position.x = message.data.ball.x;
-                ball.position.y = message.data.ball.y;
+                ball.position.z = message.data.ball.y;
+
+                settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, settings.centerZ - message.data.players.left.pos.y));
+                settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, settings.centerZ - message.data.players.right.pos.y));
+                
                 if (settings.player1Score !== message.data.players.left.score || settings.player2Score !== message.data.players.right.score) {
 
                     settings.updatePlayer1Score(message.data.players.left.score);
@@ -244,7 +251,7 @@ function progressLoading() {
 
 function changePlayStyle()
 {
-    if (game_mode !== 'local 1v1')
+    if (settings.gameMode !== 'local 1v1')
         return;
 
     // Get the currently checked play style
@@ -292,6 +299,7 @@ export async function initializeGame() {
     window.addEventListener('keyup', onKeyUp, false);
     window.addEventListener('wheel', onMouseWheel, false);
     settings = new Settings();
+    settings.gameMode = selectedMode;
     changePlayStyle();
     initMonitor();
     initTable();
@@ -319,8 +327,9 @@ function setupGameModeSelect() {
     };
     if (gameModeSelect) {
         gameModeSelect.addEventListener('change', function () {
-            const selectedMode = gameModeSelect.value.toLowerCase();
-            game_mode = selectedMode;
+            selectedMode = gameModeSelect.value.toLowerCase();
+            // gameModeSelect = selectedMode;
+            console.log('Selected game mode:', selectedMode);
             // Hide all sections
             Object.values(sections).forEach(section => {
                 section.style.display = 'none';
@@ -336,7 +345,7 @@ function setupGameModeSelect() {
 
 //////////////////////////////////////Player Names//////////////////////////////////////
 function getPlayersNames() {
-    if (game_mode === 'local tournament') {
+    if (settings.gameMode === 'local tournament') {
         const playerInputs = document.querySelectorAll('.player-input');
         playerInputs.forEach((input, index) => {
             // Immediately capture current input value

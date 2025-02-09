@@ -77,7 +77,7 @@ export function initClock(){
 };
 
 export const updateClock = () => {
-    if (!settings)
+    if (!settings || settings.gameStatus === 'paused')
     {
         return;
     }
