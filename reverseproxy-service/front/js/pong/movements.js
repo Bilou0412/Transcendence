@@ -1,7 +1,7 @@
 ///////////////////////////////////////imports////////////////////////////////////////
 import { player1UpBind, player1DownBind, player2UpBind, player2DownBind, player1Side, player2Side, player1Paddle, player2Paddle, settings } from './main.js';
 import { ball } from './ball_init.js';
-
+import { remoteWs } from './main.js';
 // Object to track pressed keys
 export const pressedKeys = {};
 
@@ -38,6 +38,20 @@ export function updateCubeSelection() {
 }
 
 ////////////////////////////////////////paddles///////////////////////////////////////
+export function movePlayerRemote (positions, centerZ) {
+    const halfLength = Math.floor(positions.length / 2);
+    const newPositions = positions.map((_, index) => ({
+        x: positions[index].x,
+        z: centerZ - halfLength + index
+    }));
+
+    // Check if any cube in the line would go out of bounds
+    if (newPositions.every(pos => pos.z >= 0 && pos.z < settings.platformLength)) {
+        return newPositions;
+    }
+    return positions;
+};
+
 export function updatePlayerPositions() {
     const movePlayer = (positions, direction) => {
         const newPositions = positions.map(pos => ({
@@ -52,25 +66,46 @@ export function updatePlayerPositions() {
         return positions;
     };
 
+
     if (settings.gameStatus === 'paused') {
         return;
     }
-
+    if (settings.gameMode === 'remote 1v1') {
+        let direction = 'none';
+        if (pressedKeys[player1UpBind] || pressedKeys[player2UpBind]) {
+            direction = 'up';
+            // if (settings.remoteRole === 'left') {
+            //     settings.updatePlayer1Positions(movePlayer(settings.player1Positions, -1));
+            // } else {
+            //     settings.updatePlayer2Positions(movePlayer(settings.player2Positions, -1));
+            // }
+        } else if (pressedKeys[player1DownBind] || pressedKeys[player2DownBind]) {
+            direction = 'down';
+            // if (settings.remoteRole === 'left') {
+            //     settings.updatePlayer1Positions(movePlayer(settings.player1Positions, 1));
+            // } else {
+            //     settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
+            // }
+        }
+        if (direction !== 'none') {
+            remoteWs.send(JSON.stringify({
+                event: 'paddle_moved',
+                data: { direction: direction, role: settings.remoteRole }
+            }));
+        }
+        return;
+    }
     // Player 1 movement
-    if (pressedKeys[player1UpBind]) {
+    if (pressedKeys[player1UpBind])
 		settings.updatePlayer1Positions(movePlayer(settings.player1Positions, -1));
-    }
-    if (pressedKeys[player1DownBind]) {
+    if (pressedKeys[player1DownBind])
 		settings.updatePlayer1Positions(movePlayer(settings.player1Positions, 1));
-    }
 
     // Player 2 movement
-    if (pressedKeys[player2UpBind]) {
+    if (pressedKeys[player2UpBind])
 		settings.updatePlayer2Positions(movePlayer(settings.player2Positions, -1));
-    }
-    if (pressedKeys[player2DownBind]) {
+    if (pressedKeys[player2DownBind])
 		settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
-    }
 }
 
 export function updatePaddleColor(player, color) 

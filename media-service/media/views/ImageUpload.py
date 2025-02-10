@@ -22,6 +22,8 @@ def ImageUpload(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
         profile_image, created = UserProfileImage.objects.get_or_create(user=user)
+        if not created:
+            profile_image.image.delete()
         profile_image.image = serializer.validated_data['image']
         profile_image.save()
         response_serializer = UserProfileImageSerializer(profile_image)

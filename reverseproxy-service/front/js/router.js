@@ -11,7 +11,7 @@ const cleanupRouteScript = async (path) => {
     const script = routeScripts.get(path);
     const module = routeModules.get(path);
     const scriptListeners = routeScriptListeners.get(path);
-
+    console.log(`script: ${script}, scriptListeners: ${scriptListeners}`);
     // If the route has a custom cleanup function, call it
     if (module && typeof module.quit === 'function') {
         await module.quit();
@@ -91,7 +91,7 @@ const loadRouteModule = async (path) => {
             '/profile': '../js/page_script/profile.js',
             '/chat': '../js/page_script/chat.js',
             '/settings': '../js/page_script/profile-settings.js',
-            '/': '../js/page_script/home.js',
+            // '/': '../js/page_script/home.js',
         };
 
         const modulePath = routeModulePaths[path];
@@ -113,7 +113,7 @@ const insertRouteScript = async (path) => {
         '/profile': '../js/page_script/profile.js',
         '/chat': '../js/page_script/chat.js',
         '/settings': '../js/page_script/profile-settings.js',
-        '/': '../js/page_script/home.js',
+        // '/': '../js/page_script/home.js',
     };
 
     const scriptPath = routeScriptPaths[path];

@@ -24,8 +24,13 @@ class PongConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		try:
 			self.game_name = self.scope['url_route']['kwargs']['room_name']
-			print(f"Connecting to group: {self.game_name}")
+			print(f"Connecting to group: {self.game_name} channel name: {self.channel_name}")
 
+			await self.channel_layer.group_add(
+				self.game_name,
+				self.channel_name
+			)
+			await self.accept()
 			async with games_lock:
 				if self.game_name not in games:
 					games[self.game_name] = Game(self.game_name)
@@ -36,17 +41,15 @@ class PongConsumer(AsyncWebsocketConsumer):
 				await games[self.game_name].add_player(Player(self.userId))
 				self.game = games[self.game_name]
 
-			await self.channel_layer.group_add(
-				self.game_name,
-				self.channel_name
-			)
-			await self.accept()
+			
+			print('laaaaaaaaaa')
 
 		except Exception as e:
 			print(f'Connect Error: {str(e)}')
 
 	@auth_token
 	async def disconnect(self, close_code):
+		print(f"close_code: {close_code}, player disconnected: id-{self.userId} role-{self.game.get_player_role(self.userId)}")
 		try:
 			async with game_locks[self.game_name]:
 				role = self.game.get_player_role(self.userId)
@@ -155,6 +158,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 			'event': 'game_ended',
 			'data': event['data']
 		}))
+		await self.disconnect(1000)
 
 	async def game_update(self, event):
 		await self.send(text_data=json.dumps({

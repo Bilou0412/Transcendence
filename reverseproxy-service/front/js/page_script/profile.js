@@ -66,9 +66,10 @@ function displaySearchResults(users) {
 		userElement.className = 'friend-item';
 		
 		const avatar = document.createElement('img');
-		avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-		avatar.alt = 'User Avatar';
+		// avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+		// avatar.alt = 'User Avatar';
 		avatar.className = 'friend-avatar';
+		avatar.id = `search-avatar-${user.id}`;
 		avatar.onclick = function () {
             profileNav(user.id);
         };
@@ -99,6 +100,7 @@ function displaySearchResults(users) {
 		
 		resultsContainer.appendChild(userElement);
 	});
+	fetchProfileImages(users.map(user => user.id), sessionStorage.getItem('accessToken'), users.map(user => `search-avatar-${user.id}`));
 }
 
 function clearSearchResults() {
@@ -106,7 +108,7 @@ function clearSearchResults() {
 	resultsContainer.innerHTML = '';
 }
 
-function fetchProfileImages(userIds, accessToken, imageElementIds) {
+export function fetchProfileImages(userIds, accessToken, imageElementIds) {
 	const cacheBuster = new Date().getTime(); // Generate a unique timestamp
 	fetch(`https://localhost:8443/media/profile-images/?cb=${cacheBuster}`, {
 		method: 'POST',
@@ -124,7 +126,7 @@ function fetchProfileImages(userIds, accessToken, imageElementIds) {
 			} else {
 				// const imageUrl = URL.createObjectURL(image.image);
 				console.log(image);
-				const imgElement = document.getElementById(imageElementIds);
+				const imgElement = document.getElementById(imageElementIds[index]);
 				imgElement.src = image.image_url;
 				imgElement.alt = `Image ${image.id}`;
 				imgElement.type = image.content_type;
@@ -143,12 +145,19 @@ function fetchUserMatches(userId, accessToken) {
 		}
 	})
 	.then(response => {
-		if (response.status === 404) {
-			const matchesList = document.getElementById('matches-list');
-			matchesList.innerHTML = '<p>No matches found</p>';
-			document.getElementById('matches-info').classList.add('active');
-			throw new Error('No matches found');
-		}
+		// if (response.status === 404) {
+		// 	console.log('No matches found');
+		// 	const historyTable = document.getElementById('history');
+		// 	while (historyTable.rows.length > 1) {
+		// 		historyTable.deleteRow(1);
+		// 	}
+		// 	const newRow = historyTable.insertRow();
+		// 	newRow.className = 'match';
+		// 	newRow.innerHTML = `
+		// 		<td colspan="8">No matches found</td>
+		// 	`;
+			
+		// }
 		if (!response.ok && response.status !== 404) {
 			throw new Error('Network response was not ok');
 		}
@@ -156,7 +165,6 @@ function fetchUserMatches(userId, accessToken) {
 	})
 	.then(data => {
 		const historyTable = document.getElementById('history');
-		const historyHeader = document.getElementById('history-header');
 		
 		while (historyTable.rows.length > 1) {
             historyTable.deleteRow(1);
@@ -166,17 +174,16 @@ function fetchUserMatches(userId, accessToken) {
 			const newRow = historyTable.insertRow();
 			newRow.className = 'match';
 			newRow.innerHTML = `
-				<td>Match ID: ${match.match_id}</td>
-				<td>Player 1 ID: ${match.player_1_id}</td>
-				<td>Player 2 ID: ${match.player_2_id}</td>
-				<td>Start Time: ${match.start_time}</td>
-				<td>End Time: ${match.end_time}</td>
-				<td>Score Player 1: ${match.score_player_1}</td>
-				<td>Score Player 2: ${match.score_player_2}</td>
-				<td>Created At: ${match.created_at}</td>
+				<td>${match.match_id}</td>
+				<td>${match.player_1_id}</td>
+				<td>${match.player_2_id}</td>
+				<td>${match.start_time}</td>
+				<td>${match.end_time}</td>
+				<td>${match.score_player_1}</td>
+				<td>${match.score_player_2}</td>
+				<td>${match.created_at}</td>
 			`;
 			
-			// historyTable.insertBefore(newRow, historyHeader.nextSibling);
 		});
 	})
 	.catch(error => console.error('Error fetching user matches:', error));
@@ -329,9 +336,10 @@ function fetchFriendList(accessToken) {
 						li.className = 'friend-item';
 						
 						const avatar = document.createElement('img');
-						avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-						avatar.alt = 'User Avatar';
+						// avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+						// avatar.alt = 'User Avatar';
 						avatar.className = 'friend-avatar';
+						avatar.id = `profile-avatar-${friendId}`;
 						avatar.onclick = function () {
 							profileNav(friendId);
 						};
@@ -378,6 +386,8 @@ function fetchFriendList(accessToken) {
 						li.appendChild(userActions);
 						friendList.appendChild(li);
 					});
+					console.log(friendIds.map(friendId => `profile-avatar-${friendId}`));
+					fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `profile-avatar-${friendId}`));
 				});
 			})
 			.catch(error => console.error('Error fetching friend details:', error));
@@ -389,39 +399,39 @@ function fetchFriendList(accessToken) {
 					const li = document.createElement('div');
 					li.className = 'friend-item';
 					
-					const avatar = document.createElement('img');
-					avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-					avatar.alt = 'User Avatar';
-					avatar.className = 'friend-avatar';
-					avatar.onclick = function () {
-						profileNav(blockedId);
-					};
+			// 		const avatar = document.createElement('img');
+			// 		avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+			// 		avatar.alt = 'User Avatar';
+			// 		avatar.className = 'friend-avatar';
+			// 		avatar.onclick = function () {
+			// 			profileNav(blockedId);
+			// 		};
 					
-					const userInfo = document.createElement('div');
-					userInfo.className = 'friend-info';
-					const userName = document.createElement('div');
-					userName.className = 'friend-name';
-					userName.innerText = `${blockedUserData[blockedId].username} (#${blockedId})`;
-					userName.onclick = function () {
-						profileNav(blockedId);
-					};
-					userInfo.appendChild(userName);
+			// 		const userInfo = document.createElement('div');
+			// 		userInfo.className = 'friend-info';
+			// 		const userName = document.createElement('div');
+			// 		userName.className = 'friend-name';
+			// 		userName.innerText = `${blockedUserData[blockedId].username} (#${blockedId})`;
+			// 		userName.onclick = function () {
+			// 			profileNav(blockedId);
+			// 		};
+			// 		userInfo.appendChild(userName);
 					
-					const userActions = document.createElement('div');
-					userActions.className = 'friend-actions';
-					const unblockButton = document.createElement('button');
-					unblockButton.className = 'btn btn-unblock';
-					unblockButton.innerText = 'Unblock';
-					unblockButton.onclick = () => {
-						unblockUser(blockedId);
-						li.remove();
-					};
+			// 		const userActions = document.createElement('div');
+			// 		userActions.className = 'friend-actions';
+			// 		const unblockButton = document.createElement('button');
+			// 		unblockButton.className = 'btn btn-unblock';
+			// 		unblockButton.innerText = 'Unblock';
+			// 		unblockButton.onclick = () => {
+			// 			unblockUser(blockedId);
+			// 			li.remove();
+			// 		};
 					
-					userActions.appendChild(unblockButton);
-					li.appendChild(avatar);
-					li.appendChild(userInfo);
-					li.appendChild(userActions);
-					friendList.appendChild(li);
+			// 		userActions.appendChild(unblockButton);
+			// 		li.appendChild(avatar);
+			// 		li.appendChild(userInfo);
+			// 		li.appendChild(userActions);
+			// 		friendList.appendChild(li);
 				});
 			});
 		}

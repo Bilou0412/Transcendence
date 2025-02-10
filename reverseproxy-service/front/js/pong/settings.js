@@ -50,13 +50,14 @@ export class Settings {
         this.lastHit = 1; // Last player to hit the ball
         this.gameStatus = 'title';
         this.displayStatus = 'start';
-        this.gameMode = '30x50';
+        this.remoteRole = 'none';
+        this.gameMode = "local 1v1";
 		this.gameStartTime = Date.now();
 
         ///////////////////////////////////paddle settings////////////////////////////////////
-        const centerZ = this.lineLength === this.platformLength ? 0 : Math.floor((this.platformLength - this.lineLength) / 2);
-        this.player1Positions = Array(this.lineLength).fill().map((_, index) => ({ x: 0, z: centerZ + index }));
-        this.player2Positions = Array(this.lineLength).fill().map((_, index) => ({ x: this.platformWidth - 1, z: centerZ + index }));
+        this.centerZ = this.lineLength === this.platformLength ? 0 : Math.floor((this.platformLength - this.lineLength) / 2);
+        this.player1Positions = Array(this.lineLength).fill().map((_, index) => ({ x: 0, z: this.centerZ + index }));
+        this.player2Positions = Array(this.lineLength).fill().map((_, index) => ({ x: this.platformWidth - 1, z: this.centerZ + index }));
 
         ///////////////////////////////////visual settings////////////////////////////////////
         this.camera.position.y = 2.7;
