@@ -52,7 +52,7 @@ def OAuth(request):
         if serializer.is_valid():
             user = serializer.save(is_active=True)  # Ensure the user is active
             tokens = create_tokens_for_user(user)
-            
+            upload_user_image(user.id, user_data['image']['link'], tokens['access'])
             return Response({
                 "access": tokens['access'],
                 "refresh": tokens['refresh'],
@@ -103,3 +103,20 @@ def create_tokens_for_user(user):
         "access": str(access),
         "refresh": str(refresh)
     }
+
+def upload_user_image(user_id, image_url, access_token):
+    """Helper function to upload the user's image to the image service."""
+    image_response = requests.get(image_url)
+    if image_response.status_code == 200:
+        files = {'image': ('profile.jpg', image_response.content, 'image/jpeg')}
+        response = requests.post(
+            'http://media:8000/media/upload/',
+            headers={'Authorization': f'Bearer {access_token}'},
+            files=files
+        )
+        if response.status_code == 201:
+            print('Image uploaded successfully')
+        else:
+            print('Failed to upload image:', response.content)
+    else:
+        print('Failed to download image:', image_response.content)

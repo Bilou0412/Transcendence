@@ -96,23 +96,40 @@
 				<div class="search-bar">
 					<input type="text" placeholder="Search user" id="search_bar">
 				</div>
-				<div class="user-search-container">
-					<div id="searchResults" class="friend-list">
-						<!-- Search results will be dynamically inserted here -->
+
+
+				<!-- Users -->
+				<div class="window searchUser-window" id="searchResults">
+					<div class="title-bar title-bar-user">
+						<div class="title-bar-text">Users</div>
+					</div>
+					<div id="searchResults-body">
+
 					</div>
 				</div>
-				<div class="friend-request-container" id="requestDisplay">
-					<div class="window-body">
-						<div id="requestResults" class="friend-list">
-							<!-- Friend requests will be dynamically inserted here -->
-						</div>
+
+
+				<!-- Friend Requests -->
+				<div class="window friendRequest-window" id="requestResults">
+					<div class="title-bar title-bar-user">
+						<div class="title-bar-text">Friend Request</div>
+					</div>
+					<div id="requestResults-body">
+
 					</div>
 				</div>
-				<div class="friend-list-container">
-					<div id="friendList" class="friend-list">
-						<!-- Friend list will be dynamically inserted here -->
+
+
+				<!-- Friends -->
+				<div class="window friendsList-window" id="friendList">
+					<div class="title-bar title-bar-user">
+						<div class="title-bar-text">Friend List</div>
+					</div>
+					<div id="friendList-body">
+						
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>

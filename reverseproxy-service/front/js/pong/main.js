@@ -86,8 +86,11 @@ export async function quitPong() {
     if (settings) {
         focusMonitor();
         await sleep(2000);
-        settings.destroy();
-        settings = null;
+
+        if (settings) {
+            settings.destroy();
+            settings = null;
+        }
     }
 
     document.getElementById('nav').style.display = 'block';
@@ -237,16 +240,16 @@ function progressLoading() {
     const interval = setInterval(() => {
         progress += 0.1;
         progressBar.value = progress;
-        if (progress >= 100) {
+        if (progress >= 50) {
             clearInterval(interval);
             progressBar.remove();
         }
-    }, 500);
+    }, 300);
 
     //remove the progress bar after 5 seconds
     setTimeout(() => {
         progressBar.remove();
-    }, 5000);
+    }, 3000);
 }
 
 function changePlayStyle()
@@ -304,7 +307,7 @@ export async function initializeGame() {
     initMonitor();
     initTable();
     titleDisplay();
-    // await sleep(5000);
+    await sleep(3000);
     settings.updateTime();
     animate();
     initEnvironment();

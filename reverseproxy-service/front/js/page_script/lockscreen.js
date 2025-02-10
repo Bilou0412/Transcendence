@@ -324,3 +324,51 @@ log42Button.addEventListener('click', function () {
 		}
 	}, 1000);
 });
+
+
+////////////////////////// Logout ////////////////////////////
+const logoutButton = document.getElementById('logoutButton');
+logoutButton.addEventListener('click', function() {
+	sessionStorage.clear();
+	window.location.reload();
+});
+
+////////////////////////// Auto-Login ////////////////////////////
+async function autoLogin() {
+    const accessTokenLogin = sessionStorage.getItem('accessToken');
+
+    if (!accessTokenLogin) {
+        console.log('No access token found.');
+        return;
+    }
+	try {
+		const response = await fetch('https://localhost:8443/auth/token/validate/', {
+			method: 'POST', // Ensure it's a POST request
+			headers: {
+				'Authorization': 'Bearer ' + accessTokenLogin
+			},
+		});
+		if (response.ok) {
+			console.log('Token is valid.');
+
+			// Transition to home page
+			homePage.classList.remove('hidden');
+			homePage.classList.add('showing');
+			lockscreenPage.classList.remove('showing');
+			lockscreenPage.classList.add('hidden');
+			lockLogo.style.display = 'none';
+
+			// Dynamically load the other scripts
+			loadScript('../js/page_script/clock.js'); // Load clock.js
+			loadScript('../js/router.js', true); // Load router.js as a module
+		} else {
+			console.log('Token validation failed:', response.status);
+			// Handle token expiration (optional: refresh token logic)
+		}
+	} catch (error) {
+		console.error('Network error:', error);
+		// Handle network error
+	}
+}
+
+autoLogin();
