@@ -330,23 +330,45 @@ log42Button.addEventListener('click', function () {
 const logoutButton = document.getElementById('logoutButton');
 logoutButton.addEventListener('click', function() {
 	sessionStorage.clear();
-
-	////////Avec reload////////
 	window.location.reload();
-
-	////////Sans reload////////
-	// document.body.style.backgroundImage = "url('../../texture/lockscreen_clean.png')";
-
-	// homePage.classList.remove('showing');
-	// homePage.classList.add('hidden');
-
-	// lockscreenPage.classList.remove('hidden');
-	// lockscreenPage.classList.add('showing');
-
-	// loadScript('../js/page_script/lockscreen.js'); // Load clock.js
-
-	// const routerScript = document.querySelector('script[src="../js/router.js"]');
-	// const clockScript = document.querySelector('script[src="../js/page_script/clock.js"]');
-	// if (routerScript) routerScript.remove();
-	// if (clockScript) clockScript.remove();
 });
+
+////////////////////////// Auto-Login ////////////////////////////
+async function autoLogin() {
+    const accessTokenLogin = sessionStorage.getItem('accessToken');
+
+    if (!accessTokenLogin) {
+        console.log('No access token found.');
+        return;
+    }
+	try {
+		const response = await fetch('https://localhost:8443/auth/token/validate/', {
+			method: 'POST', // Ensure it's a POST request
+			headers: {
+				'Authorization': 'Bearer ' + accessTokenLogin
+			},
+		});
+		if (response.ok) {
+			console.log('Token is valid.');
+
+			// Transition to home page
+			homePage.classList.remove('hidden');
+			homePage.classList.add('showing');
+			lockscreenPage.classList.remove('showing');
+			lockscreenPage.classList.add('hidden');
+			lockLogo.style.display = 'none';
+
+			// Dynamically load the other scripts
+			loadScript('../js/page_script/clock.js'); // Load clock.js
+			loadScript('../js/router.js', true); // Load router.js as a module
+		} else {
+			console.log('Token validation failed:', response.status);
+			// Handle token expiration (optional: refresh token logic)
+		}
+	} catch (error) {
+		console.error('Network error:', error);
+		// Handle network error
+	}
+}
+
+autoLogin();

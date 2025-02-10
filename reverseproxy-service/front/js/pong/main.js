@@ -84,8 +84,11 @@ export async function quitPong() {
     if (settings) {
         focusMonitor();
         await sleep(2000);
-        settings.destroy();
-        settings = null;
+
+        if (settings) {
+            settings.destroy();
+            settings = null;
+        }
     }
 
     document.getElementById('nav').style.display = 'block';
@@ -452,5 +455,5 @@ function setupKeyBindings() {
 }
 
 // Call the setup functions when the script is executed
-// setupGameModeSelect();
-// setupKeyBindings();
+setupGameModeSelect();
+setupKeyBindings();
