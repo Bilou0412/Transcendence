@@ -87,10 +87,10 @@ const loadRouteModule = async (path) => {
         // Dynamically map routes to their corresponding JS modules
         const routeModulePaths = {
             '/pong': '../js/pong/main.js',
-            '/about': '../js/page_script/tabs.js',
-            '/profile': '../js/page_script/profile.js',
-            '/chat': '../js/page_script/chat.js',
-            '/settings': '../js/page_script/profile-settings.js',
+            // '/about': '../js/page_script/tabs.js',
+            // '/profile': '../js/page_script/profile.js',
+            // '/chat': '../js/page_script/chat.js',
+            // '/settings': '../js/page_script/profile-settings.js',
             // '/': '../js/page_script/home.js',
         };
 
