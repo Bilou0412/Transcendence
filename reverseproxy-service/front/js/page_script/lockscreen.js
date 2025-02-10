@@ -1,3 +1,7 @@
+import { connectWebSocket } from "./home.js";
+
+let globalSocket = null;
+
 //////////////////////////// Show/Hide Login Form ////////////////////////////
 // Get references to the login button and login form
 const loginButton = document.getElementById('showLoginForm');
@@ -17,11 +21,11 @@ loginButton.addEventListener('click', function() {
 });
 
 // Function to dynamically load a script
-function loadScript(src) {
-	const script = document.createElement('script');
-	script.src = src;
-	document.body.appendChild(script);
-}
+// function loadScript(src) {
+// 	const script = document.createElement('script');
+// 	script.src = src;
+// 	document.body.appendChild(script);
+// }
 
 const guestBtn = document.getElementById('guestButton');
 const lockscreenPage = document.getElementById('LockPage');
@@ -37,7 +41,7 @@ guestBtn.addEventListener('click', function () {
 	lockscreenPage.classList.add('hidden');
 
 	// Dynamically load the other scripts
-	loadScript('../js/page_script/clock.js'); // Load clock.js
+	loadScript('../js/page_script/clock.js', false); // Load clock.js
 	loadScript('../js/router.js', true); // Load router.js as a module
 
 	// Optionally, remove this script after it has done its work
@@ -176,6 +180,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             	sessionStorage.setItem('username', data.user.username);
 				sessionStorage.setItem('email', data.user.email);
 				
+				connectWebSocket(data.access, data.user.username, data.user.id, globalSocket);
 				// Transition to home page
 				homePage.classList.remove('hidden');
 				homePage.classList.add('showing');
@@ -186,7 +191,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             	
 				
 				// Dynamically load the other scripts
-				loadScript('../js/page_script/clock.js'); // Load clock.js
+				loadScript('../js/page_script/clock.js', false); // Load clock.js
 				loadScript('../js/router.js', true); // Load router.js as a module
            });
        } else {
@@ -297,7 +302,8 @@ log42Button.addEventListener('click', function () {
 							sessionStorage.setItem('userId', data.user.id);
 							sessionStorage.setItem('username', data.user.username);
 							sessionStorage.setItem('email', data.user.email);
-							
+							connectWebSocket(data.access, data.user.username, data.user.id, globalSocket);
+				
 							// Transition to home page
 							homePage.classList.remove('hidden');
 							homePage.classList.add('showing');
@@ -306,7 +312,7 @@ log42Button.addEventListener('click', function () {
 							lockLogo.style.display = 'none';
 							
 							// Dynamically load the other scripts
-							loadScript('../js/page_script/clock.js'); // Load clock.js
+							loadScript('../js/page_script/clock.js', false); // Load clock.js
 							loadScript('../js/router.js', true); // Load router.js as a module
 						} else {
 							alert('OAuth failed');
@@ -359,7 +365,7 @@ async function autoLogin() {
 			lockLogo.style.display = 'none';
 
 			// Dynamically load the other scripts
-			loadScript('../js/page_script/clock.js'); // Load clock.js
+			loadScript('../js/page_script/clock.js', false); // Load clock.js
 			loadScript('../js/router.js', true); // Load router.js as a module
 		} else {
 			console.log('Token validation failed:', response.status);

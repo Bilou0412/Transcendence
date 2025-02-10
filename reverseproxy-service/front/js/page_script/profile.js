@@ -145,12 +145,19 @@ function fetchUserMatches(userId, accessToken) {
 		}
 	})
 	.then(response => {
-		if (response.status === 404) {
-			const matchesList = document.getElementById('matches-list');
-			matchesList.innerHTML = '<p>No matches found</p>';
-			document.getElementById('matches-info').classList.add('active');
-			throw new Error('No matches found');
-		}
+		// if (response.status === 404) {
+		// 	console.log('No matches found');
+		// 	const historyTable = document.getElementById('history');
+		// 	while (historyTable.rows.length > 1) {
+		// 		historyTable.deleteRow(1);
+		// 	}
+		// 	const newRow = historyTable.insertRow();
+		// 	newRow.className = 'match';
+		// 	newRow.innerHTML = `
+		// 		<td colspan="8">No matches found</td>
+		// 	`;
+			
+		// }
 		if (!response.ok && response.status !== 404) {
 			throw new Error('Network response was not ok');
 		}
@@ -425,8 +432,8 @@ function fetchFriendList(accessToken) {
 			// 		li.appendChild(userInfo);
 			// 		li.appendChild(userActions);
 			// 		friendList.appendChild(li);
-			// 	});
-			// });
+				});
+			});
 		}
 	})
 	.catch(error => console.error('Error fetching friend list:', error));

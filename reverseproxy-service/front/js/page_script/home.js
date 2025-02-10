@@ -1,9 +1,6 @@
-function displayInviteCode(data) {
-    console.log('Invite code received:', data);
-    alert(`Invite Code: ${data.invite_code}`);
-}
+// export let globalSocket = null;
 
-function connectWebSocket(accessToken, username, userId) {
+export async function connectWebSocket(accessToken, username, userId, globalSocket) {
     console.log('Connecting to WebSocket...');
     const userList = document.getElementById('user-list');
     const friendRequestList = document.getElementById('friend-request-list');
@@ -31,8 +28,13 @@ function connectWebSocket(accessToken, username, userId) {
 };
 
 
+function displayInviteCode(data) {
+    console.log('Invite code received:', data);
+    alert(`Invite Code: ${data.invite_code}`);
+}
 
 const accessToken = sessionStorage.getItem('accessToken');
 const username = sessionStorage.getItem('username');
 const userId = sessionStorage.getItem('userId');
-connectWebSocket(accessToken, username, userId);
+if (accessToken && username && userId)
+    connectWebSocket(accessToken, username, userId);
