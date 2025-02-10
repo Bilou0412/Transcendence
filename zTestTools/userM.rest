@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://127.0.0.1:8004/user/2/matches/
+GET https://localhost:8443/usermanagement/2/matches/
 
 ###
 

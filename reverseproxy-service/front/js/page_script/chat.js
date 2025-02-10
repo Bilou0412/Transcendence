@@ -1,6 +1,12 @@
-import { fetchProfileImages } from './profile.js';
+import { fetchProfileImages } from './utils.js';
 
 console.log('chat.js loaded');
+
+let chatSocket = null;
+
+const accessToken = sessionStorage.getItem('accessToken');
+const userId = sessionStorage.getItem('userId');
+fetchProfileImages([userId], accessToken, ['self-avatar']);
 
 function loadChatPage() {
 	const accessToken = sessionStorage.getItem('accessToken');
@@ -96,10 +102,6 @@ function fetchFriendList(accessToken) {
 	.catch(error => console.error('Error fetching friend list:', error));
 }
 
-function Chat(friendId) {
-
-}
-
 function inviteToChat(friendId) {
 	// Implement the function to invite a friend to chat
 	console.log(`Inviting friend with ID ${friendId} to chat`);
@@ -150,4 +152,63 @@ function blockUser(userId) {
 		console.error('Error blocking user:', error);
 		alert('Failed to block user');
 	});
+}
+
+function Chat(userIdToChat) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	if (userIdToChat && accessToken) {
+		if (chatSocket) {
+			chatSocket.close();
+		}
+		chatSocket = new WebSocket(`wss://localhost:8443/chat/${userIdToChat}/`, ['Bearer_' + accessToken]);
+
+		chatSocket.onopen = () => {
+			fetchProfileImages([userIdToChat], accessToken, ['other-avatar']);
+			console.log('Direct Message WebSocket connection opened');
+		};
+
+		chatSocket.onmessage = event => {
+			const message = JSON.parse(event.data);
+			console.log('Received message:', message);
+			const chatMessagesContainer = document.getElementById('chat-history-body');
+			chatMessagesContainer.innerHTML = '';
+
+			if (message.type === 'message_history') {
+				message.messages.forEach(msg => {
+					const messageElement = document.createElement('div');
+                    messageElement.textContent = `${msg.sender}: ${msg.content}`;
+                    chatMessagesContainer.appendChild(messageElement);
+				})
+			} else if (message.type === 'chat_message') {
+				const messageElement = document.createElement('div');
+				messageElement.textContent = `${message.sender}: ${message.message}`;
+				chatMessagesContainer.appendChild(messageElement);
+			}
+		}
+		chatSocket.onclose = () => {
+			console.log('Chat WebSocket connection closed');
+		};
+	} else {
+		alert('Please enter a valid User ID and make sure you are logged in.');
+	}
+}
+
+document.getElementById('send-message').addEventListener('click', function () {
+    console.log('send button clicked');
+    sendChatMessage();
+});
+
+function sendChatMessage() {
+	const messageInput = document.getElementById('message-input');
+	const message = messageInput.value.trim();
+	console.log('Sending message:', message);
+	if (!message) {
+		alert('Please enter a message to send.');
+		return;
+	}
+	if (chatSocket) {
+		console.log('really Sending message:', message);
+		chatSocket.send(JSON.stringify({ message }));
+		messageInput.value = '';
+	}
 }

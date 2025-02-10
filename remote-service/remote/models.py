@@ -88,8 +88,8 @@ class Game:
 	async def end (self):
 		print('game ended')
 		self.status = False
-		if self.score['left'] == 10 or self.score['right'] == 10:
-			winner = 'left' if self.score['left'] == 10 else 'right'
+		if self.score['left'] == 5 or self.score['right'] == 5:
+			winner = 'left' if self.score['left'] == 5 else 'right'
 		else:
 			winner = 'unfinished'
 		await self.send_data( {
@@ -116,7 +116,7 @@ class Game:
 					'score_player_2': self.score['right'],
 				}
 			)
-			print(userManagerResponse.text)
+		print(f"fin de partie msg: {userManagerResponse.text}")
 		self.score['left'] = self.score['right'] = 0
 
 	async def send_data (self, data):

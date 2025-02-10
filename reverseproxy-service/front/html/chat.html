@@ -29,20 +29,20 @@
 								<div class="title-bar title-bar-chat">
 								  <div class="title-bar-text">Chat History</div>
 								</div>
-								<div class="window-body">
+								<div class="window-body" id="chat-history-body">
 									<!-- chat history -->
 								</div>
 							</div>
 						</div>
 
 						<div class="chat-input">
-							<textarea id="mess-input"  placeholder="Type a message..."></textarea>
-							<button class="btn btn-send">Send</button>
+							<textarea id="message-input"  placeholder="Type a message..."></textarea>
+							<button class="btn btn-send" id="send-message">Send</button>
 						</div>
 					</div>
 					<div class="picture-area">
-						<img src="../css/icon/rounded_login.png" alt="Avatar" class="chat-avatar">
-						<img src="../css/icon/rounded_login.png" alt="Avatar" class="chat-avatar">
+						<img src="../css/icon/rounded_login.png" alt="Avatar" class="chat-avatar", id="other-avatar">
+						<img src="../css/icon/rounded_login.png" alt="Avatar" class="chat-avatar", id="self-avatar">
 					</div>
 				</div>
 			</div>
@@ -62,7 +62,7 @@
 		</div>
 	</div>
 
-	<script src="../js/router.js"></script>
+	<!-- <script src="../js/router.js"></script> -->
 	<script>
 		document.getElementById('close-button').addEventListener('click', (event) => route(event));
 	</script>

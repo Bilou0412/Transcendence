@@ -141,10 +141,6 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 	}
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM fully loaded and parsed');
-});
-
 document.getElementById('editBtnUsername').addEventListener('click', function () {
     console.log('edit button clicked');
     toggleEditForm('username');

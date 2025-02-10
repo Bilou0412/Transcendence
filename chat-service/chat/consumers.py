@@ -77,14 +77,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }))
                 return
 
-            await self.create_message(self.conversation, self.username, message)
+            timestamp = await self.create_message(self.conversation, self.username, message)
 
             await self.channel_layer.group_send(
                 self.chat_group_name,
                 {
                     'type': 'chat_message',
                     'message': message,
-                    'sender': self.username
+                    'sender': self.username,
+                    'timestamp': timestamp
                 }
             )
 
@@ -98,12 +99,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         message = event['message']
         sender = event['sender']
-
+        timestamp = event['timestamp']
 
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
             'message': message,
-            'sender': sender
+            'sender': sender,
+            'timestamp': timestamp
         }))
 
 
@@ -133,6 +135,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def create_message(self, conversation, sender, content):
         try:
             DirectMessage.objects.create(conversation=conversation, sender=sender, content=content)
+            return DirectMessage.objects.last().timestamp.isoformat()            
         except Exception as e:
             print(f'Error in create_message: {e}')
             raise

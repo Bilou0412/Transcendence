@@ -1,3 +1,5 @@
+import { fetchProfileImages } from './utils.js';
+
 function profileNav(idToSearch) {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (!accessToken) {
@@ -24,6 +26,9 @@ function profileNav(idToSearch) {
 		fetchUserFriends(user.id, accessToken); // Ensure this function is called correctly
 		fetchFriendRequests();
 		fetchFriendList(accessToken);
+		if (sessionStorage.getItem('userId') !== idToSearch) {
+			document.getElementById('editBtn').style.display = 'none';
+		}
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 }
@@ -108,36 +113,8 @@ function clearSearchResults() {
 	resultsContainer.innerHTML = '';
 }
 
-export function fetchProfileImages(userIds, accessToken, imageElementIds) {
-	const cacheBuster = new Date().getTime(); // Generate a unique timestamp
-	fetch(`https://localhost:8443/media/profile-images/?cb=${cacheBuster}`, {
-		method: 'POST',
-		headers: {
-			'Authorization': 'Bearer ' + accessToken,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ user_ids: userIds })
-	})
-	.then(response => response.json())
-	.then(images => {
-		images.forEach((image, index) => {
-			if (image.error) {
-				console.error(`Error fetching profile image for user ${image.id}: ${image.error}`);
-			} else {
-				// const imageUrl = URL.createObjectURL(image.image);
-				console.log(image);
-				const imgElement = document.getElementById(imageElementIds[index]);
-				imgElement.src = image.image_url;
-				imgElement.alt = `Image ${image.id}`;
-				imgElement.type = image.content_type;
-				
-			}
-		});
-	})
-	.catch(error => console.error('Error fetching profile images:', error));
-}
-
 function fetchUserMatches(userId, accessToken) {
+	console.log('Fetching user matches...');
 	fetch(`https://localhost:8443/usermanagement/${userId}/matches/`, {
 		method: 'GET',
 		headers: {
@@ -145,25 +122,27 @@ function fetchUserMatches(userId, accessToken) {
 		}
 	})
 	.then(response => {
-		// if (response.status === 404) {
-		// 	console.log('No matches found');
-		// 	const historyTable = document.getElementById('history');
-		// 	while (historyTable.rows.length > 1) {
-		// 		historyTable.deleteRow(1);
-		// 	}
-		// 	const newRow = historyTable.insertRow();
-		// 	newRow.className = 'match';
-		// 	newRow.innerHTML = `
-		// 		<td colspan="8">No matches found</td>
-		// 	`;
-			
-		// }
+		if (response.status === 404) {
+			console.log('No matches found');
+			const historyTable = document.getElementById('history');
+			while (historyTable.rows.length > 1) {
+				historyTable.deleteRow(1);
+			}
+			const newRow = historyTable.insertRow();
+			newRow.className = 'match';
+			newRow.innerHTML = `
+				<td colspan="8">No matches found</td>
+			`;
+			return;
+		}
 		if (!response.ok && response.status !== 404) {
 			throw new Error('Network response was not ok');
 		}
 		return response.json();
 	})
 	.then(data => {
+		if (!data) return; 
+
 		const historyTable = document.getElementById('history');
 		
 		while (historyTable.rows.length > 1) {
@@ -315,6 +294,8 @@ function fetchFriendList(accessToken) {
 	})
 	.then(response => response.json())
 	.then(data => {
+		if (!data) return;
+		
 		const friendIds = data.friends;
 		if (friendIds.length > 0) {
 			console.log('Friend list:', data);
@@ -398,40 +379,6 @@ function fetchFriendList(accessToken) {
 				blockedUserIds.forEach(blockedId => {
 					const li = document.createElement('div');
 					li.className = 'friend-item';
-					
-			// 		const avatar = document.createElement('img');
-			// 		avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-			// 		avatar.alt = 'User Avatar';
-			// 		avatar.className = 'friend-avatar';
-			// 		avatar.onclick = function () {
-			// 			profileNav(blockedId);
-			// 		};
-					
-			// 		const userInfo = document.createElement('div');
-			// 		userInfo.className = 'friend-info';
-			// 		const userName = document.createElement('div');
-			// 		userName.className = 'friend-name';
-			// 		userName.innerText = `${blockedUserData[blockedId].username} (#${blockedId})`;
-			// 		userName.onclick = function () {
-			// 			profileNav(blockedId);
-			// 		};
-			// 		userInfo.appendChild(userName);
-					
-			// 		const userActions = document.createElement('div');
-			// 		userActions.className = 'friend-actions';
-			// 		const unblockButton = document.createElement('button');
-			// 		unblockButton.className = 'btn btn-unblock';
-			// 		unblockButton.innerText = 'Unblock';
-			// 		unblockButton.onclick = () => {
-			// 			unblockUser(blockedId);
-			// 			li.remove();
-			// 		};
-					
-			// 		userActions.appendChild(unblockButton);
-			// 		li.appendChild(avatar);
-			// 		li.appendChild(userInfo);
-			// 		li.appendChild(userActions);
-			// 		friendList.appendChild(li);
 				});
 			});
 		}
