@@ -200,6 +200,7 @@ function fetchFriendRequests() {
 			const avatar = document.createElement('img');
 			avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
 			avatar.alt = 'User Avatar';
+			avatar.id = `request-avatar-${request}`;
 			avatar.className = 'friend-avatar';
 			
 			const userInfo = document.createElement('div');
@@ -234,6 +235,7 @@ function fetchFriendRequests() {
 			
 			requestContainer.appendChild(requestElement);
 		});
+		fetchProfileImages(data.pending_requests, accessToken, data.pending_requests.map(request => `request-avatar-${request}`));
 	})
 	.catch(error => console.error('Error fetching friend requests:', error));
 }

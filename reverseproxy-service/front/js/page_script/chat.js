@@ -163,6 +163,7 @@ function Chat(userIdToChat) {
 		chatSocket = new WebSocket(`wss://localhost:8443/chat/${userIdToChat}/`, ['Bearer_' + accessToken]);
 
 		chatSocket.onopen = () => {
+			document.getElementById('chat-history-body').innerHTML = '';
 			fetchProfileImages([userIdToChat], accessToken, ['other-avatar']);
 			console.log('Direct Message WebSocket connection opened');
 		};
@@ -171,7 +172,7 @@ function Chat(userIdToChat) {
 			const message = JSON.parse(event.data);
 			console.log('Received message:', message);
 			const chatMessagesContainer = document.getElementById('chat-history-body');
-			chatMessagesContainer.innerHTML = '';
+			// chatMessagesContainer.innerHTML = '';
 
 			if (message.type === 'message_history') {
 				message.messages.forEach(msg => {
