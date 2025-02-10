@@ -179,7 +179,7 @@ export async function remote_game() {
             if (message.event === 'game_update') {
                 console.log(`Ball position: ${ball.position.x}, ${ball.position.z}`);
                 ball.position.x = message.data.ball.x;
-                ball.position.z = message.data.ball.y;
+                ball.position.z = -message.data.ball.y;
 
                 settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, settings.centerZ - message.data.players.left.pos.y));
                 settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, settings.centerZ - message.data.players.right.pos.y));
