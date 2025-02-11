@@ -9,7 +9,7 @@ import { focusGame, initMonitor, focusMonitor, initTable} from "./monitor.js";
 import { onKeyDown, onKeyUp, onMouseWheel } from "./keyEvents.js";
 import { Settings } from "./settings.js";
 import { titleDisplay } from "./monitor_display.js";
-
+import { fetchFriendList } from "../page_script/friendList.js";
 
 // ///////////////////////////////////environment settings///////////////////////////////
 export let settings = null;
@@ -333,9 +333,7 @@ function setupGameModeSelect() {
     const gameModeSelect = document.getElementById('gameModeSelect');
     const sections = {
         "local tournament": document.querySelector('.localTournament'),
-        "remote tournament": document.querySelector('.remoteTournament'),
         "remote 1v1": document.querySelector('.remote1v1'),
-        "player vs ai": document.querySelector('.localPlayerAI'),
     };
     if (gameModeSelect) {
         gameModeSelect.addEventListener('change', function () {
@@ -351,9 +349,14 @@ function setupGameModeSelect() {
             if (sections[selectedMode]) {
                 sections[selectedMode].style.display = 'flex';
             }
+            if (selectedMode === 'remote 1v1') {
+                fetchFriendList(sessionStorage.getItem('accessToken'), 'friendList', Invite);
+            }
         });
     }
 }
+
+function Invite(friendId) {}
 
 //////////////////////////////////////Player Names//////////////////////////////////////
 function getPlayersNames() {
