@@ -2,7 +2,7 @@
 import { ball, initBall } from "./ball_init.js";
 import { resetBall, sleep } from "./resetBall.js";
 import { initMiddlePlatform, initSides } from "./roundedBox.js";
-import { updateCubeSelection, updatePlayerPositions, movePlayerRemote } from "./movements.js";
+import { updateCubeSelection, updatePlayerPositions, movePlayerRemote, pressedKeys } from "./movements.js";
 import { updateBallPosition } from "./ball_physics.js";
 import { updateScoreDisplay, updateClock, initScoreboard, initClock} from "./display.js";
 import { focusGame, initMonitor, focusMonitor, initTable} from "./monitor.js";
@@ -190,8 +190,8 @@ export async function remote_game() {
                 console.log(`Player 2 positions: `, message.data.players.right.pos.y);
                 // settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, settings.centerZ - message.data.players.left.pos.y + 2));
                 // settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, settings.centerZ - message.data.players.right.pos.y + 2));
-                settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, 14 - message.data.players.left.pos.y));
-                settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, 14 - message.data.players.right.pos.y));
+                settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, 15 - message.data.players.left.pos.y));
+                settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, 15 - message.data.players.right.pos.y));
 
 
                 if (settings.player1Score !== message.data.players.left.score || settings.player2Score !== message.data.players.right.score) {
@@ -211,9 +211,6 @@ export async function remote_game() {
                 settings.updateTime();
                 updateClock();
                 console.log('Game started');
-                // if (!intervalId) {
-                //     intervalId = setInterval(sendPaddleMovement, 10); // Check and send paddle movement every 10ms
-                // }
             }
             if (message.event === 'game_ended') {
                 settings.gameStatus = 'finished';
@@ -222,14 +219,17 @@ export async function remote_game() {
                 } else if (message.data.winner !== 'unfinished') {
                     alert('You lost!');
                 }
-                // resetGame();
                 console.log('Game ended');
-                // clearInterval(intervalId);
-                // intervalId = null;
             }
         };
     }
 }
+
+window.addEventListener('blur', function () {
+    if (pressedKeys)
+        for (let key in pressedKeys)
+            pressedKeys[key] = false;
+    });
 
 function progressLoading() {
     //create a progress bar and puttin it in the middle of the screen

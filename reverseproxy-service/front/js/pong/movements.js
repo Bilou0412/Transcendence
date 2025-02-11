@@ -3,7 +3,7 @@ import { player1UpBind, player1DownBind, player2UpBind, player2DownBind, player1
 import { ball } from './ball_init.js';
 import { remoteWs } from './main.js';
 // Object to track pressed keys
-export const pressedKeys = {};
+export let pressedKeys = {};
 
 /////////////////////////////////////////cubes////////////////////////////////////////
 export function updateCubeSelection() {
@@ -39,7 +39,7 @@ export function updateCubeSelection() {
 
 ////////////////////////////////////////paddles///////////////////////////////////////
 export function movePlayerRemote (positions, centerZ) {
-    const halfLength = Math.floor(positions.length / 2);
+    const halfLength = (positions.length / 2);
     const newPositions = positions.map((_, index) => ({
         x: positions[index].x,
         z: centerZ - halfLength + index
@@ -88,7 +88,7 @@ export function updatePlayerPositions() {
             //     settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
             // }
         }
-        if (direction !== 'none') {
+        if (direction !== 'none' && remoteWs.readyState === remoteWs.OPEN) {
             remoteWs.send(JSON.stringify({
                 event: 'paddle_moved',
                 data: { direction: direction, role: settings.remoteRole }

@@ -9,14 +9,14 @@ class Player:
 	def __init__ (self, id):
 		self.id = id
 		self.pos = {'x': 0, 'y': 0}
-		self.dimension = {'w': 0.6, 'h': 9}
+		self.dimension = {'w': 1, 'h': 5}
 
 	def move (self, direction):
 		self.pos['y'] += direction
-		if self.pos['y'] + 3.5 > 15:
-			self.pos['y'] = 15 - 3.5
-		if self.pos['y'] - 3.5 < -15:
-			self.pos['y'] = -15 + 3.5
+		if self.pos['y'] + 2.5 > 15:
+			self.pos['y'] = 15 - 2.5
+		if self.pos['y'] - 2.5 < -15:
+			self.pos['y'] = -15 + 2.5
 
 class Ball:
 	def __init__ (self):
@@ -40,6 +40,9 @@ class Game:
 		self.score = {'left': 0, 'right': 0}
 		self.status = False
 		self.paused = False
+		self.servSide = 'left'
+		self.maxScore = 15
+		self.hitLast = 'right'
 
 	async def add_player (self, player):
 		if self.players['left'] is None:
@@ -88,8 +91,8 @@ class Game:
 	async def end (self):
 		print('game ended')
 		self.status = False
-		if self.score['left'] == 5 or self.score['right'] == 5:
-			winner = 'left' if self.score['left'] == 5 else 'right'
+		if self.score['left'] == self.maxScore or self.score['right'] == self.maxScore:
+			winner = 'left' if self.score['left'] == self.maxScore else 'right'
 		else:
 			winner = 'unfinished'
 		await self.send_data( {
@@ -144,7 +147,7 @@ class Game:
 
 	def reset (self):
 		self.ball.pos = {'x': 0, 'y': 0}
-		self.ball.direction = {'x': random.choice([-0.1, 0.1]), 'y': random.choice([-0.1, 0.1])}
+		self.ball.direction = {'x': -0.1 if self.servSide == 'left' else 0.1, 'y': random.choice([-0.065, 0.065])}
 
 	async def move_paddle (self, player_id, direction):
 		print(f'moving paddle {direction}')
@@ -172,17 +175,19 @@ class Game:
 				'y': self.ball.pos['y'] + self.ball.velocity * self.ball.direction['y']
 			}
 
-			if potential_pos['x'] <= left_paddle.pos['x'] + left_paddle.dimension['w'] + 0.1:
+			if  self.hitLast == 'right' and (potential_pos['x'] <= left_paddle.pos['x'] + left_paddle.dimension['w'] / 2 + 0.1) and (potential_pos['x'] >= left_paddle.pos['x'] - 1):
 				print('ball x aligned with left paddle')
 				print(f'ball y: {potential_pos["y"]} left paddle y: {left_paddle.pos["y"]} left paddle down edge y: {left_paddle.pos["y"] - left_paddle.dimension["h"] / 2} left paddle up edge y: {left_paddle.pos["y"] + left_paddle.dimension["h"] / 2}')
-				if potential_pos['y'] > left_paddle.pos['y'] - left_paddle.dimension['h'] / 2 and potential_pos['y'] < left_paddle.pos['y'] + left_paddle.dimension['h'] / 2:
+				if potential_pos['y'] > left_paddle.pos['y'] - left_paddle.dimension['h'] / 2 - 0.3 and potential_pos['y'] < left_paddle.pos['y'] + left_paddle.dimension['h'] / 2 + 0.3:
 					print('ball y aligned with left paddle')
+					self.hitLast = 'left'
 					self.handle_collision(left_paddle, potential_pos)
-			elif potential_pos['x'] >= right_paddle.pos['x'] - right_paddle.dimension['w'] - 0.1:
+			elif self.hitLast == 'left' and potential_pos['x'] >= right_paddle.pos['x'] - right_paddle.dimension['w'] / 2 - 0.1 and potential_pos['x'] <= right_paddle.pos['x'] + 1:
 				print('ball x aligned with right paddle')
 				print(f'ball y: {potential_pos["y"]} right paddle y: {right_paddle.pos["y"]} ')
-				if potential_pos['y'] > right_paddle.pos['y'] - right_paddle.dimension['h'] / 2 and potential_pos['y'] < right_paddle.pos['y'] + right_paddle.dimension['h'] / 2:
+				if potential_pos['y'] > right_paddle.pos['y'] - right_paddle.dimension['h'] / 2 - 0.3 and potential_pos['y'] < right_paddle.pos['y'] + right_paddle.dimension['h'] / 2 + 0.3:
 					print('ball y aligned with right paddle')
+					self.hitLast = 'right'
 					self.handle_collision(right_paddle, potential_pos)
 			
 			# walls collision 
@@ -194,15 +199,17 @@ class Game:
 			# score
 			if self.ball.pos['x'] <= left_paddle.pos['x'] - left_paddle.dimension['w'] - 1:
 				self.score['left'] += 1
+				self.servSide = 'left'
 				self.reset()
 			if self.ball.pos['x'] >= right_paddle.pos['x'] + right_paddle.dimension['w'] + 1:
 				self.score['right'] += 1
+				self.servSide = 'right'
 				self.reset()
 			
 
 			await self.send_update()
 
-			if self.score['left'] == 5 or self.score['right'] == 5:
+			if self.score['left'] == self.maxScore or self.score['right'] == self.maxScore:
 				await self.end()
 		except Exception as e:
 			print(f'update Error: {str(e)}')
