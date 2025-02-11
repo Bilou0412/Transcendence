@@ -113,6 +113,31 @@ function clearSearchResults() {
 	resultsContainer.innerHTML = '';
 }
 
+function calculateTimeDifference(date1Str, date2Str) {
+    const date1 = new Date(date1Str);
+    const date2 = new Date(date2Str);
+
+    const diffMs = Math.abs(date2 - date1);
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const remainingSeconds = diffSeconds % 60;
+
+    return `${diffMinutes}min${remainingSeconds}s`;
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getUTCFullYear();
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+
 function fetchUserMatches(userId, accessToken) {
 	console.log('Fetching user matches...');
 	fetch(`https://localhost:8443/usermanagement/${userId}/matches/`, {
@@ -150,17 +175,17 @@ function fetchUserMatches(userId, accessToken) {
         }
 
 		data.matches.forEach(match => {
+			// const timeDiff = calculateTimeDifference(match.end_time, match.start_time);
 			const newRow = historyTable.insertRow();
 			newRow.className = 'match';
 			newRow.innerHTML = `
 				<td>${match.match_id}</td>
 				<td>${match.player_1_id}</td>
 				<td>${match.player_2_id}</td>
-				<td>${match.start_time}</td>
-				<td>${match.end_time}</td>
 				<td>${match.score_player_1}</td>
 				<td>${match.score_player_2}</td>
-				<td>${match.created_at}</td>
+				<td>${calculateTimeDifference(match.end_time, match.start_time)}</td>
+				<td>${formatDate(match.start_time)}</td>
 			`;
 			
 		});

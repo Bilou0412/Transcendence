@@ -154,6 +154,17 @@ function blockUser(userId) {
 	});
 }
 
+function formatTime(dateStr) {
+    const date = new Date(dateStr);
+
+    date.setHours(date.getUTCHours() + 1);
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${hours}:${minutes}`;
+}
+
 function Chat(userIdToChat) {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (userIdToChat && accessToken) {
@@ -177,13 +188,17 @@ function Chat(userIdToChat) {
 			if (message.type === 'message_history') {
 				message.messages.forEach(msg => {
 					const messageElement = document.createElement('div');
-                    messageElement.textContent = `${msg.sender}: ${msg.content}`;
+					messageElement.classList.add('message');
+                    messageElement.textContent = `[${formatTime(msg.timestamp)}]  ${msg.sender}: ${msg.content}`;
                     chatMessagesContainer.appendChild(messageElement);
+					chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 				})
 			} else if (message.type === 'chat_message') {
 				const messageElement = document.createElement('div');
-				messageElement.textContent = `${message.sender}: ${message.message}`;
+				messageElement.classList.add('message');
+				messageElement.textContent = `[${formatTime(message.timestamp)}]  ${message.sender}: ${message.message}`;
 				chatMessagesContainer.appendChild(messageElement);
+				chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 			}
 		}
 		chatSocket.onclose = () => {
