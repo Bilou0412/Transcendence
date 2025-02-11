@@ -45,6 +45,7 @@ export function movePlayerRemote (positions, centerZ) {
         z: centerZ - halfLength + index
     }));
 
+    console.log(newPositions);
     // Check if any cube in the line would go out of bounds
     if (newPositions.every(pos => pos.z >= 0 && pos.z < settings.platformLength)) {
         return newPositions;

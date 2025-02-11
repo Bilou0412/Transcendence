@@ -156,8 +156,9 @@ export async function startGame() {
     if (settings.gameMode === 'remote 1v1') {
         remote_game();
     }
+    else 
+        updateClock();
     initBall();
-    updateClock();
     resetGame();
 }
 
@@ -184,9 +185,15 @@ export async function remote_game() {
                 ball.position.x = message.data.ball.x;
                 ball.position.z = -message.data.ball.y;
 
-                settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, settings.centerZ - message.data.players.left.pos.y));
-                settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, settings.centerZ - message.data.players.right.pos.y));
-                
+                console.log(`centerZ: ${settings.centerZ}`);
+                console.log(`Player 1 positions: `, message.data.players.left.pos.y);
+                console.log(`Player 2 positions: `, message.data.players.right.pos.y);
+                // settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, settings.centerZ - message.data.players.left.pos.y + 2));
+                // settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, settings.centerZ - message.data.players.right.pos.y + 2));
+                settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, 14 - message.data.players.left.pos.y));
+                settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, 14 - message.data.players.right.pos.y));
+
+
                 if (settings.player1Score !== message.data.players.left.score || settings.player2Score !== message.data.players.right.score) {
 
                     settings.updatePlayer1Score(message.data.players.left.score);
@@ -201,6 +208,8 @@ export async function remote_game() {
             }
             if (message.event === 'start_game') {
                 settings.gameStatus = 'started';
+                settings.updateTime();
+                updateClock();
                 console.log('Game started');
                 // if (!intervalId) {
                 //     intervalId = setInterval(sendPaddleMovement, 10); // Check and send paddle movement every 10ms

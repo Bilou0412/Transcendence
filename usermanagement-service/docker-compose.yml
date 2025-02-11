@@ -6,6 +6,8 @@ services:
     volumes:
       - .:/app
       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ../.env
     entrypoint: ["/app/docker/entrypoint_db.sh"]
     networks:
       - my_network
@@ -20,7 +22,7 @@ services:
       - PYTHONUNBUFFERED=1
       - DEBUG=True
     env_file:
-      - .env
+      - ../.env
     networks:
       my_network:
         aliases:

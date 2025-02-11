@@ -9,7 +9,7 @@ services:
       - PYTHONUNBUFFERED=1
       - DEBUG=True
     env_file:
-      - .env
+      - ../.env
     networks:
       my_network:
         aliases:

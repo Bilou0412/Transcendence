@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'UserManagementService.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('USERMANAGEMENTSERVICE_DB_NAME'),
-        'USER': os.getenv('USERMANAGEMENTSERVICE_DB_USER'),
-        'PASSWORD': os.getenv('USERMANAGEMENTSERVICE_DB_PASSWORD'),
-        'HOST': os.getenv('USERMANAGEMENTSERVICE_DB_HOST'),
-        'PORT': os.getenv('USERMANAGEMENTSERVICE_DB_PORT'),
+        'NAME': os.getenv('USERMANAGEMENT_DB_NAME'),
+        'USER': os.getenv('USERMANAGEMENT_DB_USER'),
+        'PASSWORD': os.getenv('USERMANAGEMENT_DB_PASSWORD'),
+        'HOST': os.getenv('USERMANAGEMENT_DB_HOST'),
+        'PORT': os.getenv('USERMANAGEMENT_DB_PORT'),
     }
 }
 

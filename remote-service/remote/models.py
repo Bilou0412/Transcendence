@@ -152,7 +152,7 @@ class Game:
 		if role is None:
 			print(f'Error: Player with id {player_id} not found')
 			return
-		direction = 1 if direction == 'up' else -1
+		direction = 0.3 if direction == 'up' else -0.3
 		self.players[role].move(direction)
 	
 	def handle_collision(self, paddle, potential_pos):

@@ -1,5 +1,6 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { settings} from './main.js';
+import { settings } from './main.js';
+// import { Settings, updateTime } from './settings.js';
 
 
 /////////////////////////////////////scoreboard///////////////////////////////////////
@@ -77,10 +78,8 @@ export function initClock(){
 };
 
 export const updateClock = () => {
-    if (!settings || settings.gameStatus === 'paused')
-    {
+    if (!settings)
         return;
-    }
 	ClockCtx.clearRect(0, 0, Clock.width, Clock.height);
 	ClockCtx.fillStyle = 'white';
 	ClockCtx.font = 'bold 100px "Digital-7"';
