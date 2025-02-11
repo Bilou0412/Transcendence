@@ -88,7 +88,7 @@ export function updatePlayerPositions() {
             //     settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
             // }
         }
-        if (direction !== 'none' && remoteWs.readyState === remoteWs.OPEN) {
+        if (direction !== 'none' && remoteWs && remoteWs.readyState === remoteWs.OPEN) {
             remoteWs.send(JSON.stringify({
                 event: 'paddle_moved',
                 data: { direction: direction, role: settings.remoteRole }

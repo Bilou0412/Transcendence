@@ -77,8 +77,9 @@ class Game:
 		if None in self.players.values():
 			return
 		if not self.paused:
-			self.players['left'].pos = {'x': -24, 'y': 0}
-			self.players['right'].pos = {'x': 24, 'y': 0}
+			fieldHalfWidth = self.dimensions['w'] / 2
+			self.players['left'].pos = {'x': -fieldHalfWidth + 1, 'y': 0}
+			self.players['right'].pos = {'x': fieldHalfWidth - 1, 'y': 0}
 			self.reset()
 		else:
 			self.ball.pos = {'x': 0, 'y': 0}
@@ -175,14 +176,14 @@ class Game:
 				'y': self.ball.pos['y'] + self.ball.velocity * self.ball.direction['y']
 			}
 
-			if  self.hitLast == 'right' and (potential_pos['x'] <= left_paddle.pos['x'] + left_paddle.dimension['w'] / 2 + 0.1) and (potential_pos['x'] >= left_paddle.pos['x'] - 1):
+			if  self.hitLast == 'right' and potential_pos['x'] <= left_paddle.pos['x'] + 0.2 and potential_pos['x'] >= left_paddle.pos['x'] - 1:
 				print('ball x aligned with left paddle')
 				print(f'ball y: {potential_pos["y"]} left paddle y: {left_paddle.pos["y"]} left paddle down edge y: {left_paddle.pos["y"] - left_paddle.dimension["h"] / 2} left paddle up edge y: {left_paddle.pos["y"] + left_paddle.dimension["h"] / 2}')
 				if potential_pos['y'] > left_paddle.pos['y'] - left_paddle.dimension['h'] / 2 - 0.3 and potential_pos['y'] < left_paddle.pos['y'] + left_paddle.dimension['h'] / 2 + 0.3:
 					print('ball y aligned with left paddle')
 					self.hitLast = 'left'
 					self.handle_collision(left_paddle, potential_pos)
-			elif self.hitLast == 'left' and potential_pos['x'] >= right_paddle.pos['x'] - right_paddle.dimension['w'] / 2 - 0.1 and potential_pos['x'] <= right_paddle.pos['x'] + 1:
+			elif self.hitLast == 'left' and potential_pos['x'] >= right_paddle.pos['x'] - 0.2 and potential_pos['x'] <= right_paddle.pos['x'] + 1:
 				print('ball x aligned with right paddle')
 				print(f'ball y: {potential_pos["y"]} right paddle y: {right_paddle.pos["y"]} ')
 				if potential_pos['y'] > right_paddle.pos['y'] - right_paddle.dimension['h'] / 2 - 0.3 and potential_pos['y'] < right_paddle.pos['y'] + right_paddle.dimension['h'] / 2 + 0.3:
