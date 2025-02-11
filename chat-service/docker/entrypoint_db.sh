@@ -1,19 +1,15 @@
 #!/bin/bash
-set -e
+set -e  # Arrêter le script en cas d'erreur
 
-# Charger les variables d'environnement depuis le fichier .env
-export $(grep -v '^#' /app/.env | xargs)
+# Vérifier que les variables d'environnement sont bien définies
+: "${CHAT_DB_NAME:?Erreur: CHAT_DB_NAME non défini}"
+: "${CHAT_DB_USER:?Erreur: CHAT_DB_USER non défini}"
+: "${CHAT_DB_PASSWORD:?Erreur: CHAT_DB_PASSWORD non défini}"
 
-# Vérifier que les variables nécessaires sont définies
-if [[ -z "${DB_NAME}" || -z "${DB_USER}" || -z "${DB_PASSWORD}" ]]; then
-  echo "Erreur : DB_NAME, DB_USER et DB_PASSWORD doivent être définis dans le fichier .env"
-  exit 1
-fi
-
-# Définir les variables nécessaires pour PostgreSQL
-export POSTGRES_DB=${DB_NAME}
-export POSTGRES_USER=${DB_USER}
-export POSTGRES_PASSWORD=${DB_PASSWORD}
+# Définir les variables PostgreSQL
+export POSTGRES_DB="$CHAT_DB_NAME"
+export POSTGRES_USER="$CHAT_DB_USER"
+export POSTGRES_PASSWORD="$CHAT_DB_PASSWORD"
 
 # Lancer PostgreSQL
 exec docker-entrypoint.sh postgres

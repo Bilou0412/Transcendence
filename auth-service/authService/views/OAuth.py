@@ -74,8 +74,8 @@ def get_access_token(code):
     redirect_uri = 'https://localhost:8443/succes/'
     response = requests.post(token_url, data={
         'grant_type': 'authorization_code',
-        'client_id': os.environ.get('CLIENT_ID'),
-        'client_secret': os.environ.get('CLIENT_SECRET'),
+        'client_id': os.environ.get('AUTH_CLIENT_ID'),
+        'client_secret': os.environ.get('AUTH_CLIENT_SECRET'),
         'code': code,
         'redirect_uri': redirect_uri,
     })
