@@ -1,4 +1,5 @@
 import { fetchProfileImages } from './utils.js';
+import { fetchFriendList } from './friendList.js';
 
 console.log('chat.js loaded');
 
@@ -15,92 +16,92 @@ function loadChatPage() {
 		return;
 	}
     console.log('Loading chat page');
-	fetchFriendList(accessToken);
+	fetchFriendList(accessToken, 'friendList', Chat);
 }
 loadChatPage();
-function fetchFriendList(accessToken) {
-	fetch('https://localhost:8443/usermanagement/friends/', {
-		headers: {
-			'Authorization': `Bearer ${accessToken}`
-		}
-	})
-	.then(response => response.json())
-	.then(data => {
-		const friendIds = data.friends;
-		if (friendIds.length > 0) {
-			console.log('Friend list:', data);
-			fetch('https://localhost:8443/auth/users/info/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${accessToken}`
-				},
-				body: JSON.stringify({ user_ids: friendIds })
-			})
-			.then(response => response.json())
-			.then(userData => {
-				const friendList = document.getElementById('friendList');
-				friendList.innerHTML = '';
-				friendIds.forEach(friendId => {
-					const li = document.createElement('div');
-					li.className = 'friend-item';
+// function fetchFriendList(accessToken) {
+// 	fetch('https://localhost:8443/usermanagement/friends/', {
+// 		headers: {
+// 			'Authorization': `Bearer ${accessToken}`
+// 		}
+// 	})
+// 	.then(response => response.json())
+// 	.then(data => {
+// 		const friendIds = data.friends;
+// 		if (friendIds.length > 0) {
+// 			console.log('Friend list:', data);
+// 			fetch('https://localhost:8443/auth/users/info/', {
+// 				method: 'POST',
+// 				headers: {
+// 					'Content-Type': 'application/json',
+// 					'Authorization': `Bearer ${accessToken}`
+// 				},
+// 				body: JSON.stringify({ user_ids: friendIds })
+// 			})
+// 			.then(response => response.json())
+// 			.then(userData => {
+// 				const friendList = document.getElementById('friendList');
+// 				friendList.innerHTML = '';
+// 				friendIds.forEach(friendId => {
+// 					const li = document.createElement('div');
+// 					li.className = 'friend-item';
 					
-					const avatar = document.createElement('img');
-					avatar.className = 'friend-avatar';
-					avatar.id = `chat-avatar-${friendId}`;
-					avatar.onclick = function () {
-						Chat(friendId);
-					};
+// 					const avatar = document.createElement('img');
+// 					avatar.className = 'friend-avatar';
+// 					avatar.id = `chat-avatar-${friendId}`;
+// 					avatar.onclick = function () {
+// 						Chat(friendId);
+// 					};
 					
-					const userInfo = document.createElement('div');
-					userInfo.className = 'friend-info';
-					const userName = document.createElement('div');
-					userName.className = 'friend-name';
-					userName.innerText = `${userData[friendId].username} (#${friendId})`;
-					userName.onclick = function () {
-						Chat(friendId);
-					};
-					userInfo.appendChild(userName);
+// 					const userInfo = document.createElement('div');
+// 					userInfo.className = 'friend-info';
+// 					const userName = document.createElement('div');
+// 					userName.className = 'friend-name';
+// 					userName.innerText = `${userData[friendId].username} (#${friendId})`;
+// 					userName.onclick = function () {
+// 						Chat(friendId);
+// 					};
+// 					userInfo.appendChild(userName);
 					
-					const userActions = document.createElement('div');
-					userActions.className = 'friend-actions';
-					const inviteButton = document.createElement('button');
-					inviteButton.className = 'btn btn-invite';
-					inviteButton.innerText = 'Invite';
-					inviteButton.onclick = () => {
-						inviteToChat(friendId);
-					};
-					const removeButton = document.createElement('button');
-					removeButton.className = 'btn btn-remove';
-					removeButton.innerText = 'Remove';
-					removeButton.onclick = () => {
-						updateFriendRequest(friendId, 'refused');
-						li.remove();
-					};
-					const blockButton = document.createElement('button');
-					blockButton.className = 'btn btn-block';
-					blockButton.innerText = 'Block';
-					blockButton.onclick = () => {
-						blockUser(friendId);
-						li.remove();
-					};
+// 					const userActions = document.createElement('div');
+// 					userActions.className = 'friend-actions';
+// 					const inviteButton = document.createElement('button');
+// 					inviteButton.className = 'btn btn-invite';
+// 					inviteButton.innerText = 'Invite';
+// 					inviteButton.onclick = () => {
+// 						inviteToChat(friendId);
+// 					};
+// 					const removeButton = document.createElement('button');
+// 					removeButton.className = 'btn btn-remove';
+// 					removeButton.innerText = 'Remove';
+// 					removeButton.onclick = () => {
+// 						updateFriendRequest(friendId, 'refused');
+// 						li.remove();
+// 					};
+// 					const blockButton = document.createElement('button');
+// 					blockButton.className = 'btn btn-block';
+// 					blockButton.innerText = 'Block';
+// 					blockButton.onclick = () => {
+// 						blockUser(friendId);
+// 						li.remove();
+// 					};
 					
-					userActions.appendChild(inviteButton);
-					userActions.appendChild(removeButton);
-					userActions.appendChild(blockButton);
-					li.appendChild(avatar);
-					li.appendChild(userInfo);
-					li.appendChild(userActions);
-					friendList.appendChild(li);
+// 					userActions.appendChild(inviteButton);
+// 					userActions.appendChild(removeButton);
+// 					userActions.appendChild(blockButton);
+// 					li.appendChild(avatar);
+// 					li.appendChild(userInfo);
+// 					li.appendChild(userActions);
+// 					friendList.appendChild(li);
 					
-				});
-				fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `chat-avatar-${friendId}`));
-			})
-			.catch(error => console.error('Error fetching friend details:', error));
-		}
-	})
-	.catch(error => console.error('Error fetching friend list:', error));
-}
+// 				});
+// 				fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `chat-avatar-${friendId}`));
+// 			})
+// 			.catch(error => console.error('Error fetching friend details:', error));
+// 		}
+// 	})
+// 	.catch(error => console.error('Error fetching friend list:', error));
+// }
 
 function inviteToChat(friendId) {
 	// Implement the function to invite a friend to chat
