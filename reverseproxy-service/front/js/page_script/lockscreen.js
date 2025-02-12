@@ -283,7 +283,7 @@ document.querySelector('#registerFormContainer form').addEventListener('submit',
 const log42Button = document.getElementById('log42Button');
 
 log42Button.addEventListener('click', function () {
-	const oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=https%3A%2F%2F${window.location.host}%2Fsucces%2F&response_type=code`;
+	const oauthUrl = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=https%3A%2F%2Fxpongo.ddns.net%3A8443%2Fsucces%2F&response_type=code";
 	const popup = window.open(oauthUrl, 'OAuth Login', 'width=600,height=600');
 	const interval = setInterval(function () {
 		try {

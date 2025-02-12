@@ -30,7 +30,7 @@ def Signup(request):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             # Use the frontend URL from the Nginx configuration
-            frontend_url = "https://localhost:8443"
+            frontend_url = "https://xpongo.ddns.net:8443"
             verification_url = f"{frontend_url}/verify-email/?uid={uid}&token={token}"      
 
             # Send the verification email

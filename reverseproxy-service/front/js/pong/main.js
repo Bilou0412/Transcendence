@@ -166,7 +166,7 @@ export async function remote_game() {
     const accessToken = sessionStorage.getItem('accessToken');
 
     if (accessToken) {
-        remoteWs = new WebSocket('wss://localhost:8443/remote/key/', ['Bearer_' + accessToken]);
+        remoteWs = new WebSocket('wss://xpongo.ddns.net:8443/remote/key/', ['Bearer_' + accessToken]);
         remoteWs.onopen = function () {
             console.log('Remote WebSocket connection established');
         };

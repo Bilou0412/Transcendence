@@ -13,6 +13,8 @@ services:
       my_network:
         aliases:
           - reverseproxy
+    env_file:
+      - ../.env
     environment:
       - TZ=Europe/Paris  # Optionnel : Pour configurer le fuseau horaire
 

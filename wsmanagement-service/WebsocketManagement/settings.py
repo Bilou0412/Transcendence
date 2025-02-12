@@ -130,7 +130,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'wsmanagement']
+ALLOWED_HOSTS = ['auth','chat','media','remote','usermanagement','wsmanagement','xpongo.ddns.net']
 
 ASGI_APPLICATION = "WebsocketManagement.asgi.application"
 
@@ -144,4 +144,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+	'https://xpongo.ddns.net'
+]

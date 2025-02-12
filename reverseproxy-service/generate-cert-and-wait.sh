@@ -5,7 +5,7 @@ if [ ! -f /etc/nginx/ssl/certificate.crt ]; then
     echo "Génération du certificat SSL auto-signé..."
 
     # Générer un certificat SSL auto-signé
-    openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/private.key -out /etc/nginx/ssl/certificate.crt -days 365 -nodes -subj "/C=US/ST=State/L=City/O=Company/CN=localhost"
+    openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/private.key -out /etc/nginx/ssl/certificate.crt -days 365 -nodes -subj "/C=US/ST=State/L=City/O=Company/CN=xpongo.ddns.net"
 
     echo "Certificat SSL généré avec succès !"
 else

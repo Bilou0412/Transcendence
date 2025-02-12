@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('CHAT_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['auth','chat','media','remote','usermanagement','wsmanagement','xpongo.ddns.net']
 
 
 # Application definition
@@ -57,7 +57,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-	'http://localhost:3000'
+	'https://xpongo.ddns.net'
 ]
 
 ROOT_URLCONF = 'chat.urls'
