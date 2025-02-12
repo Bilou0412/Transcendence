@@ -222,52 +222,72 @@ function fetchFriendRequests() {
 		return response.json();
 	})
 	.then(data => {
-		console.log('Friend requests data:', data); // Debugging line
 		const requestContainer = document.getElementById('requestResults-body');
 		requestContainer.innerHTML = '';
-		data.pending_requests.forEach(request => {
-			const requestElement = document.createElement('div');
-			requestElement.className = 'friend-item';
-			
-			const avatar = document.createElement('img');
-			avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-			avatar.alt = 'User Avatar';
-			avatar.id = `request-avatar-${request}`;
-			avatar.className = 'friend-avatar';
-			
-			const userInfo = document.createElement('div');
-			userInfo.className = 'friend-info';
-			const userName = document.createElement('div');
-			userName.className = 'friend-name';
-			userName.innerText = `Friend request from User ID: ${request}`;
-			userInfo.appendChild(userName);
-			
-			const userActions = document.createElement('div');
-			userActions.className = 'friend-actions';
-			const acceptButton = document.createElement('button');
-			acceptButton.className = 'btn btn-accept-request';
-			acceptButton.innerText = 'Accept';
-			acceptButton.onclick = function () {
-				respondToFriendRequest(request, true);
-				requestElement.remove();
-			};
-			const rejectButton = document.createElement('button');
-			rejectButton.className = 'btn btn-reject-request';
-			rejectButton.innerText = 'Reject';
-			rejectButton.onclick = function () {
-				respondToFriendRequest(request, false);
-				requestElement.remove();
-			};
-			userActions.appendChild(acceptButton);
-			userActions.appendChild(rejectButton);
-			
-			requestElement.appendChild(avatar);
-			requestElement.appendChild(userInfo);
-			requestElement.appendChild(userActions);
-			
-			requestContainer.appendChild(requestElement);
-		});
-		fetchProfileImages(data.pending_requests, accessToken, data.pending_requests.map(request => `request-avatar-${request}`));
+
+		const userIds = data.pending_requests.map(request => request);
+
+		// Fetch user information
+		fetch(`https://${window.location.host}/auth/users/info/`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + accessToken
+			},
+			body: JSON.stringify({ user_ids: userIds })
+		})
+		.then(response => response.json())
+		.then(userData => {
+			data.pending_requests.forEach(requestId => {
+				const user = userData[requestId];
+				if (!user) {
+					console.error(`User data not found for request ID: ${requestId}`);
+					return;
+				}
+				const requestElement = document.createElement('div');
+				requestElement.className = 'friend-item';
+				
+				const avatar = document.createElement('img');
+				avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
+				avatar.alt = 'User Avatar';
+				avatar.id = `request-avatar-${requestId}`;
+				avatar.className = 'friend-avatar';
+				
+				const userInfo = document.createElement('div');
+				userInfo.className = 'friend-info';
+				const userName = document.createElement('div');
+				userName.className = 'friend-name';
+				userName.innerText = `Friend request from ${user.username}`;
+				userInfo.appendChild(userName);
+				
+				const userActions = document.createElement('div');
+				userActions.className = 'friend-actions';
+				const acceptButton = document.createElement('button');
+				acceptButton.className = 'btn btn-accept-request';
+				acceptButton.innerText = 'Accept';
+				acceptButton.onclick = function () {
+					respondToFriendRequest(requestId, true);
+					requestElement.remove();
+				};
+				const rejectButton = document.createElement('button');
+				rejectButton.className = 'btn btn-reject-request';
+				rejectButton.innerText = 'Reject';
+				rejectButton.onclick = function () {
+					respondToFriendRequest(requestId, false);
+					requestElement.remove();
+				};
+				userActions.appendChild(acceptButton);
+				userActions.appendChild(rejectButton);
+				
+				requestElement.appendChild(avatar);
+				requestElement.appendChild(userInfo);
+				requestElement.appendChild(userActions);
+				
+				requestContainer.appendChild(requestElement);
+			});
+			fetchProfileImages(userIds, accessToken, userIds.map(id => `request-avatar-${id}`));
+		})
+		.catch(error => console.error('Error fetching user information:', error));
 	})
 	.catch(error => console.error('Error fetching friend requests:', error));
 }
