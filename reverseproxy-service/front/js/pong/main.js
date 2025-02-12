@@ -9,7 +9,7 @@ import { focusGame, initMonitor, focusMonitor, initTable} from "./monitor.js";
 import { onKeyDown, onKeyUp, onMouseWheel } from "./keyEvents.js";
 import { Settings } from "./settings.js";
 import { titleDisplay } from "./monitor_display.js";
-import { fetchFriendList } from "../page_script/friendList.js";
+import { buildFriendList } from "../page_script/friendList.js";
 
 // ///////////////////////////////////environment settings///////////////////////////////
 export let settings = null;
@@ -149,12 +149,12 @@ function initEnvironment() {
     initClock();
 }
 
-export async function startGame() {
+export async function startGame(gameId) {
     if (!settings) return;
     console.log(`Starting game in mode: ${settings.gameMode}`);
     settings.gameStatus = 'playing';
     if (settings.gameMode === 'remote 1v1') {
-        remote_game();
+        remote_game(gameId);
     }
     else 
         updateClock();
@@ -162,11 +162,11 @@ export async function startGame() {
     resetGame();
 }
 
-export async function remote_game() {
+export async function remote_game(gameId) {
     const accessToken = sessionStorage.getItem('accessToken');
 
     if (accessToken) {
-        remoteWs = new WebSocket(`wss://${window.location.host}/remote/key/`, ['Bearer_' + accessToken]);
+        remoteWs = new WebSocket(`wss://${window.location.host}/remote/${gameId}/`, ['Bearer_' + accessToken]);
         remoteWs.onopen = function () {
             console.log('Remote WebSocket connection established');
         };
@@ -300,7 +300,7 @@ function changePlayStyle()
     }
 }
 
-export async function initializeGame() {
+export async function initializeGame(gameId) {
     document.getElementById('waitingScreen').style.display = 'block';
     document.getElementById('nav').style.display = 'none';
     document.getElementById('startButton').style.display = 'none';
@@ -312,6 +312,9 @@ export async function initializeGame() {
     window.addEventListener('wheel', onMouseWheel, false);
     settings = new Settings();
     settings.gameMode = selectedMode;
+    if (gameId) {
+        settings.gameMode = 'remote 1v1';
+    }
     changePlayStyle();
     initMonitor();
     initTable();
@@ -320,7 +323,7 @@ export async function initializeGame() {
     settings.updateTime();
     animate();
     initEnvironment();
-    startGame();
+    startGame(gameId);
     document.getElementById('Taskbar').style.display = 'none';
     document.getElementById('titleBarPong').style.display = 'none';
     document.getElementById('waitingScreen').style.display = 'none';
@@ -350,13 +353,12 @@ function setupGameModeSelect() {
                 sections[selectedMode].style.display = 'flex';
             }
             if (selectedMode === 'remote 1v1') {
-                fetchFriendList(sessionStorage.getItem('accessToken'), 'friendList', Invite);
+                buildFriendList(sessionStorage.getItem('accessToken'), 'friendList', Invite);
             }
         });
     }
 }
 
-function Invite(friendId) {}
 
 //////////////////////////////////////Player Names//////////////////////////////////////
 function getPlayersNames() {

@@ -1,5 +1,5 @@
 import { fetchProfileImages } from './utils.js';
-import { fetchFriendList } from './friendList.js';
+import { buildFriendList } from './friendList.js';
 
 
 function profileNav(idToSearch) {
@@ -27,7 +27,7 @@ function profileNav(idToSearch) {
 		fetchUserStatistics(user.id, accessToken);
 		fetchUserFriends(user.id, accessToken); // Ensure this function is called correctly
 		fetchFriendRequests();
-		fetchFriendList(accessToken, 'friendList-body', profileNav);
+		buildFriendList(accessToken, 'friendList-body', profileNav);
 		if (sessionStorage.getItem('userId') !== idToSearch) {
 			document.getElementById('editBtn').style.display = 'none';
 		}
@@ -158,7 +158,7 @@ function fetchUserMatches(userId, accessToken) {
 			const newRow = historyTable.insertRow();
 			newRow.className = 'match';
 			newRow.innerHTML = `
-				<td colspan="8">No matches found</td>
+				<td colspan="7">No matches found</td>
 			`;
 			return;
 		}
@@ -315,119 +315,5 @@ function sendFriendRequest(receiverId) {
 	});
 }
 
-// function fetchFriendList(accessToken) {
-// 	fetch('https://localhost:8443/usermanagement/friends/', {
-// 		headers: {
-// 			'Authorization': `Bearer ${accessToken}`
-// 		}
-// 	})
-// 	.then(response => response.json())
-// 	.then(data => {
-// 		if (!data) return;
-		
-// 		const friendIds = data.friends;
-// 		if (friendIds.length > 0) {
-// 			console.log('Friend list:', data);
-// 			fetch('https://localhost:8443/auth/users/info/', {
-// 				method: 'POST',
-// 				headers: {
-// 					'Content-Type': 'application/json',
-// 					'Authorization': `Bearer ${accessToken}`
-// 				},
-// 				body: JSON.stringify({ user_ids: friendIds })
-// 			})
-// 			.then(response => response.json())
-// 			.then(userData => {
-// 				const friendList = document.getElementById('friendList-body');
-// 				friendList.innerHTML = '';
-// 				fetchBlockedUsers(accessToken, blockedUserIds => {
-// 					friendIds.forEach(friendId => {
-// 						const li = document.createElement('div');
-// 						li.className = 'friend-item';
-						
-// 						const avatar = document.createElement('img');
-// 						// avatar.src = '../css/icon/rounded_login.png'; // Placeholder avatar
-// 						// avatar.alt = 'User Avatar';
-// 						avatar.className = 'friend-avatar';
-// 						avatar.id = `profile-avatar-${friendId}`;
-// 						avatar.onclick = function () {
-// 							profileNav(friendId);
-// 						};
-						
-// 						const userInfo = document.createElement('div');
-// 						userInfo.className = 'friend-info';
-// 						const userName = document.createElement('div');
-// 						userName.className = 'friend-name';
-// 						userName.innerText = `${userData[friendId].username} (#${friendId})`;
-// 						userName.onclick = function () {
-// 							profileNav(friendId);
-// 						};
-// 						userInfo.appendChild(userName);
-						
-// 						const userActions = document.createElement('div');
-// 						userActions.className = 'friend-actions';
-// 						const removeButton = document.createElement('button');
-// 						removeButton.className = 'btn btn-remove';
-// 						removeButton.innerText = 'Remove Friend';
-// 						removeButton.onclick = () => {
-// 							updateFriendRequest(friendId, 'refused');
-// 							li.remove();
-// 						};
-// 						const blockButton = document.createElement('button');
-// 						blockButton.className = 'btn';
-// 						if (blockedUserIds.has(friendId)) {
-// 							blockButton.innerText = 'Unblock';
-// 							blockButton.onclick = () => {
-// 								unblockUser(friendId);
-// 								li.remove();
-// 							};
-// 						} else {
-// 							blockButton.innerText = 'Block';
-// 							blockButton.onclick = () => {
-// 								blockUser(friendId);
-// 								li.remove();
-// 							};
-// 						}
-						
-// 						userActions.appendChild(removeButton);
-// 						userActions.appendChild(blockButton);
-// 						li.appendChild(avatar);
-// 						li.appendChild(userInfo);
-// 						li.appendChild(userActions);
-// 						friendList.appendChild(li);
-// 					});
-// 					console.log(friendIds.map(friendId => `profile-avatar-${friendId}`));
-// 					fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `profile-avatar-${friendId}`));
-// 				});
-// 			})
-// 			.catch(error => console.error('Error fetching friend details:', error));
-// 		} else {
-// 			fetchBlockedUsers(accessToken, blockedUserIds => {
-// 				const friendList = document.getElementById('friendList-body');
-// 				friendList.innerHTML = '';
-// 				blockedUserIds.forEach(blockedId => {
-// 					const li = document.createElement('div');
-// 					li.className = 'friend-item';
-// 				});
-// 			});
-// 		}
-// 	})
-// 	.catch(error => console.error('Error fetching friend list:', error));
-// }
-
-// function fetchBlockedUsers(accessToken, callback) {
-// 	fetch('https://localhost:8443/usermanagement/block/', {
-// 		headers: {
-// 			'Authorization': `Bearer ${accessToken}`,
-// 			'Content-Type': 'application/json'
-// 		}
-// 	})
-// 	.then(response => response.json())
-// 	.then(data => {
-// 		const blockedUserIds = new Set(data.blocked_users);
-// 		callback(blockedUserIds);
-// 	})
-// 	.catch(error => console.error('Error fetching blocked users:', error));
-// }
 
 

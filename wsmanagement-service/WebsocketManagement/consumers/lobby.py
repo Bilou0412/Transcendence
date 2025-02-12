@@ -67,11 +67,11 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 		invite_code = str(uuid.uuid4())
 
 		# Send invite code to the inviter
-		await self.send(text_data=json.dumps({
-			'type': 'invite_code',
-			'invite_code': invite_code,
-			'invitee_id': invitee_id
-		}))
+		# await self.send(text_data=json.dumps({
+		# 	'type': 'invite_code',
+		# 	'invite_code': invite_code,
+		# 	'invitee_id': invitee_id
+		# }))
 
 		# Send invite code to the invitee
 		await self.channel_layer.group_send(
