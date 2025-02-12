@@ -1,7 +1,7 @@
 import { fetchProfileImages } from './utils.js';
 
 export function fetchFriendList(accessToken, elementId, onClickHandler) {
-	fetch('https://localhost:8443/usermanagement/friends/', {
+	fetch(`https://${window.location.host}/usermanagement/friends/`, {
 		headers: {
 			'Authorization': `Bearer ${accessToken}`
 		}
@@ -13,7 +13,7 @@ export function fetchFriendList(accessToken, elementId, onClickHandler) {
 		const friendIds = data.friends;
 		if (friendIds.length > 0) {
 			console.log('Friend list:', data);
-			fetch('https://localhost:8443/auth/users/info/', {
+			fetch(`https://${window.location.host}/auth/users/info/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export function fetchFriendList(accessToken, elementId, onClickHandler) {
 }
 
 function fetchBlockedUsers(accessToken, callback) {
-	fetch('https://localhost:8443/usermanagement/block/', {
+	fetch(`https://${window.location.host}/usermanagement/block/`, {
 		headers: {
 			'Authorization': `Bearer ${accessToken}`,
 			'Content-Type': 'application/json'
@@ -115,7 +115,7 @@ function fetchBlockedUsers(accessToken, callback) {
 
 function updateFriendRequest(friendId, status) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/friends/update/', {
+	fetch(`https://${window.location.host}/usermanagement/friends/update/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ function updateFriendRequest(friendId, status) {
 
 function blockUser(userId) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/block/request/', {
+	fetch(`https://${window.location.host}/usermanagement/block/request/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ function blockUser(userId) {
 
 function unblockUser(userId) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/unblock/', {
+	fetch(`https://${window.location.host}/usermanagement/unblock/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

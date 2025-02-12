@@ -29,3 +29,6 @@ function switchTab(event) {
 tabButtons.forEach(button => {
 	button.addEventListener('click', switchTab);
 });
+
+// Update the static URL to use window.location.host
+const staticUrl = `https://${window.location.host}/path/to/resource`;

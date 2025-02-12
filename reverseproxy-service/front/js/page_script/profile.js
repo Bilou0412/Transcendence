@@ -7,7 +7,7 @@ function profileNav(idToSearch) {
 		return;
 	}
 
-	fetch('https://localhost:8443/auth/users/info/', {
+	fetch(`https://${window.location.host}/auth/users/info/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ if (sessionStorage.getItem('userId')) {
 document.getElementById('search_bar').addEventListener('input', function(event) {
 	const query = event.target.value;
 	if (query.length > 0) {
-		fetch(`https://localhost:8443/auth/search_user/?username=${query}`, {
+		fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ function formatDate(dateStr) {
 
 function fetchUserMatches(userId, accessToken) {
 	console.log('Fetching user matches...');
-	fetch(`https://localhost:8443/usermanagement/${userId}/matches/`, {
+	fetch(`https://${window.location.host}/usermanagement/${userId}/matches/`, {
 		method: 'GET',
 		headers: {
 			'Authorization': 'Bearer ' + accessToken
@@ -203,7 +203,7 @@ function fetchUserFriends(userId, accessToken) {
 
 function fetchFriendRequests() {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/friends/listrequests/', {
+	fetch(`https://${window.location.host}/usermanagement/friends/listrequests/`, {
 		headers: {
 			'Authorization': `Bearer ${accessToken}`
 		}
@@ -267,7 +267,7 @@ function fetchFriendRequests() {
 
 function respondToFriendRequest(friendId, accept) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/friends/update/', {
+	fetch(`https://${window.location.host}/usermanagement/friends/update/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -292,7 +292,7 @@ function respondToFriendRequest(friendId, accept) {
 
 function sendFriendRequest(receiverId) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/friends/request/', {
+	fetch(`https://${window.location.host}/usermanagement/friends/request/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

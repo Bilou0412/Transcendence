@@ -6,7 +6,7 @@ function settingsNav() {
 	}
 	const userId = sessionStorage.getItem('userId');
 
-	fetch('https://localhost:8443/auth/users/info/', {
+	fetch(`https://${window.location.host}/auth/users/info/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ settingsNav();
 
 function fetchProfileImages(userIds, accessToken, imageElementIds) {
 	const cacheBuster = new Date().getTime(); // Generate a unique timestamp
-	fetch(`https://localhost:8443/media/profile-images/?cb=${cacheBuster}`, {
+	fetch(`https://${window.location.host}/media/profile-images/?cb=${cacheBuster}`, {
 		method: 'POST',
 		headers: {
 			'Authorization': 'Bearer ' + accessToken,
@@ -67,7 +67,7 @@ document.getElementById('upload-image-form').addEventListener('submit', async fu
 	formData.append('image', fileInput.files[0]);
 
 	try {
-		const response = await fetch('https://localhost:8443/media/upload/', {
+		const response = await fetch(`https://${window.location.host}/media/upload/`, {
 			method: 'POST',
 			headers: {
 				'Authorization': 'Bearer ' + accessToken
@@ -90,7 +90,7 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 	event.preventDefault();
 	const accessToken = sessionStorage.getItem('accessToken');
 	try {
-		const response = await fetch('https://localhost:8443/auth/2fa/enable/', {
+		const response = await fetch(`https://${window.location.host}/auth/2fa/enable/`, {
 			method: 'GET',
 			headers: {
 				'Authorization': 'Bearer ' + accessToken
@@ -111,7 +111,7 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 			verifyButton.addEventListener('click', async function () {
 				const otpCode = otpInput.value;
 				try {
-					const verifyResponse = await fetch('https://localhost:8443/auth/2fa/verify/', {
+					const verifyResponse = await fetch(`https://${window.location.host}/auth/2fa/verify/`, {
 						method: 'POST',
 						headers: {
 							'Authorization': 'Bearer ' + accessToken,
@@ -226,7 +226,7 @@ function updatePassword() {
     console.log('old_password:', oldPassword);
     console.log('new_password:', newPassword);
 
-    fetch('https://localhost:8443/auth/password/update/', {
+    fetch(`https://${window.location.host}/auth/password/update/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -260,7 +260,7 @@ function updateUsernameOrEmail() {
 	console.log('Current Email:', currentEmail);
 	console.log('New Username:', newUsername);
 	console.log('New Email:', newEmail);
-	fetch('https://localhost:8443/auth/update/', {
+	fetch(`https://${window.location.host}/auth/update/`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',

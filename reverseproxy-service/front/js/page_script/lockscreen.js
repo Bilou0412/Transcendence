@@ -159,7 +159,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
    console.log('Password:', password);
    console.log('OTP:', otp);
    
-   fetch('https://localhost:8443/auth/login/', {
+   fetch(`https://${window.location.host}/auth/login/`, {
        method: 'POST',
        headers: {
            'Content-Type': 'application/json'
@@ -213,7 +213,7 @@ document.querySelector('.forgot-password').addEventListener('click', function(ev
 		return;
 	}
 	
-	fetch('https://localhost:8443/auth/password/reset/', {
+	fetch(`https://${window.location.host}/auth/password/reset/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -246,7 +246,7 @@ document.querySelector('#registerFormContainer form').addEventListener('submit',
 	console.log('Confirm Password:', password2);
 	console.log('Email:', email);
 
-	fetch('https://localhost:8443/auth/signup/', {
+	fetch(`https://${window.location.host}/auth/signup/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -283,7 +283,7 @@ document.querySelector('#registerFormContainer form').addEventListener('submit',
 const log42Button = document.getElementById('log42Button');
 
 log42Button.addEventListener('click', function () {
-	const oauthUrl = 'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fsucces%2F&response_type=code';
+	const oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=https%3A%2F%2F${window.location.host}%2Fsucces%2F&response_type=code`;
 	const popup = window.open(oauthUrl, 'OAuth Login', 'width=600,height=600');
 	const interval = setInterval(function () {
 		try {
@@ -291,7 +291,7 @@ log42Button.addEventListener('click', function () {
 				const urlParams = new URLSearchParams(popup.location.search);
 				const code = urlParams.get('code');
 				if (code) {
-					fetch(`https://localhost:8443/auth/oauth/?code=${code}`, {
+					fetch(`https://${window.location.host}/auth/oauth/?code=${code}`, {
 						method: 'GET'
 					})
 					.then(response => response.json())
@@ -348,7 +348,7 @@ async function autoLogin() {
         return;
     }
 	try {
-		const response = await fetch('https://localhost:8443/auth/token/validate/', {
+		const response = await fetch(`https://${window.location.host}/auth/token/validate/`, {
 			method: 'POST', // Ensure it's a POST request
 			headers: {
 				'Authorization': 'Bearer ' + accessTokenLogin

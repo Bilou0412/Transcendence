@@ -8,7 +8,7 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
     console.log(userId);
     console.log(username);
 
-    const socket = new WebSocket(`wss://localhost:8443/wsmanagement/lobby/`, [`Bearer_${accessToken}`]);
+    const socket = new WebSocket(`wss://${window.location.host}/wsmanagement/lobby/`, [`Bearer_${accessToken}`]);
     globalSocket = socket;
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);

@@ -21,3 +21,5 @@ gameModeSelect.addEventListener('change', function () {
 		sections[selectedMode].style.display = 'flex';
 	}
 });
+
+

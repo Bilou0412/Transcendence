@@ -110,7 +110,7 @@ function inviteToChat(friendId) {
 
 function updateFriendRequest(friendId, status) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/friends/update/', {
+	fetch(`https://${window.location.host}/usermanagement/friends/update/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ function updateFriendRequest(friendId, status) {
 
 function blockUser(userId) {
 	const accessToken = sessionStorage.getItem('accessToken');
-	fetch('https://localhost:8443/usermanagement/block/request/', {
+	fetch(`https://${window.location.host}/usermanagement/block/request/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ function Chat(userIdToChat) {
 		if (chatSocket) {
 			chatSocket.close();
 		}
-		chatSocket = new WebSocket(`wss://localhost:8443/chat/${userIdToChat}/`, ['Bearer_' + accessToken]);
+		chatSocket = new WebSocket(`wss://${window.location.host}/chat/${userIdToChat}/`, ['Bearer_' + accessToken]);
 
 		chatSocket.onopen = () => {
 			document.getElementById('chat-history-body').innerHTML = '';
