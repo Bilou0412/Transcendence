@@ -1,5 +1,16 @@
 import { fetchProfileImages } from './utils.js';
 
+// export function fetchFriendList(accessToken, elementId, onClickHandler) {
+// 	fetch(`https://${window.location.host}/usermanagement/friends/`, {
+// 		headers: {
+// 			'Authorization': `Bearer ${accessToken}`
+// 		}
+// 	})
+// 	.then(response => response.json())
+
+// 	.catch(error => console.error('Error fetching friend list:', error));
+// }
+
 export function fetchFriendList(accessToken, elementId, onClickHandler) {
 	fetch(`https://${window.location.host}/usermanagement/friends/`, {
 		headers: {
