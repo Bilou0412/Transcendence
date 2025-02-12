@@ -23,6 +23,13 @@ function settingsNav() {
 		document.getElementById('username').innerText = user.username;
 		document.getElementById('userMail').innerText = user.email;
 		fetchProfileImages(user.id, accessToken, ['userIcon']);
+		const btn2FA = document.getElementById('btn2FA');
+		if (user['2fa']) {
+			btn2FA.innerText = 'Disable 2FA';
+			btn2FA.addEventListener('click', disable2FA);
+		} else {
+			btn2FA.addEventListener('click', enable2FA);
+		}
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 };
@@ -86,7 +93,7 @@ document.getElementById('upload-image-form').addEventListener('submit', async fu
 	}
 });
 
-document.getElementById('btn2FA').addEventListener('click', async function (event) {
+async function enable2FA(event) {
 	event.preventDefault();
 	const accessToken = sessionStorage.getItem('accessToken');
 	try {
@@ -106,7 +113,6 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 			otpInput.placeholder = 'Enter OTP';
 			const verifyButton = document.createElement('button');
 			verifyButton.innerText = 'Verify';
-			//texte color
 			verifyButton.style.color = 'black';
 			verifyButton.addEventListener('click', async function () {
 				const otpCode = otpInput.value;
@@ -122,6 +128,10 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 					if (verifyResponse.ok) {
 						alert('2FA enabled successfully.');
 						document.getElementById('qrCodeContainer').innerHTML = '';
+						const btn2FA = document.getElementById('btn2FA');
+						btn2FA.innerText = 'Disable 2FA';
+						btn2FA.removeEventListener('click', enable2FA);
+						btn2FA.addEventListener('click', disable2FA);
 					} else {
 						alert('Failed to verify OTP. Please try again.');
 					}
@@ -139,7 +149,32 @@ document.getElementById('btn2FA').addEventListener('click', async function (even
 		console.error('Error initiating 2FA:', error);
 		alert('Failed to initiate 2FA. Please try again.');
 	}
-});
+}
+
+async function disable2FA(event) {
+	event.preventDefault();
+	const accessToken = sessionStorage.getItem('accessToken');
+	try {
+		const response = await fetch(`https://${window.location.host}/auth/2fa/disable/`, {
+			method: 'DELETE',
+			headers: {
+				'Authorization': 'Bearer ' + accessToken
+			}
+		});
+		if (response.ok) {
+			alert('2FA disabled successfully.');
+			const btn2FA = document.getElementById('btn2FA');
+			btn2FA.innerText = 'Activate 2-factor authentication';
+			btn2FA.removeEventListener('click', disable2FA);
+			btn2FA.addEventListener('click', enable2FA);
+		} else {
+			alert('Failed to disable 2FA. Please try again.');
+		}
+	} catch (error) {
+		console.error('Error disabling 2FA:', error);
+		alert('Failed to disable 2FA. Please try again.');
+	}
+}
 
 document.getElementById('editBtnUsername').addEventListener('click', function () {
     console.log('edit button clicked');

@@ -19,6 +19,7 @@ function profileNav(idToSearch) {
 	})
 	.then(response => response.json())
 	.then(data => {
+		console.log('Profile data:', data);
 		const user = data[idToSearch];
 		document.getElementById('profile-username').innerText = user.username;
 		document.getElementById('profile-id').innerText = user.id;

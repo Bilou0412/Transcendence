@@ -20,3 +20,6 @@ class User(AbstractUser):
     # Email est l'identifiant unique
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']  # Username est requis, mais non unique
+    
+    def has_2fa_enabled(self):
+        return bool(self.otp_secret)

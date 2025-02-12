@@ -7,6 +7,7 @@ import requests
 import os
 from ..models import User
 from ..serializers import UserSerializerOAuth
+import pyotp  # Import pyotp for 2FA
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -35,7 +36,22 @@ def OAuth(request):
         user = User.objects.filter(email=user_data['email']).first()
 
         if user:
-            # User exists, create JWT tokens
+            # User exists, check for 2FA
+            if user.otp_secret:
+                otp_code = request.GET.get('otp')
+                if not otp_code:
+                    return Response(
+                        {"detail": "OTP code is required for this account"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                totp = pyotp.TOTP(user.otp_secret)
+                if not totp.verify(otp_code):
+                    return Response(
+                        {"detail": "Invalid OTP code"},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+
+            # Create JWT tokens
             tokens = create_tokens_for_user(user)
             return Response({
                 "access": tokens['access'],

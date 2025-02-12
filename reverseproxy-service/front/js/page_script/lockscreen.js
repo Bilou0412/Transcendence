@@ -291,7 +291,8 @@ log42Button.addEventListener('click', function () {
 				const urlParams = new URLSearchParams(popup.location.search);
 				const code = urlParams.get('code');
 				if (code) {
-					fetch(`https://${window.location.host}/auth/oauth/?code=${code}`, {
+					const otp = document.getElementById('oauth2faField').value;
+					fetch(`https://${window.location.host}/auth/oauth/?code=${code}&otp=${otp}`, {
 						method: 'GET'
 					})
 					.then(response => response.json())

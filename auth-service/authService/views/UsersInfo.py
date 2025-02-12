@@ -28,4 +28,9 @@ def UsersInfo(request):
 
     user_data = {str(user['id']): user for user in serializer.data}
     
+    # Add 2fa information
+    for user in user_data.values():
+        user_instance = users.get(id=user['id'])
+        user['2fa'] = bool(user_instance.otp_secret)
+    
     return Response(user_data, status=status.HTTP_200_OK)
