@@ -187,4 +187,4 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User  # Utilise le modèle d'utilisateur personnalisé si tu en as un
-        fields = ['id','username', 'email']  # Ajoute ici les champs que tu veux renvoyer
+        fields = ['id','username', 'email', 'Student']  # Ajoute ici les champs que tu veux renvoyer

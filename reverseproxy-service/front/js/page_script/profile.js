@@ -29,9 +29,13 @@ function profileNav(idToSearch) {
 		fetchUserFriends(user.id, accessToken); // Ensure this function is called correctly
 		fetchFriendRequests();
 		fetchFriendList(accessToken, 'friendList-body', profileNav);
+		if (user['Student']) {
+			document.getElementById('editBtn').style.display = 'none';
+		}
 		if (sessionStorage.getItem('userId') !== idToSearch) {
 			document.getElementById('editBtn').style.display = 'none';
 		}
+
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 }

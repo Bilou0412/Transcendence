@@ -30,6 +30,12 @@ function settingsNav() {
 		} else {
 			btn2FA.addEventListener('click', enable2FA);
 		}
+		if (user['Student']) {
+			document.getElementById('editBtnUsername').style.display = 'none';
+			document.getElementById('editBtnUserpwrd').style.display = 'none';
+			document.getElementById('editBtnUserMail').style.display = 'none';
+			document.getElementById('upload-image-form').style.display = 'none';
+		}
 	})
 	.catch(error => console.error('Error viewing profile:', error));
 };
