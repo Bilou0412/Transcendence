@@ -148,7 +148,7 @@ class Game:
 
 	def reset (self):
 		self.ball.pos = {'x': 0, 'y': 0}
-		self.ball.direction = {'x': -0.1 if self.servSide == 'left' else 0.1, 'y': random.choice([-0.065, 0.065])}
+		self.ball.direction = {'x': -0.1 if self.servSide == 'left' else 0.1, 'y': random.choice([-0.1, 0.1])}
 
 	async def move_paddle (self, player_id, direction):
 		print(f'moving paddle {direction}')

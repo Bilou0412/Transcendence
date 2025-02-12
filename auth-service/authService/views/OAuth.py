@@ -71,7 +71,7 @@ def OAuth(request):
 def get_access_token(code):
     """Helper function to get the access token from the 42 API."""
     token_url = 'https://api.intra.42.fr/oauth/token'
-    redirect_uri = 'https://xpongo.ddns.net:8443/succes/'
+    redirect_uri = f"https://{os.getenv('DNS_URL')}:8443/succes/"
     response = requests.post(token_url, data={
         'grant_type': 'authorization_code',
         'client_id': os.environ.get('AUTH_CLIENT_ID'),

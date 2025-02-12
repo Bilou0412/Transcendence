@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('REMOTE_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['auth','chat','media','remote','usermanagement','wsmanagement','xpongo.ddns.net']
+ALLOWED_HOSTS = ['auth','chat','media','remote','usermanagement','wsmanagement', os.getenv('DNS_URL')]
 
 
 # Application definition
@@ -139,5 +139,5 @@ CHANNEL_LAYERS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-	'https://xpongo.ddns.net'
+	f"https://{os.getenv('DNS_URL')}"
 ]

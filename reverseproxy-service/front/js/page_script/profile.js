@@ -1,4 +1,6 @@
 import { fetchProfileImages } from './utils.js';
+import { fetchFriendList } from './friendList.js';
+
 
 function profileNav(idToSearch) {
 	const accessToken = sessionStorage.getItem('accessToken');
@@ -25,7 +27,7 @@ function profileNav(idToSearch) {
 		fetchUserStatistics(user.id, accessToken);
 		fetchUserFriends(user.id, accessToken); // Ensure this function is called correctly
 		fetchFriendRequests();
-		fetchFriendList(accessToken);
+		fetchFriendList(accessToken, 'friendList-body', profileNav);
 		if (sessionStorage.getItem('userId') !== idToSearch) {
 			document.getElementById('editBtn').style.display = 'none';
 		}

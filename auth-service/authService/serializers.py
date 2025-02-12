@@ -8,6 +8,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 from django.conf import settings
+import os
 
 import re
 from .models import User
@@ -161,11 +162,10 @@ class UpdateUserInfoSerializer(serializers.ModelSerializer):
         if email and email != user.email:
             user.new_email = email
             user.save()
-
             # Generate verification link
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            frontend_url = "https://xpongo.ddns.net:8443"
+            frontend_url = f"https://{os.getenv('DNS_URL')}:8443"
             verification_url = f"{frontend_url}/updatemail/?uid={uid}&token={token}" 
 
             # Send verification email

@@ -40,7 +40,9 @@ def ImageServe(request):
                 content_type = 'image/gif'
             
             truncated_path = image_path.split(settings.MEDIA_ROOT)[-1]
-            image_url = request.build_absolute_uri(settings.MEDIA_URL + truncated_path).replace('http://xpongo.ddns.net', 'https://xpongo.ddns.net:8443')
+            # print(f"image url : {request.build_absolute_uri(settings.MEDIA_URL + truncated_path)}")
+            image_url = request.build_absolute_uri(settings.MEDIA_URL + truncated_path).replace(f"http://{os.getenv('DNS_URL')}", f"https://{os.getenv('DNS_URL')}:8443")
+            print(f"image url : {image_url}") 
             images.append({
                 'id': id,
                 'image_url': image_url,
@@ -50,7 +52,7 @@ def ImageServe(request):
         except ObjectDoesNotExist:
             default_path = os.path.join('images', 'default.png')
             if os.path.exists(default_path):
-                default_url = request.build_absolute_uri(settings.MEDIA_URL + 'default.png').replace('http://xpongo.ddns.net', 'https://xpongo.ddns.net:8443')
+                default_url = request.build_absolute_uri(settings.MEDIA_URL + 'default.png').replace(f"http://{os.getenv('DNS_URL')}", f"https://{os.getenv('DNS_URL')}:8443")
                 images.append({
                     'id': id,
                     'image_url': default_url,

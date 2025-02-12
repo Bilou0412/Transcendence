@@ -137,7 +137,7 @@ AUTH_USER_MODEL = 'authService.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['auth','chat','media','remote','usermanagement','wsmanagement','xpongo.ddns.net']
+ALLOWED_HOSTS = ['auth','chat','media','remote','usermanagement','wsmanagement', os.getenv('DNS_URL')]
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-	'https://xpongo.ddns.net'
+	f"https://{os.getenv('DNS_URL')}"
 ]
 
 SIMPLE_JWT = {    

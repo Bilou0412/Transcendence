@@ -1,3 +1,4 @@
+import os
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -27,7 +28,7 @@ def PassReset(request):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             
             # Build reset URL
-            reset_url = f"https://xpongo.ddns.net:8443/password-reset/confirm?uid={uid}&token={token}"
+            reset_url = f"https://{os.getenv('DNS_URL')}:8443/password-reset/confirm?uid={uid}&token={token}"
 
             # Send email
             send_mail(
