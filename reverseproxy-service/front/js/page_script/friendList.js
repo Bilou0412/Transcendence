@@ -172,7 +172,7 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
 						viewProfileButton.className = 'btn btn-view-profile';
 						viewProfileButton.innerText = 'View Profile';
 						viewProfileButton.onclick = () => {
-							viewProfile(friendId);
+							route(event, '/profile', { userId: friendId });
 						};
 						userActions.appendChild(inviteButton);
 						userActions.appendChild(viewProfileButton);

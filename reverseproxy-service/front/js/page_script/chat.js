@@ -34,16 +34,21 @@ function formatTime(dateStr) {
 function Chat(userIdToChat) {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (userIdToChat && accessToken) {
-		if (chatSocket) {
+		console.log(`chatsocket: ${chatSocket}`);
+		if (chatSocket)
+			console.log(`chatsocket.readyState: ${chatSocket.readyState}`);
+		if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+			console.log('Closing existing Chat WebSocket connection...');
 			chatSocket.close();
 		}
+		console.log('Opening Chat WebSocket connection...');
 		chatSocket = new WebSocket(`wss://${window.location.host}/chat/${userIdToChat}/`, ['Bearer_' + accessToken]);
 
 		chatSocket.onopen = () => {
 			document.getElementById('chat-history-body').innerHTML = '';
-			document.getElementById('other-avatar').onclick = () => {
-				viewProfile(userIdToChat);
-			}
+			// document.getElementById('other-avatar').onclick = () => {
+			// 	viewProfile(userIdToChat);
+			// }
 			fetchProfileImages([userIdToChat], accessToken, ['other-avatar']);
 			console.log('Direct Message WebSocket connection opened');
 		};
@@ -96,4 +101,13 @@ function sendChatMessage() {
 		chatSocket.send(JSON.stringify({ message }));
 		messageInput.value = '';
 	}
+}
+
+// Add cleanup function
+export function quit() {
+    if (chatSocket) {
+        console.log('Closing Chat WebSocket connection due to page change...');
+        chatSocket.close();
+        chatSocket = null;
+    }
 }

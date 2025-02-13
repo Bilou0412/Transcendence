@@ -14,6 +14,7 @@ const cleanupRouteScript = async (path) => {
     console.log(`script: ${script}, scriptListeners: ${scriptListeners}`);
     // If the route has a custom cleanup function, call it
     if (module && typeof module.quit === 'function') {
+        console.log('Cleaning up route using quit:', path, module);
         await module.quit();
     }
 
@@ -89,7 +90,7 @@ const loadRouteModule = async (path) => {
             '/pong': '../js/pong/main.js',
             // '/about': '../js/page_script/tabs.js',
             // '/profile': '../js/page_script/profile.js',
-            // '/chat': '../js/page_script/chat.js',
+            '/chat': '../js/page_script/chat.js',
             // '/settings': '../js/page_script/profile-settings.js',
             // '/': '../js/page_script/home.js',
         };

@@ -33,9 +33,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
   "status": "accepted"
 }
 ###
-GET https://sxpongo.ddns.net:8443/usermanagement/friends/
+GET https://xpongo.myddns.me:8443/usermanagement/friends/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5MzkyMzMzLCJpYXQiOjE3MzkzODg3MzMsImp0aSI6IjFmYWQ0OTUwYmYxNTRlMTRhOGM3ZTg2NjVkNzUxMjkxIiwidXNlcl9pZCI6Mn0.Id9ZF6OhY-9tb-c6RItB5L6erocc-zcGgj7XL5YDvio
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5NDY2Njg3LCJpYXQiOjE3Mzk0NjMwODcsImp0aSI6Ijc3YWEwZjVjNjE1YTQ5NWE5YmNjYjBkNDk2N2Q5NDMyIiwidXNlcl9pZCI6MX0.CTgi4r3fAPrlFAymd57wQQ0cereC2lTTzK1RMTxOq-Q
 
 ###
 

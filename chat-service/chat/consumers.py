@@ -18,6 +18,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.validate_user_and_friends(tokenVal)
             self.conversation = await self.get_conversation()
 
+            # # Check for existing connection and close it
+            # existing_channels = await self.channel_layer.group_channels(self.chat_group_name)
+            # for channel in existing_channels:
+            #     if channel != self.channel_name:
+            #         await self.channel_layer.send(channel, {
+            #             'type': 'disconnect_old_connection'
+            #         })
+
+
             await self.channel_layer.group_add(
                 self.chat_group_name,
                 self.channel_name
@@ -35,27 +44,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(f'Error in connect: {e}')
             await self.close()
 
+    async def disconnect_old_connection(self, event):
+        await self.close()
+
+
     async def validate_user_and_friends(self, tokenVal):
-        if self.userId == int(self.chatId):
+        otherUserId = int(self.chatId)
+
+        if self.userId == otherUserId:
             raise DenyConnection("User cannot chat with self")
-        async with httpx.AsyncClient(timeout=5) as userInfosClient:
-            userInfosResponse = await userInfosClient.post(
-				'http://auth:8000/auth/users/info/',
-				headers={'Authorization': f'Bearer {tokenVal}'},
-				json={"user_ids": [self.chatId]}
+
+        async with httpx.AsyncClient(timeout=5) as friendshipClient:
+            friendshipResponse = await friendshipClient.get(
+				'http://usermanagement:8000/usermanagement/block/',
+				headers={'Authorization': f'Bearer {tokenVal}'}
 			)
-        if userInfosResponse.status_code == 404:
-            raise DenyConnection("User not found")
-        async with httpx.AsyncClient(timeout=5) as userInfosClient:
-            userInfosResponse = await userInfosClient.get(
+        blocked_users = friendshipResponse.json()
+        if (friendshipResponse.status_code == 200) and (otherUserId in blocked_users['blocked_users']):
+            raise  DenyConnection("User blocked")
+
+        async with httpx.AsyncClient(timeout=5) as friendshipClient:
+            friendshipResponse = await friendshipClient.get(
 				'http://usermanagement:8000/usermanagement/friends/',
 				headers={'Authorization': f'Bearer {tokenVal}'}
 			)
-        print(userInfosResponse.json())
-        if userInfosResponse.status_code != 200:
-            raise  DenyConnection("Unauthorized")
-        friends = userInfosResponse.json()
-        if int(self.chatId) not in friends['friends']:
+        friends = friendshipResponse.json()
+        if friendshipResponse.status_code != 200 or otherUserId not in friends['friends']:
             raise  DenyConnection("Users not friend")
 
     @auth_token
@@ -70,12 +84,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             data = json.loads(text_data)
             message = data.get('message', '').strip()
 
-            if not message:
-                await self.send(text_data=json.dumps({
-                    'type': 'error',
-                    'message': 'Empty message'
-                }))
-                return
+            # if not message:
+            #     await self.send(text_data=json.dumps({
+            #         'type': 'error',
+            #         'message': 'Empty message'
+            #     }))
+            #     return
 
             timestamp = await self.create_message(self.conversation, self.username, message)
 
@@ -100,7 +114,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         sender = event['sender']
         timestamp = event['timestamp']
-
+        print(f"Message: {message}, Sender: {sender}, Timestamp: {timestamp} self.username: {self.username}")
         await self.send(text_data=json.dumps({
             'type': 'chat_message',
             'message': message,

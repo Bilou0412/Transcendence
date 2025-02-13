@@ -1,4 +1,4 @@
-import { initializeGame } from "../pong/main.js";
+// import { initializeGame } from "../pong/main.js";
 
 // export let globalSocket = null;
 export let socket = null;
@@ -34,7 +34,7 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
 function receivedInviteCode(data) {
     const userConfirmed = confirm(`Inviter id: ${data.inviter_id}\nDo you want to enter the game?`);
     if (userConfirmed) {
-        initializeGame(data.invite_code);
+        // initializeGame(data.invite_code);
         // Add the action to be performed if the user clicks "OK"
         console.log('User chose to enter the game');
         // Example action: redirect to the game page
