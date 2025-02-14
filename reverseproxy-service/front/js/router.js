@@ -92,7 +92,7 @@ const loadRouteModule = async (path) => {
             // '/profile': '../js/page_script/profile.js',
             '/chat': '../js/page_script/chat.js',
             // '/settings': '../js/page_script/profile-settings.js',
-            // '/': '../js/page_script/home.js',
+            '/': '../js/page_script/home.js',
         };
 
         const modulePath = routeModulePaths[path];

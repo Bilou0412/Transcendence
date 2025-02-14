@@ -164,8 +164,8 @@ export async function startGame(gameId) {
 
 export async function remote_game(gameId) {
     const accessToken = sessionStorage.getItem('accessToken');
-
     if (accessToken) {
+        
         remoteWs = new WebSocket(`wss://${window.location.host}/remote/${gameId}/`, ['Bearer_' + accessToken]);
         remoteWs.onopen = function () {
             console.log('Remote WebSocket connection established');
@@ -379,6 +379,8 @@ function getPlayersNames() {
 
 //////////////////////////////////////Game Settings//////////////////////////////////////
 function setupKeyBindings() {
+    if (!settings)
+        return;
     // Track already assigned keys
     const assignedKeys = new Set();
     const keyBindings = {
@@ -537,6 +539,9 @@ function setupKeyBindings() {
     updateColor("player2PaddleColorBtn", "player2PaddleColor");
 }
 
-// Call the setup functions when the script is executed
-setupGameModeSelect();
-setupKeyBindings();
+if(window.location.pathname === '/pong') {
+    console.log('Pong page loaded');
+    // Call the setup functions when the script is executed
+    setupGameModeSelect();
+    setupKeyBindings();
+}

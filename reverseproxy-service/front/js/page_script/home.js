@@ -1,4 +1,7 @@
-// import { initializeGame } from "../pong/main.js";
+import { initializeGame } from "../pong/main.js";
+import { sleep } from "../pong/resetBall.js";
+
+// import { initializeGame } from "../pong/main";
 
 // export let globalSocket = null;
 export let socket = null;
@@ -31,14 +34,14 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
 };
 
 
-function receivedInviteCode(data) {
+async function receivedInviteCode(data) {
     const userConfirmed = confirm(`Inviter id: ${data.inviter_id}\nDo you want to enter the game?`);
     if (userConfirmed) {
-        // initializeGame(data.invite_code);
         // Add the action to be performed if the user clicks "OK"
         console.log('User chose to enter the game');
-        // Example action: redirect to the game page
-        // window.location.href = `/game?invite_code=${data.invite_code}`;
+        route(null, '/pong');
+        await sleep(500);
+        initializeGame(data.invite_code);
     } else {
         console.log('User chose not to enter the game');
     }
