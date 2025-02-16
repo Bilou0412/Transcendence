@@ -11,9 +11,11 @@ const cleanupRouteScript = async (path) => {
     const script = routeScripts.get(path);
     const module = routeModules.get(path);
     const scriptListeners = routeScriptListeners.get(path);
-    console.log(`script: ${script}, scriptListeners: ${scriptListeners}`);
+    console.log(`Cleaning up script for path: ${path}`);
+    
     // If the route has a custom cleanup function, call it
     if (module && typeof module.quit === 'function') {
+        console.log('Cleaning up route using quit:', path, module);
         await module.quit();
     }
 
@@ -23,6 +25,15 @@ const cleanupRouteScript = async (path) => {
             element.removeEventListener(event, listener);
         });
     }
+
+    // Remove all elements with class 'friend-item' from the page
+    document.querySelectorAll('.friend-item').forEach(element => element.remove());
+
+    // Clear any existing friend list containers
+    const friendListContainers = document.querySelectorAll('#friendList, #friendList-body');
+    friendListContainers.forEach(container => {
+        if (container) container.innerHTML = '';
+    });
 
     // Remove the script
     if (script) {
@@ -84,22 +95,19 @@ const attachRouteScriptListeners = async (path, module) => {
 
 const loadRouteModule = async (path) => {
     try {
-        // Dynamically map routes to their corresponding JS modules
         const routeModulePaths = {
             '/pong': '../js/pong/main.js',
-            // '/about': '../js/page_script/tabs.js',
-            // '/profile': '../js/page_script/profile.js',
-            // '/chat': '../js/page_script/chat.js',
-            // '/settings': '../js/page_script/profile-settings.js',
-            // '/': '../js/page_script/home.js',
+            '/chat': '../js/page_script/chat.js',
+            '/': '../js/page_script/home.js',
+            '/profile': '../js/page_script/profile.js',
         };
 
         const modulePath = routeModulePaths[path];
         if (!modulePath) return null;
 
-        const module = await import(modulePath);
-        routeModules.set(path, module);
-        return module;
+        // const module = await import(`${modulePath}?v=${Date.now()}`); // Cache-busting
+        routeModules.set(path, modulePath);
+        return modulePath;
     } catch (error) {
         console.error(`Error loading module for route ${path}:`, error);
         return null;
@@ -113,7 +121,6 @@ const insertRouteScript = async (path) => {
         '/profile': '../js/page_script/profile.js',
         '/chat': '../js/page_script/chat.js',
         '/settings': '../js/page_script/profile-settings.js',
-        // '/': '../js/page_script/home.js',
     };
 
     const scriptPath = routeScriptPaths[path];
@@ -190,11 +197,9 @@ const routes = {
 const handleLocation = async () => {
     const path = window.location.pathname;
     
-    // Cleanup any previous route-specific scripts
+    // Cleanup any previous route-specific scripts, including the current route
     for (let [routePath] of routeScripts) {
-        if (routePath !== path) {
-            await cleanupRouteScript(routePath);
-        }
+        await cleanupRouteScript(routePath); // Clean up all scripts, including the current route
     }
     
     const route = routes[path] || routes[404];

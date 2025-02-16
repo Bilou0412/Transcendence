@@ -1,18 +1,10 @@
-creat tournament local in front 
 change destination docker to sgoinfre.
-create .env for front sensible data
-connecter au front
 
-
-doc API bilel's services
-correct log in 42  
-
-param vitesse balle
-collisions à chier
-doc API
 
 
 to Fix :
+
+	viewProfile from chat
 
 Bilel :
 	user created even if mail not verified

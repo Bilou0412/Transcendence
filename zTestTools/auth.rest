@@ -9,14 +9,14 @@ Content-Type: application/json
 }
 
 ### Signup
-POST https://localhost:8443/auth/signup/
+POST https://xpongo.myddns.me:8443/auth/signup/
 Content-Type: application/json
 
 {
     "username": "bilel",
     "password": "Motdepasse12@@",
     "password2": "Motdepasse12@@",
-    "email": "bilel.moudache0412@gmail.com"
+    "email": "sefiroutin@gmail.com"
 }
 
 

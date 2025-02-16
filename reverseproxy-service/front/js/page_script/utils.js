@@ -15,7 +15,8 @@ export function fetchProfileImages(userIds, accessToken, imageElementIds) {
 				console.error(`Error fetching profile image for user ${image.id}: ${image.error}`);
 			} else {
 				// const imageUrl = URL.createObjectURL(image.image);
-				console.log(image);
+				// console.log(image);
+				// console.log('icon :', imageElementIds[index]);
 				const imgElement = document.getElementById(imageElementIds[index]);
 				imgElement.src = image.image_url;
 				imgElement.alt = `Image ${image.id}`;

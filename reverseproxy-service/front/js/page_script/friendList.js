@@ -1,112 +1,160 @@
 import { fetchProfileImages } from './utils.js';
+import { inviteGame } from './home.js';
+import { viewProfile } from './profile.js';
 
-// export function fetchFriendList(accessToken, elementId, onClickHandler) {
-// 	fetch(`https://${window.location.host}/usermanagement/friends/`, {
-// 		headers: {
-// 			'Authorization': `Bearer ${accessToken}`
-// 		}
-// 	})
-// 	.then(response => response.json())
 
-// 	.catch(error => console.error('Error fetching friend list:', error));
-// }
-
-export function fetchFriendList(accessToken, elementId, onClickHandler) {
-	fetch(`https://${window.location.host}/usermanagement/friends/`, {
+export function fetchFriendList(accessToken) {
+	return fetch(`https://${window.location.host}/usermanagement/friends/`, {
 		headers: {
 			'Authorization': `Bearer ${accessToken}`
 		}
 	})
 	.then(response => response.json())
 	.then(data => {
-		if (!data) return;
-
-		const friendIds = data.friends;
-		if (friendIds.length > 0) {
-			console.log('Friend list:', data);
-			fetch(`https://${window.location.host}/auth/users/info/`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${accessToken}`
-				},
-				body: JSON.stringify({ user_ids: friendIds })
-			})
-			.then(response => response.json())
-			.then(userData => {
-				const friendList = document.getElementById(elementId);
-				friendList.innerHTML = '';
-				fetchBlockedUsers(accessToken, blockedUserIds => {
-					friendIds.forEach(friendId => {
-						const li = document.createElement('div');
-						li.className = 'friend-item';
-
-						const avatar = document.createElement('img');
-						avatar.className = 'friend-avatar';
-						avatar.id = `profile-avatar-${friendId}`;
-						avatar.onclick = function () {
-							onClickHandler(friendId);
-						};
-
-						const userInfo = document.createElement('div');
-						userInfo.className = 'friend-info';
-						const userName = document.createElement('div');
-						userName.className = 'friend-name';
-						userName.innerText = `${userData[friendId].username} (#${friendId})`;
-						userName.onclick = function () {
-							onClickHandler(friendId);
-						};
-						userInfo.appendChild(userName);
-
-						const userActions = document.createElement('div');
-						userActions.className = 'friend-actions';
-						const removeButton = document.createElement('button');
-						removeButton.className = 'btn btn-remove';
-						removeButton.innerText = 'Remove Friend';
-						removeButton.onclick = () => {
-							updateFriendRequest(friendId, 'refused');
-							li.remove();
-						};
-						const blockButton = document.createElement('button');
-						blockButton.className = 'btn';
-						if (blockedUserIds.has(friendId)) {
-							blockButton.innerText = 'Unblock';
-							blockButton.onclick = () => {
-								unblockUser(friendId);
-								li.remove();
-							};
-						} else {
-							blockButton.innerText = 'Block';
-							blockButton.onclick = () => {
-								blockUser(friendId);
-								li.remove();
-							};
-						}
-
-						userActions.appendChild(removeButton);
-						userActions.appendChild(blockButton);
-						li.appendChild(avatar);
-						li.appendChild(userInfo);
-						li.appendChild(userActions);
-						friendList.appendChild(li);
-					});
-					console.log(friendIds.map(friendId => `profile-avatar-${friendId}`));
-					fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `profile-avatar-${friendId}`));
-				});
-			})
-				.catch(error => console.error('Error fetching friend details:', error));
-		} else {
-			fetchBlockedUsers(accessToken, blockedUserIds => {
-				const friendList = document.getElementById('friendList-body');
-				friendList.innerHTML = '';
-				blockedUserIds.forEach(blockedId => {
-					const li = document.createElement('div');
-					li.className = 'friend-item';
-				});
-			});
-		}
+		console.log('Friend list in fetch:', data.friends);
+		return data.friends;
 	})
+
 	.catch(error => console.error('Error fetching friend list:', error));
+}
+
+
+
+export function fetchUsersInfos(accessToken, friendIds) {
+	return fetch(`https://${window.location.host}/auth/users/info/`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({ user_ids: friendIds })
+	})
+	.then(response => response.json())
+	.then(userData => {
+		return userData;
+	})
+}
+
+export function buildFriendList(accessToken, elementId, onClickHandler) {
+    // Check if the container exists and is empty before building
+    const container = document.getElementById(elementId);
+    if (!container) {
+        console.error('Friend list container not found:', elementId);
+        return;
+    }
+
+    // Clear the container before adding new items
+    container.innerHTML = '';
+    console.log('Building friend list for container:', elementId);
+
+    fetchFriendList(accessToken)
+    .then(friendIds => {
+        console.log('Friend list:', friendIds);
+        if (!friendIds || friendIds.length === 0) {
+            container.innerHTML = '<div class="friend-item">No friends found</div>';
+            return;
+        }
+
+        fetchUsersInfos(accessToken, friendIds)
+        .then(userData => {
+            fetchBlockedUsers(accessToken, blockedUserIds => {
+                friendIds.forEach(friendId => {
+                    // Create friend item container
+                    const li = document.createElement('div');
+                    li.className = 'friend-item';
+
+                    // Create and setup avatar
+                    const avatar = document.createElement('img');
+                    avatar.className = 'friend-avatar';
+                    avatar.id = `avatar-${friendId}`;
+                    if (onClickHandler) {
+                        avatar.onclick = function() {
+                            onClickHandler(friendId);
+                        };
+                    }
+
+                    // Create user info section
+                    const userInfo = document.createElement('div');
+                    userInfo.className = 'friend-info';
+                    const userName = document.createElement('div');
+                    userName.className = 'friend-name';
+                    userName.innerText = `${userData[friendId].username} (#${friendId})`;
+                    if (onClickHandler) {
+                        userName.onclick = function() {
+                            onClickHandler(friendId);
+                        };
+                    }
+                    userInfo.appendChild(userName);
+
+                    // Create actions section
+                    const userActions = document.createElement('div');
+                    userActions.className = 'friend-actions';
+
+                    // Add appropriate buttons based on context
+                    if (onClickHandler && onClickHandler.name === 'profileNav') {
+                        // Profile view buttons
+                        const removeButton = document.createElement('button');
+                        removeButton.className = 'btn btn-remove';
+                        removeButton.innerText = 'Remove Friend';
+                        removeButton.onclick = () => {
+                            updateFriendRequest(friendId, 'refused');
+                            li.remove();
+                        };
+                        userActions.appendChild(removeButton);
+                    } else {
+                        // Chat/Game view buttons
+                        const inviteButton = document.createElement('button');
+                        inviteButton.className = 'btn btn-invite';
+                        inviteButton.innerText = 'Invite';
+                        inviteButton.onclick = () => {
+                            inviteGame(friendId);
+                        };
+
+                        const viewProfileButton = document.createElement('button');
+                        viewProfileButton.className = 'btn btn-view-profile';
+                        viewProfileButton.innerText = 'View Profile';
+                        viewProfileButton.onclick = () => {
+                            viewProfile(friendId);
+                        };
+
+                        userActions.appendChild(inviteButton);
+                        userActions.appendChild(viewProfileButton);
+                    }
+
+                    // Add block/unblock button
+                    const blockButton = document.createElement('button');
+                    blockButton.className = 'btn';
+                    if (blockedUserIds.has(friendId)) {
+                        blockButton.innerText = 'Unblock';
+                        blockButton.onclick = () => {
+                            unblockUser(friendId);
+                            li.remove();
+                        };
+                    } else {
+                        blockButton.innerText = 'Block';
+                        blockButton.onclick = () => {
+                            blockUser(friendId);
+                            li.remove();
+                        };
+                    }
+                    userActions.appendChild(blockButton);
+
+                    // Assemble the friend item
+                    li.appendChild(avatar);
+                    li.appendChild(userInfo);
+                    li.appendChild(userActions);
+                    container.appendChild(li);
+                });
+
+                // Load profile images for all friends
+                fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `avatar-${friendId}`));
+            });
+        });
+    })
+    .catch(error => {
+        console.error('Error building friend list:', error);
+        container.innerHTML = '<div class="friend-item">Error loading friends</div>';
+    });
 }
 
 function fetchBlockedUsers(accessToken, callback) {
