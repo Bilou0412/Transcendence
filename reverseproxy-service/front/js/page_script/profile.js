@@ -28,7 +28,6 @@ function profileNav(idToSearch) {
 		fetchProfileImages(user.id, accessToken, ['userIcon']);
 		fetchUserMatches(user.id, accessToken);
 		fetchUserStatistics(user.id, accessToken);
-		fetchUserFriends(user.id, accessToken); // Ensure this function is called correctly
 		fetchFriendRequests();
 		buildFriendList(accessToken, 'friendList-body', profileNav);
 		if (user['Student']) {
@@ -42,12 +41,6 @@ function profileNav(idToSearch) {
 	.catch(error => console.error('Error viewing profile:', error));
 }
 
-if (window.location.pathname === '/profile') {
-	if (sessionStorage.getItem('userId')) {
-		console.log('ok');
-		profileNav(sessionStorage.getItem('userId'));
-	}
-}
 
 export function viewProfile(friendId) {
     // Clean up existing friend list before navigation
@@ -62,10 +55,13 @@ export function viewProfile(friendId) {
     }, 100);
 }
 
-if (window.location.pathname === '/profile') {
-	if (document.getElementById('search_bar')) {
 
 if (window.location.pathname === '/profile') {
+	
+	if (sessionStorage.getItem('userId')) {
+		console.log('ok');
+		profileNav(sessionStorage.getItem('userId'));
+	}
 	document.getElementById('search_bar').addEventListener('input', function(event) {
 		const query = event.target.value;
 		if (query.length > 0) {
@@ -226,9 +222,6 @@ function fetchUserStatistics(userId, accessToken) {
     // Fetch and display user statistics
 }
 
-function fetchUserFriends(userId, accessToken) {
-    // Fetch and display user friends
-}
 
 export function fetchFriendRequests() {
 	const accessToken = sessionStorage.getItem('accessToken');
@@ -249,7 +242,10 @@ export function fetchFriendRequests() {
 		requestContainer.innerHTML = '';
 
 		const userIds = data.pending_requests.map(request => request);
-
+		if (userIds.length === 0) {
+			console.log('No friend requests found');
+			return;
+		}
 		// Fetch user information
 		fetch(`https://${window.location.host}/auth/users/info/`, {
 			method: 'POST',
@@ -362,6 +358,3 @@ function sendFriendRequest(receiverId) {
 		alert('Failed to send friend request');
 	});
 }
-
-
-

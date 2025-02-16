@@ -21,6 +21,7 @@ export function fetchFriendList(accessToken) {
 
 
 export function fetchUsersInfos(accessToken, friendIds) {
+    console.log('Fetching user infos for:', JSON.stringify({ user_ids: friendIds }));
 	return fetch(`https://${window.location.host}/auth/users/info/`, {
 		method: 'POST',
 		headers: {
@@ -49,12 +50,11 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
 
     fetchFriendList(accessToken)
     .then(friendIds => {
-        console.log('Friend list:', friendIds);
         if (!friendIds || friendIds.length === 0) {
             container.innerHTML = '<div class="friend-item">No friends found</div>';
             return;
         }
-
+        console.log('Friend list:', friendIds);
         fetchUsersInfos(accessToken, friendIds)
         .then(userData => {
             fetchBlockedUsers(accessToken, blockedUserIds => {

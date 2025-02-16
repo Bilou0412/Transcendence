@@ -69,12 +69,12 @@ POST http://127.0.0.1:8000/auth/token/validate/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNDM1NTYwLCJpYXQiOjE3MzE0MzE5NjAsImp0aSI6ImUzMTkzNjY4MmViZTQzMGI4OWQzZDg1OGI1NTA4ZjUxIiwidXNlcl9pZCI6Mn0.L4uzPIEMGVoc3VpUm71EmBRmhybjVdAQrHg5A71nSrc
 ###
-POST http://127.0.0.1:8000/auth/users/info/
+POST https://xpongo.myddns.me:8443/auth/users/info/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzOTMzOTQyLCJpYXQiOjE3MzM5MzAzNDIsImp0aSI6IjlmZjlmMjZhOTQxZTQzZTRiYWZiYjI2M2ZjMzJmZmUxIiwidXNlcl9pZCI6NH0.sJ6QXUoSheB8bRabratu4EAZWOy3xL0tLF-5nZtCsSM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5NzM1MTYwLCJpYXQiOjE3Mzk3MzE1NjAsImp0aSI6Ijg1MjcwZjg5MWY0ODQ3ZTY4MDM5NTFiYmM5YTA2ZGI5IiwidXNlcl9pZCI6MX0.xAEuMiyaxWvHXJfCuSIshRCHKM8MTMMNnOzK7a5Nf48
 
 {
-    "user_ids": [4,5]
+    "user_ids": [1]
 }
 
 ### 2FA
