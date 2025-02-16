@@ -55,7 +55,7 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
             return;
         }
 
-        return fetchUsersInfos(accessToken, friendIds)
+        fetchUsersInfos(accessToken, friendIds)
         .then(userData => {
             fetchBlockedUsers(accessToken, blockedUserIds => {
                 friendIds.forEach(friendId => {

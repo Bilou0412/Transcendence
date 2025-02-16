@@ -20,6 +20,8 @@ function profileNav(idToSearch) {
 	.then(response => response.json())
 	.then(data => {
 		const user = data[idToSearch];
+		if (!document.getElementById('profile-username'))
+			return;
 		document.getElementById('profile-username').innerText = user.username;
 		document.getElementById('profile-id').innerText = user.id;
 		fetchProfileImages(user.id, accessToken, ['userIcon']);

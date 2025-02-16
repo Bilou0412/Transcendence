@@ -30,6 +30,7 @@ let semifinal2Winner = document.getElementById('semifinal2');
 let finalWinner = document.getElementById('final');
 
 export let remoteWs = null;
+let currentRemoteGame = null;
 ///////////////////////////////////main functions/////////////////////////////////////
 
 function advance(player) {
@@ -219,6 +220,7 @@ export async function remote_game(gameId) {
                 } else if (message.data.winner !== 'unfinished') {
                     alert('You lost!');
                 }
+                currentRemoteGame = null;
                 console.log('Game ended');
             }
         };
@@ -313,6 +315,7 @@ export async function initializeGame(gameId) {
     settings = new Settings();
     settings.gameMode = selectedMode;
     if (gameId) {
+        currentRemoteGame = gameId;
         settings.gameMode = 'remote 1v1';
     }
     changePlayStyle();
