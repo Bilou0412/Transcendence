@@ -35,35 +35,55 @@ function profileNav(idToSearch) {
 	.catch(error => console.error('Error viewing profile:', error));
 }
 
-if (sessionStorage.getItem('userId')) {
-	console.log('ok');
-	profileNav(sessionStorage.getItem('userId'));
+if (window.location.pathname === '/profile') {
+	if (sessionStorage.getItem('userId')) {
+		console.log('ok');
+		profileNav(sessionStorage.getItem('userId'));
+	}
 }
 
-document.getElementById('search_bar').addEventListener('input', function(event) {
-	const query = event.target.value;
-	if (query.length > 0) {
-		fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
-			}
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.users) {
-				console.log('Search results:', data.users);
-				displaySearchResults(data.users);
+export function viewProfile(friendId) {
+    // Clean up existing friend list before navigation
+    document.querySelectorAll('.friend-item').forEach(element => element.remove());
+    
+    // Navigate to profile
+    route(null, '/profile');
+    
+    // Wait for navigation to complete before initializing profile
+    setTimeout(() => {
+        profileNav(friendId);
+    }, 100);
+}
+
+if (window.location.pathname === '/profile') {
+	if (document.getElementById('search_bar')) {
+
+		document.getElementById('search_bar').addEventListener('input', function(event) {
+			const query = event.target.value;
+			if (query.length > 0) {
+				fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
+					}
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.users) {
+						console.log('Search results:', data.users);
+						displaySearchResults(data.users);
+					} else {
+						console.error('No users found');
+					}
+				})
+				.catch(error => console.error('Error searching users:', error));
 			} else {
-				console.error('No users found');
+				clearSearchResults();
 			}
-		})
-		.catch(error => console.error('Error searching users:', error));
-	} else {
-		clearSearchResults();
+		});
 	}
-});
+}
 
 function displaySearchResults(users) {
 	const resultsContainer = document.getElementById('searchResults-body');

@@ -540,8 +540,6 @@ function setupKeyBindings() {
 }
 
 if(window.location.pathname === '/pong') {
-    console.log('Pong page loaded');
-    // Call the setup functions when the script is executed
     setupGameModeSelect();
     setupKeyBindings();
 }
