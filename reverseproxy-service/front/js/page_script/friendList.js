@@ -20,7 +20,7 @@ export function fetchFriendList(accessToken) {
 
 
 
-function fetchUsersInfos(accessToken, friendIds) {
+export function fetchUsersInfos(accessToken, friendIds) {
 	return fetch(`https://${window.location.host}/auth/users/info/`, {
 		method: 'POST',
 		headers: {

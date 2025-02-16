@@ -353,7 +353,7 @@ function setupGameModeSelect() {
                 sections[selectedMode].style.display = 'flex';
             }
             if (selectedMode === 'remote 1v1') {
-                buildFriendList(sessionStorage.getItem('accessToken'), 'friendList', Invite);
+                buildFriendList(sessionStorage.getItem('accessToken'), 'friendList', null);
             }
         });
     }

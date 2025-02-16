@@ -105,9 +105,9 @@ const loadRouteModule = async (path) => {
         const modulePath = routeModulePaths[path];
         if (!modulePath) return null;
 
-        const module = await import(`${modulePath}?v=${Date.now()}`); // Cache-busting
-        routeModules.set(path, module);
-        return module;
+        // const module = await import(`${modulePath}?v=${Date.now()}`); // Cache-busting
+        routeModules.set(path, modulePath);
+        return modulePath;
     } catch (error) {
         console.error(`Error loading module for route ${path}:`, error);
         return null;
@@ -121,7 +121,6 @@ const insertRouteScript = async (path) => {
         '/profile': '../js/page_script/profile.js',
         '/chat': '../js/page_script/chat.js',
         '/settings': '../js/page_script/profile-settings.js',
-        // '/': '../js/page_script/home.js',
     };
 
     const scriptPath = routeScriptPaths[path];
