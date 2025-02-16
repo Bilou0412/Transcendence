@@ -27,7 +27,6 @@ function profileNav(idToSearch) {
 		document.getElementById('profile-id').innerText = user.id;
 		fetchProfileImages(user.id, accessToken, ['userIcon']);
 		fetchUserMatches(user.id, accessToken);
-		fetchUserStatistics(user.id, accessToken);
 		fetchFriendRequests();
 		buildFriendList(accessToken, 'friendList-body', profileNav);
 		if (user['Student']) {
@@ -191,16 +190,40 @@ function fetchUserMatches(userId, accessToken) {
 		return response.json();
 	})
 	.then(data => {
-		if (!data) return; 
+		if (!data) return;
 
 		const historyTable = document.getElementById('history');
 		
 		while (historyTable.rows.length > 1) {
-            historyTable.deleteRow(1);
-        }
+			historyTable.deleteRow(1);
+		}
+
+		// Stats variables
+		let totalGames = 0;
+		let wins = 0;
+		let totalPointsScored = 0;
+		let totalPointsTaken = 0;
+		let totalTimePlayedSeconds = 0;
 
 		data.matches.forEach(match => {
-			// const timeDiff = calculateTimeDifference(match.end_time, match.start_time);
+			totalGames++;
+
+			const isPlayer1 = match.player_1_id == userId;
+			const playerScore = isPlayer1 ? match.score_player_1 : match.score_player_2;
+			const opponentScore = isPlayer1 ? match.score_player_2 : match.score_player_1;
+
+			totalPointsScored += playerScore;
+			totalPointsTaken += opponentScore;
+
+			if (playerScore > opponentScore) {
+				wins++;
+			}
+
+			// Convert match time difference into total seconds played
+			const timePlayedStr = calculateTimeDifference(match.end_time, match.start_time);
+			const matchTimeSeconds = parseTimeToSeconds(timePlayedStr);
+			totalTimePlayedSeconds += matchTimeSeconds;
+
 			const newRow = historyTable.insertRow();
 			newRow.className = 'match';
 			newRow.innerHTML = `
@@ -209,19 +232,80 @@ function fetchUserMatches(userId, accessToken) {
 				<td>${match.player_2_id}</td>
 				<td>${match.score_player_1}</td>
 				<td>${match.score_player_2}</td>
-				<td>${calculateTimeDifference(match.end_time, match.start_time)}</td>
+				<td>${timePlayedStr}</td>
 				<td>${formatDate(match.start_time)}</td>
 			`;
-			
 		});
+
+		// Compute stats
+		const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
+		const kdRatio = totalPointsTaken > 0 ? (totalPointsScored / totalPointsTaken) : totalPointsScored;
+		const avgPointsPerGame = totalGames > 0 ? totalPointsScored / totalGames : 0;
+		const avgPointsTakenPerGame = totalGames > 0 ? totalPointsTaken / totalGames : 0;
+		const formattedTotalTime = formatTime(totalTimePlayedSeconds);
+
+		// Update stats in HTML
+		updateStats(
+			totalGames, 
+			winRate.toFixed(2) + '%', 
+			kdRatio.toFixed(2), 
+			formattedTotalTime, 
+			avgPointsPerGame.toFixed(2), 
+			avgPointsTakenPerGame.toFixed(2), 
+			totalPointsScored, 
+			totalPointsTaken
+		);
 	})
 	.catch(error => console.error('Error fetching user matches:', error));
 }
 
-function fetchUserStatistics(userId, accessToken) {
-    // Fetch and display user statistics
+function parseTimeToSeconds(timeStr) {
+	const match = timeStr.match(/(\d+)min(\d+)s/);
+	if (match) {
+		const minutes = parseInt(match[1], 10);
+		const seconds = parseInt(match[2], 10);
+		return minutes * 60 + seconds;
+	}
+	return 0;
 }
 
+// Convert total seconds into "Xmin Ys" format
+function formatTime(seconds) {
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+	return `${minutes}min${remainingSeconds}s`;
+}
+
+function updateStats(games, winRate, kd, timePlayed, pointsPerGame, pointsTakenPerGame, totalScored, totalTaken) {
+    // updateWinrateCircle(winRate);
+    
+	document.getElementById('games-played').textContent = games;
+    // document.getElementById('winrate').textContent = winRate;
+    document.getElementById('kd').textContent = kd;
+    document.getElementById('time-played').textContent = timePlayed;
+    document.getElementById('points-per-game').textContent = pointsPerGame;
+    document.getElementById('points-taken-per-game').textContent = pointsTakenPerGame;
+    document.getElementById('total-points-scored').textContent = totalScored;
+    document.getElementById('total-points-taken').textContent = totalTaken;
+
+    // Convert winRate from "XX%" format to a number
+    const winRateValue = parseFloat(winRate);
+
+    // // Render the winrate chart
+    updateWinrateCircle(winRateValue);
+}
+
+function updateWinrateCircle(winRateValue) {
+    const circle = document.getElementById('winrate-progress');
+    const text = document.getElementById('winrate-text');
+
+    // Stroke-dasharray is 2πr (full circle length)
+    const circleLength = 2 * Math.PI * 45; 
+    const progress = circleLength * (1 - winRateValue / 100);
+
+    circle.style.strokeDashoffset = progress;
+    text.textContent = winRateValue.toFixed(1) + '%';
+}
 
 export function fetchFriendRequests() {
 	const accessToken = sessionStorage.getItem('accessToken');

@@ -97,6 +97,11 @@ td, th {
 	min-width: 100px;
 }
 
+.winrate-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 /* ====================================Friends window==================================== */
 #friendDisplay {

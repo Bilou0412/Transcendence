@@ -50,12 +50,21 @@
 						<div class="table-wrapper">
 							<table id="statistics">
 								<tr>
-									<td>Game played</td>
-									<td class="stat" id="games-played">0</td>
+									<td>Winrate</td>
+									<td class="stat">
+										<div class="winrate-container">
+											<svg id="winrate" width="80" height="80" viewBox="0 0 100 100">
+												<circle cx="50" cy="50" r="45" stroke="#E0E0E0" stroke-width="10" fill="none" />
+												<circle id="winrate-progress" cx="50" cy="50" r="45" stroke="#0051ee" stroke-width="10" fill="none" 
+													stroke-dasharray="283" stroke-dashoffset="283" transform="rotate(-90 50 50)" />
+												<text id="winrate-text" x="50" y="55" text-anchor="middle" font-size="18px" fill="#333">0%</text>
+											</svg>
+										</div>
+									</td>
 								</tr>
 								<tr>
-									<td>Winrate</td>
-									<td class="stat" id="winrate">0%</td>
+									<td>Game played</td>
+									<td class="stat" id="games-played">0</td>
 								</tr>
 								<tr>
 									<td>KD</td>
