@@ -1,7 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from ..models import UserInfo
 from ..decorators import auth_token
-# from . import connected_users
 from django.core.cache import cache
 import json
 import uuid
@@ -10,8 +9,13 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 	@auth_token
 	async def connect(self):
 		self.lobby_group_name = 'lobby'
+		self.user_group_name = f"user_{self.userId}"
 		await self.channel_layer.group_add(
 			self.lobby_group_name,
+			self.channel_name
+		)
+		await self.channel_layer.group_add(
+			self.user_group_name,
 			self.channel_name
 		)
 		await self.accept()
@@ -33,6 +37,10 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 		cache.delete(self.userId)
 		await self.channel_layer.group_discard(
 			self.lobby_group_name,
+			self.channel_name
+		)
+		await self.channel_layer.group_discard(
+			self.user_group_name,
 			self.channel_name
 		)
 		connected_user_ids = cache.get('connected_user_ids', set())
@@ -100,6 +108,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 	async def friend_request(self, event):
 		sender_id = event['sender_id']
 		receiver_id = event['receiver_id']
+		print(f"Friend request event received: sender_id={sender_id}, receiver_id={receiver_id}")
 
 		# Ne notifier que le destinataire
 		if self.userId == receiver_id:
@@ -108,3 +117,4 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 				'sender_id': sender_id,
 				'receiver_id': receiver_id
 			}))
+			print(f"Friend request sent to frontend for user_{receiver_id}")

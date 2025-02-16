@@ -29,13 +29,17 @@ def FriendRequest(request):
 
         # Envoie d'une demande via WebSocket (envoie un message au groupe WebSocket de l'utilisateur invité)
         async_to_sync(channel_layer.group_send)(
-            'lobby',  # Groupe global
+            f"user_{receiver_id}",  # Groupe spécifique à l'utilisateur
             {
                 'type': 'friend_request',  # This type should match the handler in the consumer
                 'receiver_id': receiver_id,
                 'sender_id': sender_id,
             }
         )
+        print(f"Friend request sent to user_{receiver_id} via WebSocket")
         return Response({'message': 'Friend request sent successfully!'}, status=status.HTTP_200_OK)
     except json.JSONDecodeError:
         return Response({'error': 'Invalid JSON format'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(f"Error sending friend request: {str(e)}")
+        return Response({'error': f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

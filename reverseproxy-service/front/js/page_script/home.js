@@ -1,4 +1,5 @@
 // export let globalSocket = null;
+import { fetchFriendRequests } from '../page_script/profile.js';
 
 export async function connectWebSocket(accessToken, username, userId, globalSocket) {
     console.log('Connecting to WebSocket...');
@@ -19,7 +20,7 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
                 displayInviteCode(data);
                 break;
             case 'friend_request':
-                handleFriendRequest(data, friendRequestList);
+                reloadProfileScript(data, friendRequestList);
                 break;
             default:
                 console.log('Unhandled message type:', data.type);
@@ -27,6 +28,10 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
     }
 };
 
+function reloadProfileScript() {
+    console.log("recu");
+    fetchFriendRequests();
+}
 
 function displayInviteCode(data) {
     console.log('Invite code received:', data);

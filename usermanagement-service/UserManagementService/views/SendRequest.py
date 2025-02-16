@@ -58,6 +58,20 @@ def SendRequest(request):
             status='pending'
         )
 
+        # Envoyer une requête à wsmanagement pour notifier le destinataire
+        wsmanagement_url = 'http://wsmanagement:8000/friend-request/'  # Correct URL
+        wsmanagement_data = {
+            'receiver_id': friend_id,
+            'sender_id': user_id
+        }
+        try:
+            response = requests.post(wsmanagement_url, json=wsmanagement_data)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            return Response({
+                "error": f"Failed to notify the receiver via WebSocket: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response({
             "message": "Friendship request sent successfully.",
             "friendship": str(friendship)
