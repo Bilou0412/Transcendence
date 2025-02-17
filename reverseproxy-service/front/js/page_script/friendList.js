@@ -1,41 +1,14 @@
-import { fetchProfileImages } from './utils.js';
+import { fetchProfileImages, fetchFriendList, fetchUsersInfos } from './fetchData.js';
 import { inviteGame } from './home.js';
 import { viewProfile } from './profile.js';
 import { sleep } from '../pong/resetBall.js';
 
 
-export function fetchFriendList(accessToken) {
-	return fetch(`https://${window.location.host}/usermanagement/friends/`, {
-		headers: {
-			'Authorization': `Bearer ${accessToken}`
-		}
-	})
-	.then(response => response.json())
-	.then(data => {
-		console.log('Friend list in fetch:', data.friends);
-		return data.friends;
-	})
-
-	.catch(error => console.error('Error fetching friend list:', error));
-}
 
 
 
-export function fetchUsersInfos(accessToken, friendIds) {
-    console.log('Fetching user infos for:', JSON.stringify({ user_ids: friendIds }));
-	return fetch(`https://${window.location.host}/auth/users/info/`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${accessToken}`
-		},
-		body: JSON.stringify({ user_ids: friendIds })
-	})
-	.then(response => response.json())
-	.then(userData => {
-		return userData;
-	})
-}
+
+
 
 export function buildFriendList(accessToken, elementId, onClickHandler) {
     // Check if the container exists and is empty before building
@@ -47,7 +20,6 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
 
     // Clear the container before adding new items
     container.innerHTML = '';
-    console.log('Building friend list for container:', elementId);
 
     fetchFriendList(accessToken)
     .then(friendIds => {
@@ -55,7 +27,6 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
             container.innerHTML = '<div class="friend-item">No friends found</div>';
             return;
         }
-        console.log('Friend list:', friendIds);
         fetchUsersInfos(accessToken, friendIds)
         .then(userData => {
             fetchBlockedUsers(accessToken, blockedUserIds => {
@@ -192,7 +163,7 @@ function updateFriendRequest(friendId, status) {
 	})
 		.then(response => response.json())
 		.then(data => {
-			console.log(`Friend request ${status}:`, data);
+			// console.log(`Friend request ${status}:`, data);
 			alert(`Friend request ${status} successfully!`);
 		})
 		.catch(error => {
@@ -215,7 +186,7 @@ function blockUser(userId) {
 	})
 		.then(response => response.json())
 		.then(data => {
-			console.log('User blocked:', data);
+			// console.log('User blocked:', data);
 			alert('User blocked successfully!');
 		})
 		.catch(error => {
@@ -238,7 +209,7 @@ function unblockUser(userId) {
 	})
 		.then(response => response.json())
 		.then(data => {
-			console.log('User unblocked:', data);
+			// console.log('User unblocked:', data);
 			alert('User unblocked successfully!');
 		})
 		.catch(error => {

@@ -14,9 +14,6 @@ export function fetchProfileImages(userIds, accessToken, imageElementIds) {
 			if (image.error) {
 				console.error(`Error fetching profile image for user ${image.id}: ${image.error}`);
 			} else {
-				// const imageUrl = URL.createObjectURL(image.image);
-				// console.log(image);
-				// console.log('icon :', imageElementIds[index]);
 				const imgElement = document.getElementById(imageElementIds[index]);
 				imgElement.src = image.image_url;
 				imgElement.alt = `Image ${image.id}`;
@@ -26,4 +23,33 @@ export function fetchProfileImages(userIds, accessToken, imageElementIds) {
 		});
 	})
 	.catch(error => console.error('Error fetching profile images:', error));
+}
+
+export function fetchUsersInfos(accessToken, friendIds) {
+	return fetch(`https://${window.location.host}/auth/users/info/`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${accessToken}`
+		},
+		body: JSON.stringify({ user_ids: friendIds })
+	})
+	.then(response => response.json())
+	.then(userData => {
+		return userData;
+	})
+}
+
+export function fetchFriendList(accessToken) {
+	return fetch(`https://${window.location.host}/usermanagement/friends/`, {
+		headers: {
+			'Authorization': `Bearer ${accessToken}`
+		}
+	})
+	.then(response => response.json())
+	.then(data => {
+		return data.friends;
+	})
+
+	.catch(error => console.error('Error fetching friend list:', error));
 }

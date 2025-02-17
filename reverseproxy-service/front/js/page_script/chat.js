@@ -1,4 +1,4 @@
-import { fetchProfileImages } from './utils.js';
+import { fetchProfileImages } from './fetchData.js';
 import { buildFriendList } from './friendList.js';
 
 console.log('chat.js loaded');
@@ -34,15 +34,13 @@ function formatTime(dateStr) {
 function Chat(userIdToChat) {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (userIdToChat && accessToken) {
-		console.log(`chatsocket: ${chatSocket}`);
-		if (chatSocket)
-			console.log(`chatsocket.readyState: ${chatSocket.readyState}`);
 		if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
 			console.log('Closing existing Chat WebSocket connection...');
 			chatSocket.close();
 		}
-		console.log('Opening Chat WebSocket connection...');
-		chatSocket = new WebSocket(`wss://${window.location.host}/chat/${userIdToChat}/`, ['Bearer_' + accessToken]);
+		console.log('Opening new Chat WebSocket connection...');
+		const encodedToken = encodeURIComponent(accessToken);
+		chatSocket = new WebSocket(`wss://${window.location.host}/chat/${userIdToChat}/?${encodedToken}`);
 
 		chatSocket.onopen = () => {
 			document.getElementById('chat-history-body').innerHTML = '';
@@ -84,20 +82,17 @@ function Chat(userIdToChat) {
 }
 
 document.getElementById('send-message').addEventListener('click', function () {
-    console.log('send button clicked');
     sendChatMessage();
 });
 
 function sendChatMessage() {
 	const messageInput = document.getElementById('message-input');
 	const message = messageInput.value.trim();
-	console.log('Sending message:', message);
 	if (!message) {
 		alert('Please enter a message to send.');
 		return;
 	}
 	if (chatSocket) {
-		console.log('really Sending message:', message);
 		chatSocket.send(JSON.stringify({ message }));
 		messageInput.value = '';
 	}

@@ -6,20 +6,14 @@ def auth_token(func):
 	@wraps(func)
 	async def wrapper(self, *args, **kwargs):
 		try:
-			subprotocols = self.scope.get('subprotocols', [])
-			if not subprotocols or len(subprotocols) != 1:
-				raise DenyConnection("Invalid subprotocols format")
-			token = subprotocols[0]
-			if not token.startswith("Bearer_"):
-				raise DenyConnection("Invalid authorization format")
-			tokenVal = token[len("Bearer_"):].strip()
-			if not tokenVal:
+			token = self.scope.get('query_string', b'').decode()
+			if not token:
 				raise DenyConnection("Authorization token missing")
 
 			async with httpx.AsyncClient(timeout=5) as validateClient:
 				validateResponse = await validateClient.post(
 					'http://auth:8000/auth/token/validate/',
-					headers={'Authorization': f'Bearer {tokenVal}'}
+					headers={'Authorization': f'Bearer {token}'}
 				)
 			if validateResponse.status_code != 200:
 				raise DenyConnection("Invalid authorization token")
@@ -30,7 +24,7 @@ def auth_token(func):
 			async with httpx.AsyncClient(timeout=5) as userInfosClient:
 				userInfosResponse = await userInfosClient.post(
 					'http://auth:8000/auth/users/info/',
-					headers={'Authorization': f'Bearer {tokenVal}'},
+					headers={'Authorization': f'Bearer {token}'},
 					json={"user_ids": [self.userId]}
 				)
 			if userInfosResponse.status_code != 200:

@@ -2,6 +2,7 @@
 import { player1UpBind, player1DownBind, player2UpBind, player2DownBind, player1Side, player2Side, player1Paddle, player2Paddle, settings } from './main.js';
 import { ball } from './ball_init.js';
 import { remoteWs } from './main.js';
+
 // Object to track pressed keys
 export let pressedKeys = {};
 
@@ -44,8 +45,6 @@ export function movePlayerRemote (positions, centerZ) {
         x: positions[index].x,
         z: centerZ - halfLength + index
     }));
-
-    console.log(newPositions);
     // Check if any cube in the line would go out of bounds
     if (newPositions.every(pos => pos.z >= 0 && pos.z < settings.platformLength)) {
         return newPositions;
@@ -67,7 +66,6 @@ export function updatePlayerPositions() {
         return positions;
     };
 
-
     if (settings.gameStatus === 'paused') {
         return;
     }
@@ -75,18 +73,8 @@ export function updatePlayerPositions() {
         let direction = 'none';
         if (pressedKeys[player1UpBind] || pressedKeys[player2UpBind]) {
             direction = 'up';
-            // if (settings.remoteRole === 'left') {
-            //     settings.updatePlayer1Positions(movePlayer(settings.player1Positions, -1));
-            // } else {
-            //     settings.updatePlayer2Positions(movePlayer(settings.player2Positions, -1));
-            // }
         } else if (pressedKeys[player1DownBind] || pressedKeys[player2DownBind]) {
             direction = 'down';
-            // if (settings.remoteRole === 'left') {
-            //     settings.updatePlayer1Positions(movePlayer(settings.player1Positions, 1));
-            // } else {
-            //     settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
-            // }
         }
         if (direction !== 'none' && remoteWs && remoteWs.readyState === remoteWs.OPEN) {
             remoteWs.send(JSON.stringify({

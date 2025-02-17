@@ -1,4 +1,4 @@
-import { fetchProfileImages } from './utils.js';
+import { fetchProfileImages } from './fetchData.js';
 import { buildFriendList } from './friendList.js';
 
 
@@ -19,7 +19,6 @@ function profileNav(idToSearch) {
 	})
 	.then(response => response.json())
 	.then(data => {
-		console.log('Profile data:', data);
 		const user = data[idToSearch];
 		if (!document.getElementById('profile-username'))
 			return;
@@ -58,7 +57,6 @@ export function viewProfile(friendId) {
 if (window.location.pathname === '/profile') {
 	
 	if (sessionStorage.getItem('userId')) {
-		console.log('ok');
 		profileNav(sessionStorage.getItem('userId'));
 	}
 	if (document.getElementById('search_bar')) {

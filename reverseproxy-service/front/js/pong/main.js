@@ -167,7 +167,8 @@ export async function remote_game(gameId) {
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
         
-        remoteWs = new WebSocket(`wss://${window.location.host}/remote/${gameId}/`, ['Bearer_' + accessToken]);
+		const encodedToken = encodeURIComponent(accessToken);
+        remoteWs = new WebSocket(`wss://${window.location.host}/remote/${gameId}/?${encodedToken}`);
         remoteWs.onopen = function () {
             console.log('Remote WebSocket connection established');
         };
@@ -176,19 +177,19 @@ export async function remote_game(gameId) {
         };
         remoteWs.onmessage = function (event) {
             const message = JSON.parse(event.data);
-            console.log('Received message:', message);
+            // console.log('Received message:', message);
             if (message.event === 'assign_role') {
                 settings.remoteRole = message.data;
-                console.log('Assigned role:', settings.remoteRole);
+                // console.log('Assigned role:', settings.remoteRole);
             }
             if (message.event === 'game_update') {
-                console.log(`Ball position: ${ball.position.x}, ${ball.position.z}`);
+                // console.log(`Ball position: ${ball.position.x}, ${ball.position.z}`);
                 ball.position.x = message.data.ball.x;
                 ball.position.z = -message.data.ball.y;
 
-                console.log(`centerZ: ${settings.centerZ}`);
-                console.log(`Player 1 positions: `, message.data.players.left.pos.y);
-                console.log(`Player 2 positions: `, message.data.players.right.pos.y);
+                // console.log(`centerZ: ${settings.centerZ}`);
+                // console.log(`Player 1 positions: `, message.data.players.left.pos.y);
+                // console.log(`Player 2 positions: `, message.data.players.right.pos.y);
                 // settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, settings.centerZ - message.data.players.left.pos.y + 2));
                 // settings.updatePlayer2Positions(movePlayerRemote(settings.player2Positions, settings.centerZ - message.data.players.right.pos.y + 2));
                 settings.updatePlayer1Positions(movePlayerRemote(settings.player1Positions, 15 - message.data.players.left.pos.y));
@@ -215,11 +216,11 @@ export async function remote_game(gameId) {
             }
             if (message.event === 'game_ended') {
                 settings.gameStatus = 'finished';
-                if (message.data.winner === settings.remoteRole) {
-                    alert('You won!');
-                } else if (message.data.winner !== 'unfinished') {
-                    alert('You lost!');
-                }
+                // if (message.data.winner === settings.remoteRole) {
+                //     alert('You won!');
+                // } else if (message.data.winner !== 'unfinished') {
+                //     alert('You lost!');
+                // }
                 currentRemoteGame = null;
                 console.log('Game ended');
             }
@@ -345,19 +346,27 @@ function setupGameModeSelect() {
     if (gameModeSelect) {
         gameModeSelect.addEventListener('change', function () {
             selectedMode = gameModeSelect.value.toLowerCase();
+            // console.log('sections: ', sections);
             // gameModeSelect = selectedMode;
             // Hide all sections
             Object.values(sections).forEach(section => {
-                section.style.display = 'none';
+                if (section) {
+                    section.style.display = 'none';
+                }
             });
 
             // Show the selected section
             if (sections[selectedMode]) {
                 sections[selectedMode].style.display = 'flex';
             }
+            const fieldRows = document.querySelectorAll('.field-row');
+            
             if (selectedMode === 'remote 1v1') {
                 buildFriendList(sessionStorage.getItem('accessToken'), 'friendList', null);
+                fieldRows.forEach(fieldRow => fieldRow.style.visibility = 'hidden');
             }
+            else if (fieldRows[0].style.visibility === 'hidden')
+                fieldRows.forEach(fieldRow => fieldRow.style.visibility = 'visible');
         });
     }
 }
