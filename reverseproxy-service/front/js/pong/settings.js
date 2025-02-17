@@ -51,7 +51,7 @@ export class Settings {
         this.gameStatus = 'title';
         this.displayStatus = 'start';
         this.remoteRole = 'none';
-        this.gameMode = "local 1v1";
+        this.gameMode = 'local 1v1';
 		this.gameStartTime = Date.now();
 
         ///////////////////////////////////paddle settings////////////////////////////////////

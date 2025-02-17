@@ -121,6 +121,24 @@ td, th {
     align-items: center;
     padding-top: 3%;
 }
+
+.status-indicator {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Couleur de la pastille en fonction du statut */
+.friend-avatar.online + .status-indicator {
+    background-color: #00ff00;
+}
+
+.friend-avatar.offline + .status-indicator {
+    background-color: #ff0000;
+}
+
 /* --------------------------------Search Bar-------------------------------- */
 .search-bar {
     width: 90%;
@@ -182,6 +200,7 @@ td, th {
 }
 
 .friend-item img {
+    position: relative;
     width: 50px;
     height: 50px;
 }

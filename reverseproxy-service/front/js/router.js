@@ -11,11 +11,11 @@ const cleanupRouteScript = async (path) => {
     const script = routeScripts.get(path);
     const module = routeModules.get(path);
     const scriptListeners = routeScriptListeners.get(path);
-    console.log(`Cleaning up script for path: ${path}`);
+    // console.log(`Cleaning up script for path: ${path}`);
     
     // If the route has a custom cleanup function, call it
     if (module && typeof module.quit === 'function') {
-        console.log('Cleaning up route using quit:', path, module);
+        // console.log('Cleaning up route using quit:', path, module);
         await module.quit();
     }
 
@@ -77,6 +77,7 @@ const attachRouteScriptListeners = async (path, module) => {
     if (path === '/pong') {
         const startButton = document.getElementById('startButton');
         if (startButton && module && typeof module.initializeGame === 'function') {
+        // if (startButton && module) {
             const listener = () => module.initializeGame();
             startButton.addEventListener('click', listener);
             
@@ -106,8 +107,9 @@ const loadRouteModule = async (path) => {
         if (!modulePath) return null;
 
         // const module = await import(`${modulePath}?v=${Date.now()}`); // Cache-busting
-        routeModules.set(path, modulePath);
-        return modulePath;
+        const module = await import(modulePath);
+        routeModules.set(path, module);
+        return module;
     } catch (error) {
         console.error(`Error loading module for route ${path}:`, error);
         return null;
@@ -136,6 +138,7 @@ const insertRouteScript = async (path) => {
     // Create and append the new script
     const script = document.createElement('script');
     script.src = `${scriptPath}?v=${Date.now()}`; // Cache-busting
+
     script.type = 'module';
     routeScripts.set(path, script);
     document.getElementById("main-page").appendChild(script);

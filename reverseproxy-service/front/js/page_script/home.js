@@ -1,6 +1,6 @@
 import { initializeGame } from "../pong/main.js";
 import { sleep } from "../pong/resetBall.js";
-
+import { changeFriendStatus } from "../page_script/friendList.js";
 // import { initializeGame } from "../pong/main";
 
 // export let globalSocket = null;
@@ -28,6 +28,8 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
             case 'friend_request':
                 reloadProfileScript(data, friendRequestList);
                 break;
+            case 'list_user_connected':
+                changeFriendStatus(data);
             default:
                 console.log('Unhandled message type:', data.type);
         }

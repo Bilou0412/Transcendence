@@ -61,30 +61,32 @@ if (window.location.pathname === '/profile') {
 		console.log('ok');
 		profileNav(sessionStorage.getItem('userId'));
 	}
-	document.getElementById('search_bar').addEventListener('input', function(event) {
-		const query = event.target.value;
-		if (query.length > 0) {
-			fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
-				}
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.users) {
-					console.log('Search results:', data.users);
-					displaySearchResults(data.users);
-				} else {
-					console.error('No users found');
-				}
-			})
-			.catch(error => console.error('Error searching users:', error));
-		} else {
-			clearSearchResults();
-		}
-	});
+	if (document.getElementById('search_bar')) {
+		document.getElementById('search_bar').addEventListener('input', function(event) {
+			const query = event.target.value;
+			if (query.length > 0) {
+				fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
+					}
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.users) {
+						console.log('Search results:', data.users);
+						displaySearchResults(data.users);
+					} else {
+						console.error('No users found');
+					}
+				})
+				.catch(error => console.error('Error searching users:', error));
+			} else {
+				clearSearchResults();
+			}
+		});
+	}
 }
 
 function displaySearchResults(users) {

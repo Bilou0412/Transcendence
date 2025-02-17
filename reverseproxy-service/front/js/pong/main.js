@@ -13,7 +13,7 @@ import { buildFriendList } from "../page_script/friendList.js";
 
 // ///////////////////////////////////environment settings///////////////////////////////
 export let settings = null;
-let selectedMode = null;
+let selectedMode = 'local 1v1';
 let current_match = 1;
 let players_names = ["player 1", "player 2", "player 3", "player 4", null, null, null];
 export let player1Side = 0x222222;
@@ -130,12 +130,13 @@ function animate() {
     }
 }
 
-function resetGame() {
+async function resetGame() {
     if (!settings) 
         return;
     settings.player1Score = 0;
     settings.player2Score = 0;
     updateScoreDisplay();
+    await sleep(2000);
     if (settings.gameStatus === 'started') {
         resetBall();
     }
@@ -152,12 +153,11 @@ function initEnvironment() {
 
 export async function startGame(gameId) {
     if (!settings) return;
-    console.log(`Starting game in mode: ${settings.gameMode}`);
     settings.gameStatus = 'playing';
     if (settings.gameMode === 'remote 1v1') {
         remote_game(gameId);
     }
-    else 
+    else
         updateClock();
     initBall();
     resetGame();
@@ -298,11 +298,11 @@ function changePlayStyle()
             settings.speedIncreaseFactor = 1.3;
         }
 
-        console.log("Selected play style:", playStyle);
     }
 }
 
 export async function initializeGame(gameId) {
+    console.log('Initializing game...');
     document.getElementById('waitingScreen').style.display = 'block';
     document.getElementById('nav').style.display = 'none';
     document.getElementById('startButton').style.display = 'none';
@@ -338,6 +338,7 @@ export async function initializeGame(gameId) {
 function setupGameModeSelect() {
     const gameModeSelect = document.getElementById('gameModeSelect');
     const sections = {
+        "local 1v1": document.querySelector('.local1v1'),
         "local tournament": document.querySelector('.localTournament'),
         "remote 1v1": document.querySelector('.remote1v1'),
     };
@@ -345,7 +346,6 @@ function setupGameModeSelect() {
         gameModeSelect.addEventListener('change', function () {
             selectedMode = gameModeSelect.value.toLowerCase();
             // gameModeSelect = selectedMode;
-            console.log('Selected game mode:', selectedMode);
             // Hide all sections
             Object.values(sections).forEach(section => {
                 section.style.display = 'none';
@@ -382,8 +382,8 @@ function getPlayersNames() {
 
 //////////////////////////////////////Game Settings//////////////////////////////////////
 function setupKeyBindings() {
-    if (!settings)
-        return;
+    // if (!settings)
+    //     return;
     // Track already assigned keys
     const assignedKeys = new Set();
     const keyBindings = {
@@ -425,6 +425,8 @@ function setupKeyBindings() {
     // Handle keybinding updates
     function updateKeybind(buttonId, keyDisplayId, action, buttonDefaultText) {
         const button = document.getElementById(buttonId);
+        if (!document.querySelector(`#${keyDisplayId} kbd`))
+            return;
         const keyDisplay = document.querySelector(`#${keyDisplayId} kbd`);
 
         // Set default key display
@@ -490,6 +492,8 @@ function setupKeyBindings() {
 
     // Handle color picker updates
     function updateColor(buttonId, colorDisplayId) {
+        if (!document.getElementById(buttonId))
+            return;
         const button = document.getElementById(buttonId);
         const colorDisplay = document.getElementById(colorDisplayId);
 

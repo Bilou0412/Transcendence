@@ -1,6 +1,7 @@
 import { fetchProfileImages } from './utils.js';
 import { inviteGame } from './home.js';
 import { viewProfile } from './profile.js';
+import { sleep } from '../pong/resetBall.js';
 
 
 export function fetchFriendList(accessToken) {
@@ -65,13 +66,16 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
 
                     // Create and setup avatar
                     const avatar = document.createElement('img');
-                    avatar.className = 'friend-avatar';
-                    avatar.id = `avatar-${friendId}`;
+                    avatar.className = 'friend-avatar offline';
+                    avatar.id = `user-${friendId}`;
                     if (onClickHandler) {
                         avatar.onclick = function() {
                             onClickHandler(friendId);
                         };
                     }
+                    // Créer la pastille de statut
+                    const statusIndicator = document.createElement('div');
+                    statusIndicator.className = 'status-indicator';
 
                     // Create user info section
                     const userInfo = document.createElement('div');
@@ -141,13 +145,14 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
 
                     // Assemble the friend item
                     li.appendChild(avatar);
+                    li.appendChild(statusIndicator);
                     li.appendChild(userInfo);
                     li.appendChild(userActions);
                     container.appendChild(li);
                 });
 
                 // Load profile images for all friends
-                fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `avatar-${friendId}`));
+                fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `user-${friendId}`));
             });
         });
     })
@@ -241,3 +246,28 @@ function unblockUser(userId) {
 			alert('Failed to unblock user');
 		});
 }
+
+export async function changeFriendStatus(data) {
+    // Get all user elements in the document
+    const userElements = document.querySelectorAll('[id^="user-"]');
+
+    // Convert data.users into a Set for quick lookup (ensuring IDs are strings)
+    const onlineUsers = new Set(data.users.map(user => String(user.id)));
+
+    for (const userElement of userElements) {
+        const userId = userElement.id.replace('user-', ''); // Extract ID as string
+        
+        if (onlineUsers.has(userId)) {
+            // User is online
+            console.log('Changing status to online for:', userId);
+            userElement.classList.remove('offline');
+            userElement.classList.add('online');
+        } else {
+            // User is offline
+            console.log('Changing status to offline for:', userId);
+            userElement.classList.remove('online');
+            userElement.classList.add('offline');
+        }
+    }
+}
+
