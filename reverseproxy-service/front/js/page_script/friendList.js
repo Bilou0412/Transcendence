@@ -3,13 +3,6 @@ import { inviteGame } from './home.js';
 import { viewProfile } from './profile.js';
 import { sleep } from '../pong/resetBall.js';
 
-
-
-
-
-
-
-
 export function buildFriendList(accessToken, elementId, onClickHandler) {
     // Check if the container exists and is empty before building
     const container = document.getElementById(elementId);
@@ -121,7 +114,7 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
                     li.appendChild(userActions);
                     container.appendChild(li);
                 });
-
+                changeFriendStatus();
                 // Load profile images for all friends
                 fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `user-${friendId}`));
             });
@@ -218,12 +211,18 @@ function unblockUser(userId) {
 		});
 }
 
-export async function changeFriendStatus(data) {
+let connectedUsers = [];
+
+export function getConnectedUsers(data) {
+    connectedUsers = data.users;
+}
+
+export function changeFriendStatus() {
     // Get all user elements in the document
     const userElements = document.querySelectorAll('[id^="user-"]');
 
     // Convert data.users into a Set for quick lookup (ensuring IDs are strings)
-    const onlineUsers = new Set(data.users.map(user => String(user.id)));
+    const onlineUsers = new Set(connectedUsers.map(user => String(user.id)));
 
     for (const userElement of userElements) {
         const userId = userElement.id.replace('user-', ''); // Extract ID as string
@@ -241,4 +240,29 @@ export async function changeFriendStatus(data) {
         }
     }
 }
+
+
+// export async function changeFriendStatus(data) {
+//     // Get all user elements in the document
+//     const userElements = document.querySelectorAll('[id^="user-"]');
+
+//     // Convert data.users into a Set for quick lookup (ensuring IDs are strings)
+//     const onlineUsers = new Set(data.users.map(user => String(user.id)));
+
+//     for (const userElement of userElements) {
+//         const userId = userElement.id.replace('user-', ''); // Extract ID as string
+        
+//         if (onlineUsers.has(userId)) {
+//             // User is online
+//             console.log('Changing status to online for:', userId);
+//             userElement.classList.remove('offline');
+//             userElement.classList.add('online');
+//         } else {
+//             // User is offline
+//             console.log('Changing status to offline for:', userId);
+//             userElement.classList.remove('online');
+//             userElement.classList.add('offline');
+//         }
+//     }
+// }
 
