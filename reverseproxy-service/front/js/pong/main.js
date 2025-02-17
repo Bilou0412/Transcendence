@@ -94,6 +94,10 @@ export async function quitPong() {
         }
     }
 
+    console.log("remoteWS before close: ", remoteWs);
+    if (remoteWs)
+        remoteWs.close();
+
     document.getElementById('nav').style.display = 'block';
     document.getElementById('Taskbar').style.display = 'flex';
     document.getElementById('startButton').style.display = 'block';

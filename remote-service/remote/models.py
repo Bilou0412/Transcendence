@@ -4,6 +4,7 @@ import random
 import time
 from datetime import datetime
 import httpx
+import asyncio
 
 class Player:
 	def __init__ (self, id):
@@ -43,6 +44,13 @@ class Game:
 		self.servSide = 'left'
 		self.maxScore = 15
 		self.hitLast = 'right'
+		self.start_timeout_task = asyncio.create_task(self.start_timeout())
+
+	async def start_timeout(self):
+		await asyncio.sleep(300)  # 5 minutes
+		if not self.status:
+			print('Game did not start in time. Destroying game.')
+			await self.destroy_game()
 
 	async def add_player (self, player):
 		if self.players['left'] is None:
@@ -62,10 +70,11 @@ class Game:
 			print(f'Error: No player to remove in role {role}')
 			return
 		print(f'removing player at role {role}')
-		if self.status:
-			self.paused = True
-		self.status = False
-		self.players[role] = None
+		self.end()
+		# if self.status:
+		# 	self.paused = True
+		# self.status = False
+		# self.players[role] = None
 
 	def get_player_role(self, player_id):
 		for role, player in self.players.items():
@@ -104,7 +113,6 @@ class Game:
 			}
 		)
 		if winner == 'unfinished':
-			self.score['left'] = self.score['right'] = 0
 			return
 		end_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 		start_time = self.time.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -120,7 +128,6 @@ class Game:
 					'score_player_2': self.score['right'],
 				}
 			)
-		print(f"fin de partie msg: {userManagerResponse.text}")
 		self.score['left'] = self.score['right'] = 0
 
 	async def send_data (self, data):
@@ -151,7 +158,7 @@ class Game:
 		self.ball.direction = {'x': -0.1 if self.servSide == 'left' else 0.1, 'y': random.choice([-0.1, 0.1])}
 
 	async def move_paddle (self, player_id, direction):
-		print(f'moving paddle {direction}')
+		# print(f'moving paddle {direction}')
 		role = self.get_player_role(player_id)
 		if role is None:
 			print(f'Error: Player with id {player_id} not found')
@@ -177,17 +184,17 @@ class Game:
 			}
 
 			if  self.hitLast == 'right' and potential_pos['x'] <= left_paddle.pos['x'] + 0.2 and potential_pos['x'] >= left_paddle.pos['x'] - 1:
-				print('ball x aligned with left paddle')
-				print(f'ball y: {potential_pos["y"]} left paddle y: {left_paddle.pos["y"]} left paddle down edge y: {left_paddle.pos["y"] - left_paddle.dimension["h"] / 2} left paddle up edge y: {left_paddle.pos["y"] + left_paddle.dimension["h"] / 2}')
+				# print('ball x aligned with left paddle')
+				# print(f'ball y: {potential_pos["y"]} left paddle y: {left_paddle.pos["y"]} left paddle down edge y: {left_paddle.pos["y"] - left_paddle.dimension["h"] / 2} left paddle up edge y: {left_paddle.pos["y"] + left_paddle.dimension["h"] / 2}')
 				if potential_pos['y'] > left_paddle.pos['y'] - left_paddle.dimension['h'] / 2 - 0.3 and potential_pos['y'] < left_paddle.pos['y'] + left_paddle.dimension['h'] / 2 + 0.3:
-					print('ball y aligned with left paddle')
+					# print('ball y aligned with left paddle')
 					self.hitLast = 'left'
 					self.handle_collision(left_paddle, potential_pos)
 			elif self.hitLast == 'left' and potential_pos['x'] >= right_paddle.pos['x'] - 0.2 and potential_pos['x'] <= right_paddle.pos['x'] + 1:
-				print('ball x aligned with right paddle')
-				print(f'ball y: {potential_pos["y"]} right paddle y: {right_paddle.pos["y"]} ')
+				# print('ball x aligned with right paddle')
+				# print(f'ball y: {potential_pos["y"]} right paddle y: {right_paddle.pos["y"]} ')
 				if potential_pos['y'] > right_paddle.pos['y'] - right_paddle.dimension['h'] / 2 - 0.3 and potential_pos['y'] < right_paddle.pos['y'] + right_paddle.dimension['h'] / 2 + 0.3:
-					print('ball y aligned with right paddle')
+					# print('ball y aligned with right paddle')
 					self.hitLast = 'right'
 					self.handle_collision(right_paddle, potential_pos)
 			

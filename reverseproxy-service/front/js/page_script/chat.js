@@ -1,16 +1,13 @@
 import { fetchProfileImages } from './fetchData.js';
 import { buildFriendList } from './friendList.js';
 
-console.log('chat.js loaded');
-
-let chatSocket = null;
-
 const accessToken = sessionStorage.getItem('accessToken');
 const userId = sessionStorage.getItem('userId');
+let chatSocket = null;
+
 fetchProfileImages([userId], accessToken, ['self-avatar']);
 
 function loadChatPage() {
-	const accessToken = sessionStorage.getItem('accessToken');
 	if (!accessToken) {
 		console.error('Access token not found');
 		return;
@@ -18,7 +15,15 @@ function loadChatPage() {
     console.log('Loading chat page');
 	buildFriendList(accessToken, 'friendList', Chat);
 }
-loadChatPage();
+
+if (window.location.pathname === '/chat') {
+	
+	loadChatPage();
+	
+	document.getElementById('send-message').addEventListener('click', function () {
+		sendChatMessage();
+	});
+}
 
 function formatTime(dateStr) {
     const date = new Date(dateStr);
@@ -32,7 +37,6 @@ function formatTime(dateStr) {
 }
 
 function Chat(userIdToChat) {
-	const accessToken = sessionStorage.getItem('accessToken');
 	if (userIdToChat && accessToken) {
 		if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
 			console.log('Closing existing Chat WebSocket connection...');
@@ -44,18 +48,13 @@ function Chat(userIdToChat) {
 
 		chatSocket.onopen = () => {
 			document.getElementById('chat-history-body').innerHTML = '';
-			// document.getElementById('other-avatar').onclick = () => {
-			// 	viewProfile(userIdToChat);
-			// }
 			fetchProfileImages([userIdToChat], accessToken, ['other-avatar']);
 			console.log('Direct Message WebSocket connection opened');
 		};
 
 		chatSocket.onmessage = event => {
 			const message = JSON.parse(event.data);
-			console.log('Received message:', message);
 			const chatMessagesContainer = document.getElementById('chat-history-body');
-			// chatMessagesContainer.innerHTML = '';
 
 			if (message.type === 'message_history') {
 				message.messages.forEach(msg => {
@@ -81,17 +80,11 @@ function Chat(userIdToChat) {
 	}
 }
 
-document.getElementById('send-message').addEventListener('click', function () {
-    sendChatMessage();
-});
-
 function sendChatMessage() {
 	const messageInput = document.getElementById('message-input');
 	const message = messageInput.value.trim();
-	if (!message) {
-		alert('Please enter a message to send.');
+	if (!message)
 		return;
-	}
 	if (chatSocket) {
 		chatSocket.send(JSON.stringify({ message }));
 		messageInput.value = '';

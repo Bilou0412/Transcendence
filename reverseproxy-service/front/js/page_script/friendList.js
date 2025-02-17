@@ -114,8 +114,9 @@ export function buildFriendList(accessToken, elementId, onClickHandler) {
                     li.appendChild(userActions);
                     container.appendChild(li);
                 });
+
                 changeFriendStatus();
-                // Load profile images for all friends
+                
                 fetchProfileImages(friendIds, accessToken, friendIds.map(friendId => `user-${friendId}`));
             });
         });
@@ -213,7 +214,7 @@ function unblockUser(userId) {
 
 let connectedUsers = [];
 
-export function getConnectedUsers(data) {
+export function setConnectedUsers(data) {
     connectedUsers = data.users;
 }
 
