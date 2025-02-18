@@ -1,7 +1,6 @@
 ///////////////////////////////////////imports////////////////////////////////////////
 import { player1UpBind, player1DownBind, player2UpBind, player2DownBind, player1Side, player2Side, player1Paddle, player2Paddle, settings } from './main.js';
 import { ball } from './ball_init.js';
-import { remoteWs } from './main.js';
 
 // Object to track pressed keys
 export let pressedKeys = {};
@@ -76,8 +75,8 @@ export function updatePlayerPositions() {
         } else if (pressedKeys[player1DownBind] || pressedKeys[player2DownBind]) {
             direction = 'down';
         }
-        if (direction !== 'none' && remoteWs && remoteWs.readyState === remoteWs.OPEN) {
-            remoteWs.send(JSON.stringify({
+        if (direction !== 'none' && window.pongSocket && window.pongSocket.readyState === window.pongSocket.OPEN) {
+            window.pongSocket.send(JSON.stringify({
                 event: 'paddle_moved',
                 data: { direction: direction, role: settings.remoteRole }
             }));

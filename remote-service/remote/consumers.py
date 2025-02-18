@@ -41,30 +41,33 @@ class PongConsumer(AsyncWebsocketConsumer):
 				await games[self.game_name].add_player(Player(self.userId))
 				self.game = games[self.game_name]
 
-			
-			print('laaaaaaaaaa')
-
 		except Exception as e:
 			print(f'Connect Error: {str(e)}')
 
 	@auth_token
 	async def disconnect(self, close_code):
 		print(f"close_code: {close_code}, player disconnected: id-{self.userId} role-{self.game.get_player_role(self.userId)}")
+
 		try:
-			async with game_locks[self.game_name]:
-				role = self.game.get_player_role(self.userId)
-				await self.game.remove_player(role)
-				async with games_lock:
-					if all(player is None for player in self.game.players.values()):
+			
+			if self.game_name in game_locks :
+				async with game_locks[self.game_name]:
+					role = self.game.get_player_role(self.userId)
+					await self.game.remove_player(role)
+					await self.game.end()
+					async with games_lock:
+						print(f"del game: {self.game_name}")
 						del games[self.game_name]
 						game_tasks[self.game_name].cancel()
 						del game_tasks[self.game_name]
 						del game_locks[self.game_name]
-
+			
 			await self.channel_layer.group_discard(
-			    self.game_name,
-			    self.channel_name
+				self.game_name,
+				self.channel_name
 			)
+
+			await self.close()
 
 		except Exception as e:
 			print(f'Disconnect Error: {str(e)}')

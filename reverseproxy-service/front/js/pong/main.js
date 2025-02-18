@@ -29,7 +29,6 @@ let semifinal1Winner = document.getElementById('semifinal1');
 let semifinal2Winner = document.getElementById('semifinal2');
 let finalWinner = document.getElementById('final');
 
-export let remoteWs = null;
 let currentRemoteGame = null;
 ///////////////////////////////////main functions/////////////////////////////////////
 
@@ -94,9 +93,11 @@ export async function quitPong() {
         }
     }
 
-    console.log("remoteWS before close: ", remoteWs);
-    if (remoteWs)
-        remoteWs.close();
+    if (window.pongSocket) {
+        console.log("window.pongSocket before close: ", window.pongSocket);
+        window.pongSocket.close();
+        window.pongSocket = null;
+    }
 
     document.getElementById('nav').style.display = 'block';
     document.getElementById('Taskbar').style.display = 'flex';
@@ -172,14 +173,19 @@ export async function remote_game(gameId) {
     if (accessToken) {
         
 		const encodedToken = encodeURIComponent(accessToken);
-        remoteWs = new WebSocket(`wss://${window.location.host}/remote/${gameId}/?${encodedToken}`);
-        remoteWs.onopen = function () {
-            console.log('Remote WebSocket connection established');
+        window.pongSocket = new WebSocket(`wss://${window.location.host}/remote/${gameId}/?${encodedToken}`);
+        window.pongSocket.onopen = function () {
+            console.log('pong WebSocket connection established');
         };
-        remoteWs.onerror = function (error) {
-            console.error('Remote WebSocket error:', error);
+        window.pongSocket.onerror = function (error) {
+            console.error('pong WebSocket error:', error);
         };
-        remoteWs.onmessage = function (event) {
+        window.pongSocket.onclose = function () {
+            console.log('pong WebSocket connection closed');
+            quitPong();
+        };
+
+        window.pongSocket.onmessage = function (event) {
             const message = JSON.parse(event.data);
             // console.log('Received message:', message);
             if (message.event === 'assign_role') {

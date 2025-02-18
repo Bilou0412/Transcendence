@@ -60,6 +60,7 @@ class Game:
 		else:
 			print('Error: Game is full')
 			return
+		
 		print(f'player {player.id} added at role {self.get_player_role(player.id)}')
 		if self.players['left'] is not None and self.players['right'] is not None:
 			time.sleep(5)
@@ -70,11 +71,8 @@ class Game:
 			print(f'Error: No player to remove in role {role}')
 			return
 		print(f'removing player at role {role}')
-		self.end()
-		# if self.status:
-		# 	self.paused = True
-		# self.status = False
-		# self.players[role] = None
+		self.players[role] = None
+		self.status = False
 
 	def get_player_role(self, player_id):
 		for role, player in self.players.items():
@@ -113,6 +111,7 @@ class Game:
 			}
 		)
 		if winner == 'unfinished':
+			self.players['left'] = self.players['right'] = None
 			return
 		end_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 		start_time = self.time.strftime('%Y-%m-%dT%H:%M:%SZ')
