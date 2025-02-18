@@ -1,5 +1,12 @@
 
 services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+
   db-auth:
     image: postgres:13
     ports:
