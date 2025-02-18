@@ -1,0 +1,183 @@
+
+services:
+  db-auth:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./auth-service:/app
+      - postgres_data_auth:/var/lib/postgresql/data
+    env_file:
+      - .env
+    entrypoint: ["/app/docker/entrypoint_db.sh"]
+    networks:
+      - my_network
+
+  auth:
+    build:
+      context: ./auth-service/docker
+    volumes:
+      - ./auth-service:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    env_file:
+      - .env
+    networks:
+      - my_network
+    depends_on:
+      - db-auth
+    entrypoint: ["/app/docker/entrypoint_dev.sh"]
+
+  db-chat:
+    image: postgres:13
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./chat-service:/app
+      - postgres_data_chat:/var/lib/postgresql/data
+    env_file:
+      - .env
+    entrypoint: ["/app/docker/entrypoint_db.sh"]
+    networks:
+      - my_network
+
+  chat:
+    build:
+      context: ./chat-service/docker
+    volumes:
+      - ./chat-service:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    env_file:
+      - .env
+    networks:
+      - my_network
+    depends_on:
+      - db-chat
+    entrypoint: ["/app/docker/entrypoint_dev.sh"]
+
+  ### 🔹 Base de données pour Media ###
+  db-media:
+    image: postgres:13
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./media-service:/app
+      - postgres_data_media:/var/lib/postgresql/data
+    env_file:
+      - .env
+    entrypoint: ["/app/docker/entrypoint_db.sh"]
+    networks:
+      - my_network
+
+  media:
+    build:
+      context: ./media-service/docker
+    volumes:
+      - ./media-service:/app
+      - ./media-service/docker:/app/docker
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    env_file:
+      - .env
+    networks:
+      my_network:
+        aliases:
+          - media
+    entrypoint: ["/app/docker/entrypoint_dev.sh"]
+    depends_on:
+      - db-media
+
+  remote:
+    build:
+      context: ./remote-service/docker
+    volumes:
+      - ./remote-service:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    env_file:
+      - .env
+    networks:
+      - my_network
+    entrypoint: ["/app/docker/entrypoint_dev.sh"]
+
+  reverseproxy:
+    build: ./reverseproxy-service
+    container_name: nginx_reverse_proxy
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./reverseproxy-service/nginx.conf:/etc/nginx/nginx.conf
+      - ./reverseproxy-service/nginx/ssl:/etc/nginx/ssl
+      - ./media-service/images:/etc/front/images
+    networks:
+      - my_network
+    env_file:
+      - .env
+    depends_on:
+      - auth
+      - chat
+      - media
+      - remote
+      - usermanagement
+      - wsmanagement
+    environment:
+      - TZ=Europe/Paris
+
+  db-usermanagement:
+    image: postgres:13
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./usermanagement-service:/app
+      - postgres_data_usermanagement:/var/lib/postgresql/data
+    env_file:
+      - .env
+    entrypoint: ["/app/docker/entrypoint_db.sh"]
+    networks:
+      - my_network
+
+  usermanagement:
+    build:
+      context: ./usermanagement-service/docker
+    volumes:
+      - ./usermanagement-service:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    env_file:
+      - .env
+    networks:
+      - my_network
+    depends_on:
+      - db-usermanagement
+    entrypoint: ["/app/docker/entrypoint_dev.sh"]
+
+  wsmanagement:
+    build:
+      context: ./wsmanagement-service/docker
+    volumes:
+      - ./wsmanagement-service:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=True
+    env_file:
+      - .env
+    networks:
+      - my_network
+    entrypoint: ["/app/docker/entrypoint_dev.sh"]
+
+volumes:
+  postgres_data_auth:
+  postgres_data_chat:
+  postgres_data_media:  # Ajout du volume pour Media
+  postgres_data_usermanagement:
+
+networks:
+  my_network:
+    driver: bridge
