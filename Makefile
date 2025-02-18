@@ -41,10 +41,10 @@ down:
 	@echo "$(GREEN)Stopping services...$(NC)"
 	@$(foreach dir, $(SERVICE_DIRS), \
 		(echo "Stopping $(dir)"; cd $(dir) && $(COMPOSE) down) &&) true
-	# @if docker ps --format '{{.Names}}' | grep -q "^redis$$"; then \
-    #     echo "$(GREEN)Stopping Redis service...$(NC)"; \
-    #     docker stop redis; \
-    # fi
+	@if docker ps --format '{{.Names}}' | grep -q "^redis$$"; then \
+        echo "$(GREEN)Stopping Redis service...$(NC)"; \
+        docker stop redis; \
+    fi
 
 logs:
 	@echo "$(GREEN)Opening GNOME Terminal with tabs for all services...$(NC)"
@@ -56,10 +56,6 @@ clean:
 	@echo "$(RED)Cleaning up...$(NC)"
 	@$(foreach dir, $(SERVICE_DIRS), \
         (echo "Cleaning $(dir)"; cd $(dir) && $(COMPOSE) down -v --remove-orphans || true) &&) true
-	@if docker ps -a --format '{{.Names}}' | grep -q "^$(REDIS)$$"; then \
-		echo "$(RED)Removing Redis container...$(NC)"; \
-		docker stop $(REDIS) && docker rm $(REDIS); \
-	fi
 	@if docker network inspect $(NETWORK) >/dev/null 2>&1; then \
 		echo "$(RED)Checking for containers connected to $(NETWORK)...$(NC)"; \
 		CONTAINERS=$$(docker network inspect -f '{{range .Containers}}{{.Name}} {{end}}' $(NETWORK)); \

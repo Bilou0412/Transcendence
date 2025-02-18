@@ -72,15 +72,7 @@ class LobbyConsumer(AsyncWebsocketConsumer):
 
 	async def handle_invite(self, data):
 		invitee_id = data['invitee_id']
-		# invite_code = str(uuid.uuid4())
 		invite_code = uuid.uuid4().hex
-
-		# Send invite code to the inviter
-		# await self.send(text_data=json.dumps({
-		# 	'type': 'invite_code',
-		# 	'invite_code': invite_code,
-		# 	'invitee_id': invitee_id
-		# }))
 
 		# Send invite code to the invitee
 		await self.channel_layer.group_send(
