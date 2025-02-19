@@ -31,8 +31,15 @@ function profileNav(idToSearch) {
 		if (user['Student']) {
 			document.getElementById('editBtn').style.display = 'none';
 		}
-		if (sessionStorage.getItem('userId') !== idToSearch) {
+		if (sessionStorage.getItem('userId') !== String(idToSearch)) {
 			document.getElementById('editBtn').style.display = 'none';
+		}
+
+		if (document.getElementById('search_bar')) {
+			document.getElementById('search_bar').addEventListener('input', function(event) {
+				const query = event.target.value;
+				fetchSearchResults(query);
+			});
 		}
 
 	})
@@ -59,36 +66,37 @@ if (window.location.pathname === '/profile') {
 	if (sessionStorage.getItem('userId')) {
 		profileNav(sessionStorage.getItem('userId'));
 	}
-	if (document.getElementById('search_bar')) {
-		document.getElementById('search_bar').addEventListener('input', function(event) {
-			const query = event.target.value;
-			if (query.length > 0) {
-				fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
-					}
-				})
-				.then(response => response.json())
-				.then(data => {
-					if (data.users) {
-						console.log('Search results:', data.users);
-						displaySearchResults(data.users);
-					} else {
-						console.error('No users found');
-					}
-				})
-				.catch(error => console.error('Error searching users:', error));
-			} else {
-				clearSearchResults();
+}
+
+function fetchSearchResults(query) {
+	if (query.length > 0) {
+		fetch(`https://${window.location.host}/auth/search_user/?username=${query}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken')
 			}
-		});
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.users) {
+				console.log('Search results:', data.users);
+				displaySearchResults(data.users);
+			} else {
+				console.error('No users found');
+			}
+		})
+		.catch(error => console.error('Error searching users:', error));
+	} else {
+		clearSearchResults();
 	}
 }
 
 function displaySearchResults(users) {
 	const resultsContainer = document.getElementById('searchResults-body');
+	const userElements = document.querySelectorAll('[id^="user-"]');
+    const friendIds = new Set(Array.from(userElements).map(element => element.id.replace('user-', '')));
+
 	resultsContainer.innerHTML = '';
 	users.forEach(user => {
 		const userElement = document.createElement('div');
@@ -115,13 +123,15 @@ function displaySearchResults(users) {
 		
 		const userActions = document.createElement('div');
 		userActions.className = 'friend-actions';
-		const friendRequestButton = document.createElement('button');
-		friendRequestButton.className = 'btn btn-friend-request';
-		friendRequestButton.innerText = 'Send Friend Request';
-		friendRequestButton.onclick = function () {
-			sendFriendRequest(user.id);
-		};
-		userActions.appendChild(friendRequestButton);
+		if (String(user.id) !== sessionStorage.getItem('userId') && !friendIds.has(String(user.id))) {
+			const friendRequestButton = document.createElement('button');
+			friendRequestButton.className = 'btn btn-friend-request';
+			friendRequestButton.innerText = 'Send Friend Request';
+			friendRequestButton.onclick = function () {
+				sendFriendRequest(user.id);
+			};
+			userActions.appendChild(friendRequestButton);
+		}
 		
 		userElement.appendChild(avatar);
 		userElement.appendChild(userInfo);

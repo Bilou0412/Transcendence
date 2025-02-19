@@ -141,7 +141,7 @@ async function resetGame() {
     settings.player1Score = 0;
     settings.player2Score = 0;
     updateScoreDisplay();
-    await sleep(2000);
+    await sleep(5000);
     if (settings.gameStatus === 'started') {
         resetBall();
     }
