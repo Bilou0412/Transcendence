@@ -20,7 +20,7 @@ export async function onKeyDown(event) {
     }
 
     if (event.key === 'Escape'){
-        if ( settings.gameStatus === 'playing') {
+        if ( settings.gameStatus === 'started') {
             if (settings.displayStatus === 'settings'){
                 clearModes();
                 settingDisplay();

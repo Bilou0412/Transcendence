@@ -48,7 +48,7 @@ export class Settings {
         this.player2HitCounter = 0; // Number of hits by player 2 for supercharge
         this.ServSide = 2; // Wich player will serve
         this.lastHit = 1; // Last player to hit the ball
-        this.gameStatus = 'title';
+        this.gameStatus = 'paused';
         this.displayStatus = 'start';
         this.remoteRole = 'none';
         this.gameMode = 'local 1v1';

@@ -136,7 +136,7 @@ async function resetGame() {
     settings.player1Score = 0;
     settings.player2Score = 0;
     updateScoreDisplay();
-    await sleep(5000);
+    await sleep(1500);
     if (settings.gameStatus === 'started') {
         resetBall();
     }
@@ -153,7 +153,7 @@ function initEnvironment() {
 
 export async function startGame(gameId) {
     if (!settings) return;
-    settings.gameStatus = 'playing';
+    // settings.
     if (settings.gameMode === 'remote 1v1') {
         remote_game(gameId);
     }
@@ -333,6 +333,8 @@ export async function initializeGame(gameId) {
     document.getElementById('titleBarPong').style.display = 'none';
     document.getElementById('waitingScreen').style.display = 'none';
     focusGame();
+    await sleep(3000);
+    settings.updateGameStatus('started');
 }
 
 ////////////////////////////////////////////////////////Page script////////////////////////////////////////////////////////

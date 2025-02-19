@@ -66,7 +66,7 @@ export function updatePlayerPositions() {
         return positions;
     };
 
-    if (settings.gameStatus === 'paused') {
+    if (settings.gameStatus !== 'started') {
         return;
     }
     if (settings.gameMode === 'remote 1v1') {
