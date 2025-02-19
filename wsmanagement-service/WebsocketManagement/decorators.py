@@ -12,14 +12,14 @@ def auth_token(func):
 			# print(f"dirrrrrrrrrrrrrrrrrr: {dir(self.scope)}")
 			# print(f"oooooooooooooooooooo: {self.scope.items()}")
 			# token = self.COOKIES.get('access_token')
-			token = self.scope.get('cookies').get('access_token')
-			if not token:
-				raise DenyConnection("Authorization token missing")
+			# token = self.scope.get('cookies').get('access_token')
+			# if not token:
+				# raise DenyConnection("Authorization token missing")
 			async with httpx.AsyncClient(timeout=5) as validateClient:
 				validateResponse = await validateClient.post(
 					'http://auth:8000/auth/token/validate/',
-					headers={'Authorization': f'Bearer {token}'},
                     cookies=self.scope.get('cookies')
+					
                 )
 			if validateResponse.status_code != 200:
 				raise DenyConnection("Invalid authorization token")
@@ -30,7 +30,7 @@ def auth_token(func):
 			async with httpx.AsyncClient(timeout=5) as userInfosClient:
 				userInfosResponse = await userInfosClient.post(
 					'http://auth:8000/auth/users/info/',
-					headers={'Authorization': f'Bearer {token}'},
+					cookies=self.scope.get('cookies'),
 					json={"user_ids": [self.userId]}
 				)
 			if userInfosResponse.status_code != 200:

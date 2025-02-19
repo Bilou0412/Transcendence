@@ -12,6 +12,7 @@ def UsersInfo(request):
     Récupère les informations des utilisateurs en fonction de leurs IDs.
     """
     # Récupérer les `user_ids` du corps de la requête
+    print("use infos in")
     user_ids = request.data.get('user_ids', [])
     
     if not user_ids:

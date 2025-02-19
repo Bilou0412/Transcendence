@@ -9,6 +9,7 @@ from rest_framework.response import Response
 def Validate(request):
     print('l')
     user = request.user 
+    print(f"User: {user.id}")
     if user:
         return Response({'detail': 'Valid token.', 'id': user.id}, status=status.HTTP_200_OK)
     return Response({'detail': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
