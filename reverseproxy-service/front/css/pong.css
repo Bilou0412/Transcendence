@@ -46,14 +46,6 @@ body {
 	align-items: center;
 }
 
-
-
-
-
-
-
-
-
 .localTournament {
 	height: 100%;
 	display: none;
@@ -67,6 +59,7 @@ body {
 	justify-content: space-around;
 	padding: 20px;
 	font-family: Arial, sans-serif;
+	padding-right: 62px;
 }
 
 .round {

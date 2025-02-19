@@ -1,5 +1,5 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { quitPong, settings, player1Paddle, player2Paddle } from './main.js';
+import { quit, settings, player1Paddle, player2Paddle } from './main.js';
 import { ball } from './ball_init.js';
 import { focusGame } from './monitor.js';
 import { updatePaddleColor, pressedKeys } from './movements.js';
@@ -24,7 +24,7 @@ export async function onKeyDown(event) {
                 clearModes();
                 settingDisplay();
             }
-            quitPong();
+            quit();
         } 
         else if ( settings.gameStatus === 'paused')
         {

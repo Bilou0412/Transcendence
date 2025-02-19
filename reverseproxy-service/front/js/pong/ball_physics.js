@@ -1,5 +1,5 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { settings, player1Paddle, player2Paddle, quitPong } from './main.js';
+import { settings, player1Paddle, player2Paddle, quit } from './main.js';
 import { ball } from './ball_init.js';
 import { updatePaddleColor } from './movements.js';
 import { resetBall } from './resetBall.js';
@@ -173,7 +173,7 @@ export function updateBallPosition()
         updateScoreDisplay();
         settings.updateServSide(1);
         if (settings.player2Score >= settings.maxScore)
-            quitPong();
+            quit();
         resetBall();
 
     }
@@ -183,7 +183,7 @@ export function updateBallPosition()
         updateScoreDisplay();
         settings.updateServSide(2);
         if (settings.player1Score >= settings.maxScore)
-            quitPong();
+            quit();
         resetBall();
     }
 }

@@ -58,7 +58,7 @@ function annonceWinner(player1, player2) {
     }
 }
 
-export async function quitPong() {
+export async function quit() {
     if (settings.player1Score === settings.maxScore || settings.player2Score === settings.maxScore) {
         if (settings.gameMode === 'local tournament' ) {
             if (current_match === 1) {
@@ -182,7 +182,7 @@ export async function remote_game(gameId) {
         };
         window.pongSocket.onclose = function () {
             console.log('pong WebSocket connection closed');
-            quitPong();
+            quit();
         };
 
         window.pongSocket.onmessage = function (event) {
@@ -213,7 +213,7 @@ export async function remote_game(gameId) {
                     updateScoreDisplay();
                     settings.updateServSide(1);
                     if (settings.player2Score >= settings.maxScore || settings.player1Score >= settings.maxScore)
-                        quitPong();
+                        quit();
                     resetBall();
                 }
 
@@ -314,6 +314,7 @@ function changePlayStyle()
 
 export async function initializeGame(gameId) {
     console.log('Initializing game...');
+    console.log('key bind', player1UpBind, player1DownBind, player2UpBind, player2DownBind);
     document.getElementById('waitingScreen').style.display = 'block';
     document.getElementById('nav').style.display = 'none';
     document.getElementById('startButton').style.display = 'none';
@@ -443,6 +444,7 @@ function setupKeyBindings() {
 
     // Handle keybinding updates
     function updateKeybind(buttonId, keyDisplayId, action, buttonDefaultText) {
+        console.log('updating keybind:', action);
         const button = document.getElementById(buttonId);
         if (!document.querySelector(`#${keyDisplayId} kbd`))
             return;
@@ -507,6 +509,7 @@ function setupKeyBindings() {
 
             document.addEventListener("keydown", onKeyPress);
         });
+        console.log('key bind', player1UpBind, player1DownBind, player2UpBind, player2DownBind);
     }
 
     // Handle color picker updates

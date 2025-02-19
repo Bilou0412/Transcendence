@@ -15,7 +15,7 @@ const cleanupRouteScript = async (path) => {
     
     // If the route has a custom cleanup function, call it
     if (module && typeof module.quit === 'function') {
-        // console.log('Cleaning up route using quit:', path, module);
+        console.log('Cleaning up route using quit:', path, module);
         await module.quit();
     }
 

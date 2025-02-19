@@ -74,6 +74,7 @@
 #chat-history-body {
 	height: 94%;
   	overflow-y: auto;
+	margin-top: 2%;
 }
 
 .chat-input {

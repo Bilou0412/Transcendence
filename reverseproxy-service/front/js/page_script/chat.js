@@ -1,4 +1,4 @@
-import { fetchProfileImages } from './fetchData.js';
+import { fetchProfileImages, fetchUsersInfos } from './fetchData.js';
 import { buildFriendList } from './friendList.js';
 
 const accessToken = sessionStorage.getItem('accessToken');
@@ -18,7 +18,7 @@ function loadChatPage() {
 if (window.location.pathname === '/chat') {
 	
 	loadChatPage();
-	
+
 	document.getElementById('send-message').addEventListener('click', function () {
 		sendChatMessage();
 	});
@@ -50,6 +50,13 @@ function Chat(userIdToChat) {
         document.getElementById('chat-history-body').innerHTML = '';
         fetchProfileImages([userIdToChat], accessToken, ['other-avatar']);
         console.log('Direct Message WebSocket connection opened');
+        //change title of chat page
+        let chat_with = document.getElementById('chat-with');
+        fetchUsersInfos(accessToken, [userIdToChat])
+        .then (userData => {
+            console.log(userData);
+            chat_with.textContent = userData[userIdToChat].username;
+        });
     };
 
     window.chatSocket.onmessage = event => {
