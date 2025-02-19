@@ -1,9 +1,10 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { settings, player1Paddle, player2Paddle, quit } from './main.js';
+import { settings, quit } from './main.js';
 import { ball } from './ball_init.js';
 import { updatePaddleColor } from './movements.js';
 import { resetBall } from './resetBall.js';
 import { updateScoreDisplay, updateHitCounter1Display, updateHitCounter2Display} from './display.js';
+import { pongColors } from './pong_bind.js';
 
 
 ///////////////////////////////////grab mechanic//////////////////////////////////////
@@ -119,7 +120,7 @@ export function updateBallPosition()
     let closestCube = null;
 
     settings.cubes.forEach(cube => {
-        const playerColor = cube.position.x < 0 ? player1Paddle : player2Paddle;
+        const playerColor = cube.position.x < 0 ? pongColors.player1Paddle : pongColors.player2Paddle;
         if (cube.material.color.getHex() === playerColor || cube.material.color.getHex() === 0x0aa23b) {
             const cubeBoundingBox = new THREE.Box3().setFromObject(cube);
             const intersection = ray.intersectBox(cubeBoundingBox, new THREE.Vector3());

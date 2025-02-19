@@ -53,6 +53,10 @@ export class Settings {
         this.remoteRole = 'none';
         this.gameMode = 'local 1v1';
 		this.gameStartTime = Date.now();
+        this.player1UpBind = 'w';
+        this.player1DownBind = 's';
+        this.player2UpBind = 'ArrowUp';
+        this.player2DownBind = 'ArrowDown';
 
         ///////////////////////////////////paddle settings////////////////////////////////////
         this.centerZ = this.lineLength === this.platformLength ? 0 : Math.floor((this.platformLength - this.lineLength) / 2);
@@ -145,4 +149,10 @@ export class Settings {
         });
     }
     updateTime() { this.gameStartTime = Date.now(); }
+    updateBindKeys(player1Up, player1Down, player2Up, player2Down) {
+        this.player1UpBind = player1Up;
+        this.player1DownBind = player1Down;
+        this.player2UpBind = player2Up;
+        this.player2DownBind = player2Down;
+    }
 }

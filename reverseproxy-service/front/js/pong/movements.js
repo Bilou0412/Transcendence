@@ -1,6 +1,7 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { player1UpBind, player1DownBind, player2UpBind, player2DownBind, player1Side, player2Side, player1Paddle, player2Paddle, settings } from './main.js';
+import { settings } from './main.js';
 import { ball } from './ball_init.js';
+import { pongColors } from './pong_bind.js';
 
 // Object to track pressed keys
 export let pressedKeys = {};
@@ -10,16 +11,16 @@ export function updateCubeSelection() {
     settings.cubes.forEach(cube => {
         //update color depending on the side
         if (cube.userData.gridPosition.x < 2) {
-            cube.material.color.setHex(player1Side);
+            cube.material.color.setHex(pongColors.player1Side);
         }
         else {
-            cube.material.color.setHex(player2Side);
+            cube.material.color.setHex(pongColors.player2Side);
         }
         cube.userData.targetY = 0;
     });
 
     const updatePlayerCubes = (positions, player) => {
-        const playerColor = player === 1 ? player1Paddle : player2Paddle;
+        const playerColor = player === 1 ? pongColors.player1Paddle : pongColors.player2Paddle;
         const color = ball.userData.heldBy === player ? 0x0aa23b : playerColor;
         positions.forEach((pos) => {
             const cube = settings.cubes.find(cube =>
@@ -70,9 +71,9 @@ export function updatePlayerPositions() {
     }
     if (settings.gameMode === 'remote 1v1') {
         let direction = 'none';
-        if (pressedKeys[player1UpBind] || pressedKeys[player2UpBind]) {
+        if (pressedKeys[settings.player1UpBind] || pressedKeys[settings.player2UpBind]) {
             direction = 'up';
-        } else if (pressedKeys[player1DownBind] || pressedKeys[player2DownBind]) {
+        } else if (pressedKeys[settings.player1DownBind] || pressedKeys[settings.player2DownBind]) {
             direction = 'down';
         }
         if (direction !== 'none' && window.pongSocket && window.pongSocket.readyState === window.pongSocket.OPEN) {
@@ -84,15 +85,15 @@ export function updatePlayerPositions() {
         return;
     }
     // Player 1 movement
-    if (pressedKeys[player1UpBind])
+    if (pressedKeys[settings.player1UpBind])
 		settings.updatePlayer1Positions(movePlayer(settings.player1Positions, -1));
-    if (pressedKeys[player1DownBind])
+    if (pressedKeys[settings.player1DownBind])
 		settings.updatePlayer1Positions(movePlayer(settings.player1Positions, 1));
 
     // Player 2 movement
-    if (pressedKeys[player2UpBind])
+    if (pressedKeys[settings.player2UpBind])
 		settings.updatePlayer2Positions(movePlayer(settings.player2Positions, -1));
-    if (pressedKeys[player2DownBind])
+    if (pressedKeys[settings.player2DownBind])
 		settings.updatePlayer2Positions(movePlayer(settings.player2Positions, 1));
 }
 

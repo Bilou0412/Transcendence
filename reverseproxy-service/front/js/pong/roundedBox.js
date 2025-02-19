@@ -1,5 +1,6 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { player1Side, player2Side, settings } from "./main.js";
+import { settings } from "./main.js";
+import { pongColors } from "./pong_bind.js";
 
 
 //////////////////////////////////////cubes modelisation//////////////////////////////////////
@@ -34,7 +35,7 @@ export function initSides(){
 	for (let i = -1; i < 2; i++) {
 		for (let j = -1; j < settings.platformLength + 1; j++) {
 			const geometry = createRoundedBox(settings.cubeSize, settings.cubeSize, settings.cubeSize, 0.18, 4);
-			const material = new THREE.MeshPhongMaterial({ color: player1Side });
+			const material = new THREE.MeshPhongMaterial({ color: pongColors.player1Side });
 			const cube = new THREE.Mesh(geometry, material);
 			cube.position.set(i - settings.platformWidth / 2 + 0.5, 0, j - settings.platformLength / 2 + 0.5);
 			cube.userData.gridPosition = { x: i, z: j };
@@ -47,7 +48,7 @@ export function initSides(){
 	for (let i = settings.platformWidth - 2; i < settings.platformWidth + 1; i++) {
 		for (let j = -1; j < settings.platformLength + 1; j++) {
 			const geometry = createRoundedBox(settings.cubeSize, settings.cubeSize, settings.cubeSize, 0.18, 4);
-			const material = new THREE.MeshPhongMaterial({ color: player2Side });
+			const material = new THREE.MeshPhongMaterial({ color: pongColors.player2Side });
 			const cube = new THREE.Mesh(geometry, material);
 			cube.position.set(i - settings.platformWidth / 2 + 0.5, 0, j - settings.platformLength / 2 + 0.5);
 			cube.userData.gridPosition = { x: i, z: j };

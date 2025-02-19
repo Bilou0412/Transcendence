@@ -1,5 +1,6 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { player1Paddle, player2Paddle, settings} from "./main.js";
+import { settings} from "./main.js";
+import { pongColors } from "./pong_bind.js";
 import { ball} from "./ball_init.js";
 import { updatePaddleColor } from "./movements.js";
 import { updateHitCounter1Display, updateHitCounter2Display } from "./display.js";
@@ -21,8 +22,8 @@ export async function resetBall() {
 	settings.updatePlayer2HitCounter(0); // Réinitialise le compteur de hits du joueur 2
     updateHitCounter1Display();
     updateHitCounter2Display();
-    updatePaddleColor(1, player1Paddle); // Réinitialise la couleur du paddle du joueur 1
-    updatePaddleColor(2, player2Paddle); // Réinitialise la couleur du paddle du joueur 2
+    updatePaddleColor(1, pongColors.player1Paddle); // Réinitialise la couleur du paddle du joueur 1
+    updatePaddleColor(2, pongColors.player2Paddle); // Réinitialise la couleur du paddle du joueur 2
 
     await sleep(2000);
 

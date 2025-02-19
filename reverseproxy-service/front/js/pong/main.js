@@ -10,20 +10,13 @@ import { onKeyDown, onKeyUp, onMouseWheel } from "./keyEvents.js";
 import { Settings } from "./settings.js";
 import { titleDisplay } from "./monitor_display.js";
 import { buildFriendList } from "../page_script/friendList.js";
+import { pongBindings, pongColors } from "./pong_bind.js";
 
 // ///////////////////////////////////environment settings///////////////////////////////
 export let settings = null;
 let selectedMode = 'local 1v1';
 let current_match = 1;
 let players_names = ["player 1", "player 2", "player 3", "player 4", null, null, null];
-export let player1Side = 0x222222;
-export let player2Side = 0x222222;
-export let player1Paddle = 0x797979;
-export let player2Paddle = 0x797979;
-export let player1UpBind = 'w';
-export let player1DownBind = 's';
-export let player2UpBind = 'ArrowUp';
-export let player2DownBind = 'ArrowDown';
 
 let semifinal1Winner = document.getElementById('semifinal1');
 let semifinal2Winner = document.getElementById('semifinal2');
@@ -59,28 +52,30 @@ function annonceWinner(player1, player2) {
 }
 
 export async function quit() {
-    if (settings.player1Score === settings.maxScore || settings.player2Score === settings.maxScore) {
-        if (settings.gameMode === 'local tournament' ) {
-            if (current_match === 1) {
-                annonceWinner(0, 1);
-                current_match++;
-            }
-            else if (current_match === 2) {
-                annonceWinner(2, 3);
-                current_match++;
+    if (settings) {
+        if (settings.player1Score === settings.maxScore || settings.player2Score === settings.maxScore) {
+            if (settings.gameMode === 'local tournament' ) {
+                if (current_match === 1) {
+                    annonceWinner(0, 1);
+                    current_match++;
+                }
+                else if (current_match === 2) {
+                    annonceWinner(2, 3);
+                    current_match++;
+                }
+                else {
+                    annonceWinner(4, 5);
+                    alert(players_names[6] + ' wins the tournament!');
+                    current_match = 1;
+                }
             }
             else {
-                annonceWinner(4, 5);
-                alert(players_names[6] + ' wins the tournament!');
-                current_match = 1;
-            }
+                if (settings.player1Score > settings.player2Score)
+                    alert(players_names[0] + ' wins the match!');
+                else
+                    alert(players_names[1] + ' wins the match!');
+            }  
         }
-        else {
-            if (settings.player1Score > settings.player2Score)
-                alert(players_names[0] + ' wins the match!');
-            else
-                alert(players_names[1] + ' wins the match!');
-        }  
     }
 
     if (settings) {
@@ -141,7 +136,7 @@ async function resetGame() {
     settings.player1Score = 0;
     settings.player2Score = 0;
     updateScoreDisplay();
-    await sleep(2000);
+    await sleep(5000);
     if (settings.gameStatus === 'started') {
         resetBall();
     }
@@ -226,11 +221,6 @@ export async function remote_game(gameId) {
             }
             if (message.event === 'game_ended') {
                 settings.gameStatus = 'finished';
-                // if (message.data.winner === settings.remoteRole) {
-                //     alert('You won!');
-                // } else if (message.data.winner !== 'unfinished') {
-                //     alert('You lost!');
-                // }
                 currentRemoteGame = null;
                 console.log('Game ended');
             }
@@ -314,7 +304,6 @@ function changePlayStyle()
 
 export async function initializeGame(gameId) {
     console.log('Initializing game...');
-    console.log('key bind', player1UpBind, player1DownBind, player2UpBind, player2DownBind);
     document.getElementById('waitingScreen').style.display = 'block';
     document.getElementById('nav').style.display = 'none';
     document.getElementById('startButton').style.display = 'none';
@@ -330,6 +319,7 @@ export async function initializeGame(gameId) {
         currentRemoteGame = gameId;
         settings.gameMode = 'remote 1v1';
     }
+    settings.updateBindKeys(pongBindings.player1UpBind, pongBindings.player1DownBind, pongBindings.player2UpBind, pongBindings.player2DownBind);
     changePlayStyle();
     initMonitor();
     initTable();
@@ -401,45 +391,49 @@ function getPlayersNames() {
 }
 
 //////////////////////////////////////Game Settings//////////////////////////////////////
-function setupKeyBindings() {
-    // if (!settings)
-    //     return;
-    // Track already assigned keys
-    const assignedKeys = new Set();
-    const keyBindings = {
-        player1Up: "W",
-        player1Down: "S",
-        player2Up: "ArrowUp",
-        player2Down: "ArrowDown"
-    };
+if (window.location.pathname === '/pong') {
+    // Handle color picker updates
+    function updateColor(buttonId, colorDisplayId) {
+        if (!document.getElementById(buttonId))
+            return;
+        const button = document.getElementById(buttonId);
+        const colorDisplay = document.getElementById(colorDisplayId);
 
-    // Key display mapping
-    const keyDisplayMapping = {
-        ArrowUp: "↑",
-        ArrowDown: "↓",
-        ArrowLeft: "←",
-        ArrowRight: "→",
-        ARROWUP: "↑",
-        ARROWDOWN: "↓",
-        ARROWLEFT: "←",
-        ARROWRIGHT: "→",
-        " ": "Space",
-        Enter: "Enter",
-        Backspace: "Backspace"
-    };
+        button.addEventListener("click", () => {
+            const colorInput = document.createElement("input");
+            colorInput.type = "color";
+            colorInput.style.display = "none";
 
-    // Function to reset assigned keys based on current bindings
-    function resetAssignedKeys() {
-        assignedKeys.clear();
-        Object.values(keyBindings).forEach(key => assignedKeys.add(key.toUpperCase()));
-    }
+            document.body.appendChild(colorInput);
+            colorInput.click();
 
-    // Initialize assignedKeys with default keys
-    resetAssignedKeys();
+            colorInput.addEventListener("input", () => {
+                colorDisplay.style.backgroundColor = colorInput.value;
+                
+                // Convert hex color to 0x format and update the corresponding variable
+                const colorValue = parseInt(colorInput.value.replace('#', '0x'));
+                
+                switch(buttonId) {
+                    case 'player1SideColorBtn':
+                        pongColors.player1Side = colorValue;
+                        break;
+                    case 'player1PaddleColorBtn':
+                        pongColors.player1Paddle = colorValue;
+                        break;
+                    case 'player2SideColorBtn':
+                        pongColors.player2Side = colorValue;
+                        break;
+                    case 'player2PaddleColorBtn':
+                        pongColors.player2Paddle = colorValue;
+                        break;
+                }
 
-    // Function to get display value for a key
-    function getKeyDisplay(key) {
-        return keyDisplayMapping[key] || key.toUpperCase();
+            });
+
+            colorInput.addEventListener("change", () => {
+                document.body.removeChild(colorInput);
+            });
+        });
     }
 
     // Handle keybinding updates
@@ -490,85 +484,77 @@ function setupKeyBindings() {
 
                 // Update the game bindings
                 if (action === 'player1Up') {
-                    player1UpBind = bindingKey;
+                    pongBindings.player1UpBind = bindingKey;
                 } else if (action === 'player1Down') {
-                    player1DownBind = bindingKey;
+                    pongBindings.player1DownBind = bindingKey;
                 } else if (action === 'player2Up') {
-                    player2UpBind = bindingKey;
+                    pongBindings.player2UpBind = bindingKey;
                 } else if (action === 'player2Down') {
-                    player2DownBind = bindingKey;
+                    pongBindings.player2DownBind = bindingKey;
                 }
 
-                console.log('Updated bindings:', {
-                    player1UpBind,
-                    player1DownBind,
-                    player2UpBind,
-                    player2DownBind
-                });
             };
 
             document.addEventListener("keydown", onKeyPress);
         });
-        console.log('key bind', player1UpBind, player1DownBind, player2UpBind, player2DownBind);
     }
 
-    // Handle color picker updates
-    function updateColor(buttonId, colorDisplayId) {
-        if (!document.getElementById(buttonId))
-            return;
-        const button = document.getElementById(buttonId);
-        const colorDisplay = document.getElementById(colorDisplayId);
+    setInterval(() => {
+        // console.log('key bind', player1UpBind, player1DownBind, player2UpBind, player2DownBind);
+    }, 5000);
 
-        button.addEventListener("click", () => {
-            const colorInput = document.createElement("input");
-            colorInput.type = "color";
-            colorInput.style.display = "none";
+    console.log('pong main.js loaded');
 
-            document.body.appendChild(colorInput);
-            colorInput.click();
+    const assignedKeys = new Set();
+    const keyBindings = {
+        player1Up: pongBindings.player1UpBind,
+        player1Down: pongBindings.player1DownBind,
+        player2Up: pongBindings.player2UpBind,
+        player2Down: pongBindings.player2DownBind
+    };
 
-            colorInput.addEventListener("input", () => {
-                colorDisplay.style.backgroundColor = colorInput.value;
-                
-                // Convert hex color to 0x format and update the corresponding variable
-                const colorValue = parseInt(colorInput.value.replace('#', '0x'));
-                
-                switch(buttonId) {
-                    case 'player1SideColorBtn':
-                        player1Side = colorValue;
-                        break;
-                    case 'player1PaddleColorBtn':
-                        player1Paddle = colorValue;
-                        break;
-                    case 'player2SideColorBtn':
-                        player2Side = colorValue;
-                        break;
-                    case 'player2PaddleColorBtn':
-                        player2Paddle = colorValue;
-                        break;
-                }
+    // Key display mapping
+    const keyDisplayMapping = {
+        ArrowUp: "↑",
+        ArrowDown: "↓",
+        ArrowLeft: "←",
+        ArrowRight: "→",
+        ARROWUP: "↑",
+        ARROWDOWN: "↓",
+        ARROWLEFT: "←",
+        ARROWRIGHT: "→",
+        " ": "Space",
+        Enter: "Enter",
+        Backspace: "Backspace"
+    };
 
-            });
-
-            colorInput.addEventListener("change", () => {
-                document.body.removeChild(colorInput);
-            });
-        });
+    // Function to reset assigned keys based on current bindings
+    function resetAssignedKeys() {
+        assignedKeys.clear();
+        Object.values(keyBindings).forEach(key => assignedKeys.add(key.toUpperCase()));
     }
 
-    // Initialize the functionality for both players
-    updateKeybind("player1InputUp", "player1KeyUp", "player1Up", "Move Up");
-    updateKeybind("player1InputDown", "player1KeyDown", "player1Down", "Move Down");
-    updateKeybind("player2InputUp", "player2KeyUp", "player2Up", "Move Up");
-    updateKeybind("player2InputDown", "player2KeyDown", "player2Down", "Move Down");
+    // Function to get display value for a key
+    function getKeyDisplay(key) {
+        return keyDisplayMapping[key] || key.toUpperCase();
+    }
 
-    updateColor("player1SideColorBtn", "player1SideColor");
-    updateColor("player1PaddleColorBtn", "player1PaddleColor");
-    updateColor("player2SideColorBtn", "player2SideColor");
-    updateColor("player2PaddleColorBtn", "player2PaddleColor");
-}
+    function setupKeyBindings() {
+        // Initialize assignedKeys with default keys on page load
+        resetAssignedKeys();
 
-if(window.location.pathname === '/pong') {
+        // Initialize the functionality for both players
+        updateKeybind("player1InputUp", "player1KeyUp", "player1Up", "Move Up");
+        updateKeybind("player1InputDown", "player1KeyDown", "player1Down", "Move Down");
+        updateKeybind("player2InputUp", "player2KeyUp", "player2Up", "Move Up");
+        updateKeybind("player2InputDown", "player2KeyDown", "player2Down", "Move Down");
+
+        updateColor("player1SideColorBtn", "player1SideColor");
+        updateColor("player1PaddleColorBtn", "player1PaddleColor");
+        updateColor("player2SideColorBtn", "player2SideColor");
+        updateColor("player2PaddleColorBtn", "player2PaddleColor");
+    }
+
     setupGameModeSelect();
     setupKeyBindings();
 }

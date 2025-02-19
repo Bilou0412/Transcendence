@@ -1,9 +1,10 @@
 ///////////////////////////////////////imports////////////////////////////////////////
-import { quit, settings, player1Paddle, player2Paddle } from './main.js';
+import { quit, settings, } from './main.js';
 import { ball } from './ball_init.js';
 import { focusGame } from './monitor.js';
 import { updatePaddleColor, pressedKeys } from './movements.js';
 import { sleep } from './resetBall.js';
+import { pongColors } from './pong_bind.js';
 
 /////////////////////////////////////Keyboard/////////////////////////////////////////
 export async function onKeyDown(event) {
@@ -15,7 +16,7 @@ export async function onKeyDown(event) {
         settings.ballVelocity.set(direction * settings.ballSpeed * 8, 0, 0);
         const player = ball.userData.heldBy;
         ball.userData.heldBy = null;
-        updatePaddleColor(player, player === 1 ? player1Paddle : player2Paddle);
+        updatePaddleColor(player, player === 1 ? pongColors.player1Paddle : pongColors.player2Paddle);
     }
 
     if (event.key === 'Escape'){
