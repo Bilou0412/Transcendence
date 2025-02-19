@@ -44,6 +44,7 @@ down:
 	@if docker ps --format '{{.Names}}' | grep -q "^redis$$"; then \
         echo "$(GREEN)Stopping Redis service...$(NC)"; \
         docker stop redis; \
+		docker rm redis; \
     fi
 
 logs:
