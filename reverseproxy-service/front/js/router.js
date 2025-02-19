@@ -98,7 +98,7 @@ const loadRouteModule = async (path) => {
     try {
         const routeModulePaths = {
             '/pong': '../js/pong/main.js',
-            '/chat': '../js/page_script/chat.js',
+            // '/chat': '../js/page_script/chat.js',
             '/': '../js/page_script/home.js',
             '/profile': '../js/page_script/profile.js',
         };
