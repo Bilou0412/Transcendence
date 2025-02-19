@@ -80,7 +80,7 @@ class JWTAuthenticationFromCookiesMiddleware(BaseAuthentication):
         Attempts to find and return a user using the given validated token.
         """
         try:
-            user_id = get_user_id_from_payload_handler(validated_token)
+            user_id = validated_token.payloads.get('user_id')
         except KeyError:
             raise InvalidToken(_('Token contained no recognizable user identification'))
 
