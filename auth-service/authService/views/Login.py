@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 import pyotp
+from ..responseGenCookie import ResponseCookie
+# from django.conf import settings
 
 
 @api_view(['POST'])
@@ -55,12 +57,31 @@ def Login(request):
     # Generate JWT tokens
     refresh = RefreshToken.for_user(user)
 
-    return Response({
-        "refresh": str(refresh),
-        "access": str(refresh.access_token),
-        "user": {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-        }
-    }, status=status.HTTP_200_OK)
+    # Set the JWT tokens in HTTP-only cookies
+    # response = Response(
+    #     {
+    #         "user": {
+    #             "id": user.id,
+    #             "username": user.username,
+    #             "email": user.email,
+    #         }
+    #     }, status=status.HTTP_200_OK
+    # )
+    
+    # response.set_cookie(
+    #     'access_token',
+    #     str(refresh.access_token),
+    #     max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+    #     secure=True,
+    #     httponly=True,
+    #     samesite='Strict'
+    # )
+    # response.set_cookie(
+    #     'refresh_token',
+    #     str(refresh),
+    #     max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+    #     secure=True,
+    #     httponly=True,
+    #     samesite='Strict'
+    # )
+    return ResponseCookie(refresh, user, status.HTTP_200_OK)

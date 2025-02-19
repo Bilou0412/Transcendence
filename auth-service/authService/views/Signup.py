@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
+from ..responseGenCookie import ResponseCookie
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -37,15 +38,33 @@ def Signup(request):
             # Send the verification email
             send_verification_email(user.email, verification_url)
 
-            return Response({
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                }
-            }, status=status.HTTP_201_CREATED)
+            # response = Response(
+            #     {
+            #         "user": {
+            #             "id": user.id,
+            #             "username": user.username,
+            #             "email": user.email,
+            #         }
+            #     },
+            #     status=status.HTTP_201_CREATED
+            # )
+            # response.set_cookie(
+            #     'access_token',
+            #     str(refresh.access_token),
+            #     max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+            #     secure=True,
+            #     httponly=True,
+            #     samesite='Strict'
+            # )
+            # response.set_cookie(
+            #     'refresh_token',
+            #     str(refresh),
+            #     max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+            #     secure=True,
+            #     httponly=True,
+            #     samesite='Strict'
+            # )
+            return ResponseCookie(refresh, user, status.HTTP_201_CREATED)
             
         except Exception as e:
             return Response({"detail": "An error occurred during registration", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

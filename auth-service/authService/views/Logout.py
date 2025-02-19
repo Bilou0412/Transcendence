@@ -10,7 +10,7 @@ from rest_framework_simplejwt.token_blacklist.models import OutstandingToken ,Bl
 def Logout(request):
     try:
         # Obtenez le refresh token de la requête
-        refresh_token = request.data.get('refresh')
+        refresh_token = request.COOKIES.get('refresh_token')
 
         if not refresh_token:
             return Response({"detail": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)

@@ -159,28 +159,29 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
    console.log('Password:', password);
    console.log('OTP:', otp);
    
-   fetch(`https://${window.location.host}/auth/login/`, {
-       method: 'POST',
-       headers: {
-           'Content-Type': 'application/json'
-       },
-       body: JSON.stringify({
-           email: email,
-           password: password,
-           otp: otp // Correctly send the OTP value
-       })
-   }).then(response => {
-       if (response.ok) {
+	fetch(`https://${window.location.host}/auth/login/`, {
+    	method: 'POST',
+    	headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			email: email,
+        	password: password,
+        	otp: otp // Correctly send the OTP value
+		}),
+	    credentials: 'include'
+	}).then(response => {
+		if (response.ok) {
            // Handle successful login
            response.json().then(data => {
             	console.log('Login successful:', data);
-				sessionStorage.setItem('accessToken', data.access);
-            	sessionStorage.setItem('refreshToken', data.refresh);
+				// sessionStorage.setItem('accessToken', data.access);
+            	// sessionStorage.setItem('refreshToken', data.refresh);
             	sessionStorage.setItem('userId', data.user.id);
             	sessionStorage.setItem('username', data.user.username);
 				sessionStorage.setItem('email', data.user.email);
 				
-				connectWebSocket(data.access, data.user.username, data.user.id, globalSocket);
+				connectWebSocket(data.user.username, data.user.id, globalSocket);
 				// Transition to home page
 				homePage.classList.remove('hidden');
 				homePage.classList.add('showing');
@@ -293,17 +294,18 @@ log42Button.addEventListener('click', function () {
 				if (code) {
 					const otp = document.getElementById('oauth2faField').value;
 					fetch(`https://${window.location.host}/auth/oauth/?code=${code}&otp=${otp}`, {
-						method: 'GET'
+						method: 'GET',
+						credentials: 'include'
 					})
 					.then(response => response.json())
 					.then(data => {
 						if (data.access) {
-							sessionStorage.setItem('accessToken', data.access);
-							sessionStorage.setItem('refreshToken', data.refresh);
+							// sessionStorage.setItem('accessToken', data.access);
+							// sessionStorage.setItem('refreshToken', data.refresh);
 							sessionStorage.setItem('userId', data.user.id);
 							sessionStorage.setItem('username', data.user.username);
 							sessionStorage.setItem('email', data.user.email);
-							connectWebSocket(data.access, data.user.username, data.user.id, globalSocket);
+							connectWebSocket(data.user.username, data.user.id, globalSocket);
 				
 							// Transition to home page
 							homePage.classList.remove('hidden');
@@ -342,18 +344,20 @@ logoutButton.addEventListener('click', function() {
 
 ////////////////////////// Auto-Login ////////////////////////////
 async function autoLogin() {
-    const accessTokenLogin = sessionStorage.getItem('accessToken');
+	// console.log('cookies:', document.cookie);
+    // const accessTokenLogin = ;
 
-    if (!accessTokenLogin) {
-        console.log('No access token found.');
-        return;
-    }
+    // if (!accessTokenLogin) {
+    //     console.log('No access token found.');
+    //     return;
+    // }
 	try {
 		const response = await fetch(`https://${window.location.host}/auth/token/validate/`, {
 			method: 'POST', // Ensure it's a POST request
-			headers: {
-				'Authorization': 'Bearer ' + accessTokenLogin
-			},
+			// headers: {
+			// 	'Authorization': 'Bearer ' + accessTokenLogin
+			// },
+			credentials: 'include'
 		});
 		if (response.ok) {
 			console.log('Token is valid.');

@@ -158,6 +158,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
 	f"https://{os.getenv('DNS_URL')}"
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 SIMPLE_JWT = {    
     'BLACKLIST_AFTER_ROTATION': True,

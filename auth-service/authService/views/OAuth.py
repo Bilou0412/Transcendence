@@ -3,11 +3,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
 import requests
 import os
 from ..models import User
 from ..serializers import UserSerializerOAuth
 import pyotp  # Import pyotp for 2FA
+from ..responseGenCookie import ResponseCookie
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -52,32 +54,63 @@ def OAuth(request):
                     )
 
             # Create JWT tokens
-            tokens = create_tokens_for_user(user)
-            return Response({
-                "access": tokens['access'],
-                "refresh": tokens['refresh'],
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email
-                }
-            }, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user)
+            # tokens = create_tokens_for_user(user)
+            # response = Response({
+            #     "user": {
+            #         "id": user.id,
+            #         "username": user.username,
+            #         "email": user.email
+            #     }
+            # }, status=status.HTTP_200_OK)
+            # response.set_cookie(
+            #     'access_token',
+            #     str(refresh.access_token),
+            #     max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+            #     secure=True,
+            #     httponly=True,
+            #     samesite='Strict'
+            # )
+            # response.set_cookie(
+            #     'refresh_token',
+            #     str(refresh),
+            #     max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+            #     secure=True,
+            #     httponly=True,
+            #     samesite='Strict'
+            # )
+            return ResponseCookie(refresh, user, status.HTTP_200_OK)
 
         # User doesn't exist, create or update user with the serializer
         serializer = UserSerializerOAuth(data=user_data)
         if serializer.is_valid():
             user = serializer.save(is_active=True)  # Ensure the user is active
-            tokens = create_tokens_for_user(user)
+            refresh = RefreshToken.for_user(user)
             upload_user_image(user.id, user_data['image']['link'], tokens['access'])
-            return Response({
-                "access": tokens['access'],
-                "refresh": tokens['refresh'],
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email
-                }
-            }, status=status.HTTP_201_CREATED)
+            # response = Response({
+            #     "user": {
+            #         "id": user.id,
+            #         "username": user.username,
+            #         "email": user.email
+            #     }
+            # }, status=status.HTTP_201_CREATED)
+            # response.set_cookie(
+            #     'access_token',
+            #     tokens['access'],
+            #     max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
+            #     secure=True,
+            #     httponly=True,
+            #     samesite='Strict'
+            # )
+            # response.set_cookie(
+            #     'refresh_token',
+            #     tokens['refresh'],
+            #     max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
+            #     secure=True,
+            #     httponly=True,
+            #     samesite='Strict'
+            # )
+            return ResponseCookie(refresh, user, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -109,14 +142,14 @@ def get_user_info_from_42(access_token):
         return response.json()
     return None
 
-def create_tokens_for_user(user):
-    """Generate JWT tokens for the authenticated user."""
-    refresh = RefreshToken.for_user(user)
-    access = refresh.access_token
-    return {
-        "access": str(access),
-        "refresh": str(refresh)
-    }
+# def create_tokens_for_user(user):
+#     """Generate JWT tokens for the authenticated user."""
+
+#     access = refresh.access_token
+#     return {
+#         "access": str(access),
+#         "refresh": str(refresh)
+#     }
 
 def upload_user_image(user_id, image_url, access_token):
     """Helper function to upload the user's image to the image service."""

@@ -6,15 +6,21 @@ def auth_token(func):
 	@wraps(func)
 	async def wrapper(self, *args, **kwargs):
 		try:
-			token = self.scope.get('query_string', b'').decode()
+			# token = self.scope.get('query_string', b'').decode()
+			# if not token:
+			# 	raise DenyConnection("Authorization token missing")
+			# print(f"dirrrrrrrrrrrrrrrrrr: {dir(self.scope)}")
+			# print(f"oooooooooooooooooooo: {self.scope.items()}")
+			# token = self.COOKIES.get('access_token')
+			token = self.scope.get('cookies').get('access_token')
 			if not token:
 				raise DenyConnection("Authorization token missing")
-			
 			async with httpx.AsyncClient(timeout=5) as validateClient:
 				validateResponse = await validateClient.post(
 					'http://auth:8000/auth/token/validate/',
-					headers={'Authorization': f'Bearer {token}'}
-				)
+					headers={'Authorization': f'Bearer {token}'},
+                    cookies=self.scope.get('cookies')
+                )
 			if validateResponse.status_code != 200:
 				raise DenyConnection("Invalid authorization token")
 

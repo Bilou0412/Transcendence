@@ -11,12 +11,15 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
     console.log('Connecting to WebSocket...');
     const userList = document.getElementById('user-list');
     const friendRequestList = document.getElementById('friend-request-list');
-    console.log(accessToken);
     console.log(userId);
     console.log(username);
 
-    const encodedToken = encodeURIComponent(accessToken);
-    socket = new WebSocket(`wss://${window.location.host}/wsmanagement/lobby/?${encodedToken}`);
+    // const encodedToken = encodeURIComponent(accessToken);
+    socket = new WebSocket(`wss://${window.location.host}/wsmanagement/lobby/`, [], {
+        headers: {
+            Cookie: document.cookie // This will include all cookies, including HTTP-only ones if the browser allows
+        }
+    });
     globalSocket = socket;
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);

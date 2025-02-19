@@ -7,6 +7,7 @@ from rest_framework.response import Response
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Validate(request):
+    print('l')
     user = request.user 
     if user:
         return Response({'detail': 'Valid token.', 'id': user.id}, status=status.HTTP_200_OK)
