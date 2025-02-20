@@ -15,6 +15,7 @@ export const pongColors = {
 export const pongSet = {
     selectedMode: 'local 1v1',
     current_match: 1,
+    game_announcement: false,
     players_names: ["player 1", "player 2", "player 3", "player 4", null, null, null],
 };
 

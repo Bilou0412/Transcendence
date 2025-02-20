@@ -36,6 +36,9 @@ function advance(player) {
 }
 
 function annonceWinner(player1, player2) {
+    if (pongSet.game_announcement===true) {
+        return;
+    }
     if (settings.player1Score > settings.player2Score) {
         alert(pongSet.players_names[player1] + ' wins the match!');
         advance(player1);
@@ -44,6 +47,7 @@ function annonceWinner(player1, player2) {
         alert(pongSet.players_names[player2] + ' wins the match!');
         advance(player2);
     }
+    pongSet.game_announcement = true;
 }
 
 export async function quit() {
@@ -65,11 +69,8 @@ export async function quit() {
                 }
             }
             else {
-                if (settings.player1Score > settings.player2Score)
-                    alert(pongSet.players_names[0] + ' wins the match!');
-                else
-                    alert(pongSet.players_names[1] + ' wins the match!');
-            }  
+                annonceWinner(0, 1);
+            }
         }
     }
 
@@ -363,6 +364,7 @@ function setupGameModeSelect() {
             if (pongSet.selectedMode === 'remote 1v1') {
                 buildFriendList(sessionStorage.getItem('accessToken'), 'friendList', null);
                 fieldRows.forEach(fieldRow => fieldRow.style.visibility = 'hidden');
+                document.getElementById('startButton').style.display = 'none';
             }
             else if (fieldRows[0].style.visibility === 'hidden')
                 fieldRows.forEach(fieldRow => fieldRow.style.visibility = 'visible');
