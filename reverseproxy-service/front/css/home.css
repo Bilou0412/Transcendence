@@ -198,7 +198,7 @@ input{
 	align-items: center;
 	flex-direction: column;
 	position: absolute;
-	top: 30%;
+	top: 34%;
     left: 64%;
 	gap: 10px;
 }
@@ -234,6 +234,10 @@ input{
 	flex-wrap: wrap;
 	align-content: space-around;
 }
+
+/* #oauth2faField {
+	display: none;
+} */
 
 /* ====================================Register form==================================== */
 .register-form {
