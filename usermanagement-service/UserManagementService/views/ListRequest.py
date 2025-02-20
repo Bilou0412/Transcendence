@@ -15,4 +15,4 @@ def ListRequest(request):
         pending_requests = [friendship.user_1.user_id for friendship in friendships]
         return Response({ "user_id": request.id, "pending_requests": pending_requests })
     except UserProfile.DoesNotExist:
-        return Response({"message": "User not found"}, status=404)
+        return Response({"message": "User not found"}, status=200)

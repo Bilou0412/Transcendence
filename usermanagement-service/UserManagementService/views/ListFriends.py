@@ -35,4 +35,4 @@ def ListFriends(request):
         return Response({ "user_id": request.id, "friends": friends })
 
     except UserProfile.DoesNotExist:
-        return Response({"message": "User not found"}, status=404)
+        return Response({"message": "User not found"}, status=200)

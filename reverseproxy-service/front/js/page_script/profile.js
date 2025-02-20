@@ -180,9 +180,9 @@ function fetchUserMatches(userId, accessToken) {
 			'Authorization': 'Bearer ' + accessToken
 		}
 	})
-	.then(response => {
-		if (response.status === 404) {
-			console.log('No matches found');
+	.then(response => response.json())
+	.then(data => {
+		if (!data || !data.matches) {
 			const historyTable = document.getElementById('history');
 			while (historyTable.rows.length > 1) {
 				historyTable.deleteRow(1);
@@ -194,13 +194,6 @@ function fetchUserMatches(userId, accessToken) {
 			`;
 			return;
 		}
-		if (!response.ok && response.status !== 404) {
-			throw new Error('Network response was not ok');
-		}
-		return response.json();
-	})
-	.then(data => {
-		if (!data) return;
 
 		const historyTable = document.getElementById('history');
 		
@@ -332,6 +325,9 @@ export function fetchFriendRequests() {
 		return response.json();
 	})
 	.then(data => {
+		if (!data.pending_requests) {
+			return;
+		}
 		const requestContainer = document.getElementById('requestResults-body');
 		requestContainer.innerHTML = '';
 

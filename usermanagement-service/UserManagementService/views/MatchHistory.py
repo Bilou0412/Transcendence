@@ -15,7 +15,7 @@ def MatchHistory(request, user_id):
     except UserProfile.DoesNotExist:
         return Response({
             "error": f"User with ID {user_id} does not exist."
-        }, status=status.HTTP_404_NOT_FOUND)
+        }, status=status.HTTP_200_OK)
 
     # Récupérer les matchs où l'utilisateur est impliqué (player_1 ou player_2)
     matches = Match.objects.filter(
