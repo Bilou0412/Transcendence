@@ -10,43 +10,38 @@ import { onKeyDown, onKeyUp, onMouseWheel } from "./keyEvents.js";
 import { Settings } from "./settings.js";
 import { titleDisplay } from "./monitor_display.js";
 import { buildFriendList } from "../page_script/friendList.js";
-import { pongBindings, pongColors } from "./pong_bind.js";
+import { pongBindings, pongColors, pongSet, getMatchWinners } from "./pong_bind.js";
 
 // ///////////////////////////////////environment settings///////////////////////////////
 export let settings = null;
-let selectedMode = 'local 1v1';
-let current_match = 1;
-let players_names = ["player 1", "player 2", "player 3", "player 4", null, null, null];
-
-let semifinal1Winner = document.getElementById('semifinal1');
-let semifinal2Winner = document.getElementById('semifinal2');
-let finalWinner = document.getElementById('final');
 
 let currentRemoteGame = null;
 ///////////////////////////////////main functions/////////////////////////////////////
 
 function advance(player) {
-    if (current_match === 1) {
-        players_names[4] = players_names[player];
-        semifinal1Winner.value = players_names[player];
+    const matchWinners = getMatchWinners();
+
+    if (pongSet.current_match === 1) {
+        pongSet.players_names[4] = pongSet.players_names[player];
+        matchWinners.semifinal1Winner.value = pongSet.players_names[player];
     }
-    else if (current_match === 2) {
-        players_names[5] = players_names[player];
-        semifinal2Winner.value = players_names[player];
+    else if (pongSet.current_match === 2) {
+        pongSet.players_names[5] = pongSet.players_names[player];
+        matchWinners.semifinal2Winner.value = pongSet.players_names[player];
     }
     else {
-        players_names[6] = players_names[player];
-        finalWinner.value = players_names[player];
+        pongSet.players_names[6] = pongSet.players_names[player];
+        matchWinners.finalWinner.value = pongSet.players_names[player];
     }
 }
 
 function annonceWinner(player1, player2) {
     if (settings.player1Score > settings.player2Score) {
-        alert(players_names[player1] + ' wins the match!');
+        alert(pongSet.players_names[player1] + ' wins the match!');
         advance(player1);
     }
     else {
-        alert(players_names[player2] + ' wins the match!');
+        alert(pongSet.players_names[player2] + ' wins the match!');
         advance(player2);
     }
 }
@@ -55,25 +50,25 @@ export async function quit() {
     if (settings) {
         if (settings.player1Score === settings.maxScore || settings.player2Score === settings.maxScore) {
             if (settings.gameMode === 'local tournament' ) {
-                if (current_match === 1) {
+                if (pongSet.current_match === 1) {
                     annonceWinner(0, 1);
-                    current_match++;
+                    pongSet.current_match++;
                 }
-                else if (current_match === 2) {
+                else if (pongSet.current_match === 2) {
                     annonceWinner(2, 3);
-                    current_match++;
+                    pongSet.current_match++;
                 }
                 else {
                     annonceWinner(4, 5);
-                    alert(players_names[6] + ' wins the tournament!');
-                    current_match = 1;
+                    alert(pongSet.players_names[6] + ' wins the tournament!');
+                    pongSet.current_match = 1;
                 }
             }
             else {
                 if (settings.player1Score > settings.player2Score)
-                    alert(players_names[0] + ' wins the match!');
+                    alert(pongSet.players_names[0] + ' wins the match!');
                 else
-                    alert(players_names[1] + ' wins the match!');
+                    alert(pongSet.players_names[1] + ' wins the match!');
             }  
         }
     }
@@ -304,6 +299,7 @@ function changePlayStyle()
 
 export async function initializeGame(gameId) {
     console.log('Initializing game...');
+    console.log('Players in the game: ', pongSet.players_names);
     document.getElementById('waitingScreen').style.display = 'block';
     document.getElementById('nav').style.display = 'none';
     document.getElementById('startButton').style.display = 'none';
@@ -314,7 +310,7 @@ export async function initializeGame(gameId) {
     window.addEventListener('keyup', onKeyUp, false);
     window.addEventListener('wheel', onMouseWheel, false);
     settings = new Settings();
-    settings.gameMode = selectedMode;
+    settings.gameMode = pongSet.selectedMode;
     if (gameId) {
         currentRemoteGame = gameId;
         settings.gameMode = 'remote 1v1';
@@ -348,7 +344,7 @@ function setupGameModeSelect() {
     };
     if (gameModeSelect) {
         gameModeSelect.addEventListener('change', function () {
-            selectedMode = gameModeSelect.value.toLowerCase();
+            pongSet.selectedMode = gameModeSelect.value.toLowerCase();
             // console.log('sections: ', sections);
             // gameModeSelect = selectedMode;
             // Hide all sections
@@ -359,12 +355,12 @@ function setupGameModeSelect() {
             });
 
             // Show the selected section
-            if (sections[selectedMode]) {
-                sections[selectedMode].style.display = 'flex';
+            if (sections[pongSet.selectedMode]) {
+                sections[pongSet.selectedMode].style.display = 'flex';
             }
             const fieldRows = document.querySelectorAll('.field-row');
             
-            if (selectedMode === 'remote 1v1') {
+            if (pongSet.selectedMode === 'remote 1v1') {
                 buildFriendList(sessionStorage.getItem('accessToken'), 'friendList', null);
                 fieldRows.forEach(fieldRow => fieldRow.style.visibility = 'hidden');
             }
@@ -382,11 +378,11 @@ function getPlayersNames() {
         playerInputs.forEach((input, index) => {
             // Immediately capture current input value
             if (input.value)
-                players_names[index] = input.value;
+                pongSet.players_names[index] = input.value;
             
             // Add input event listener for future changes
             input.addEventListener('input', () => {
-                players_names[index] = input.value || null;
+                pongSet.players_names[index] = input.value || null;
             });
         });
     }
@@ -440,7 +436,6 @@ if (window.location.pathname === '/pong') {
 
     // Handle keybinding updates
     function updateKeybind(buttonId, keyDisplayId, action, buttonDefaultText) {
-        console.log('updating keybind:', action);
         const button = document.getElementById(buttonId);
         if (!document.querySelector(`#${keyDisplayId} kbd`))
             return;
@@ -500,12 +495,6 @@ if (window.location.pathname === '/pong') {
             document.addEventListener("keydown", onKeyPress);
         });
     }
-
-    setInterval(() => {
-        // console.log('key bind', player1UpBind, player1DownBind, player2UpBind, player2DownBind);
-    }, 5000);
-
-    console.log('pong main.js loaded');
 
     const assignedKeys = new Set();
     const keyBindings = {

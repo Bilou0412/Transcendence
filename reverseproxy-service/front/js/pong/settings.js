@@ -43,7 +43,7 @@ export class Settings {
         this.ballVelocity = new THREE.Vector3(this.ballSpeed, 0, this.ballSpeed);
         this.player1Score = 0;
         this.player2Score = 0;
-        this.maxScore = 15; // Max score to win the game
+        this.maxScore = 5; // Max score to win the game
         this.player1HitCounter = 0; // Number of hits by player 1 for supercharge
         this.player2HitCounter = 0; // Number of hits by player 2 for supercharge
         this.ServSide = 2; // Wich player will serve

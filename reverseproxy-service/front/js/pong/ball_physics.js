@@ -87,7 +87,6 @@ export function updateBallPosition()
 {
     // console.log("gameStatus: " + settings.gameStatus);
     if (!settings || settings.gameMode === 'remote 1v1' || settings.gameStatus === 'paused') {
-        console.log('remote 1v1 or game not started');
         return;
 
     }

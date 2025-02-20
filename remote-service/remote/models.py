@@ -42,7 +42,7 @@ class Game:
 		self.status = False
 		self.paused = False
 		self.servSide = 'left'
-		self.maxScore = 15
+		self.maxScore = 5
 		self.hitLast = 'right'
 		self.start_timeout_task = asyncio.create_task(self.start_timeout())
 
