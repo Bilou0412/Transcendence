@@ -283,55 +283,84 @@ document.querySelector('#registerFormContainer form').addEventListener('submit',
 const log42Button = document.getElementById('log42Button');
 // const twoFAField = document.getElementById('oauth2faField');
 
-log42Button.addEventListener('click', function () {
-	// twoFAField.style.display = 'flex';
-	const oauthUrl = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3&redirect_uri=https%3A%2F%2Fxpongo.ddns.net%3A8443%2Fsucces%2F&response_type=code";
-	const popup = window.open(oauthUrl, 'OAuth Login', 'width=600,height=600');
-	const interval = setInterval(function () {
-		try {
-			if (popup.location.href.indexOf('code=') !== -1) {
-				const urlParams = new URLSearchParams(popup.location.search);
-				const code = urlParams.get('code');
-				if (code) {
-					const otp = document.getElementById('oauth2faField').value;
-					fetch(`https://${window.location.host}/auth/oauth/?code=${code}&otp=${otp}`, {
-						method: 'GET'
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.access) {
-							sessionStorage.setItem('accessToken', data.access);
-							sessionStorage.setItem('refreshToken', data.refresh);
-							sessionStorage.setItem('userId', data.user.id);
-							sessionStorage.setItem('username', data.user.username);
-							sessionStorage.setItem('email', data.user.email);
-							connectWebSocket(data.access, data.user.username, data.user.id, globalSocket);
-				
-							// Transition to home page
-							homePage.classList.remove('hidden');
-							homePage.classList.add('showing');
-							lockscreenPage.classList.remove('showing');
-							lockscreenPage.classList.add('hidden');
-							lockLogo.style.display = 'none';
-							
-							// Dynamically load the other scripts
-							loadScript('../js/page_script/clock.js', false); // Load clock.js
-							loadScript('../js/router.js', true); // Load router.js as a module
-						} else {
-							alert('OAuth failed');
-						}
-					})
-					.catch(error => {
-						console.error('Error during OAuth request:', error);
-					});
-					popup.close();
-					clearInterval(interval);
-				}
-			}
-		} catch (error) {
-			console.error('Error checking popup URL:', error);
-		}
-	}, 1000);
+// Gestionnaire des messages de la popup OAuth
+window.addEventListener('message', function(event) {
+    // Vérifier l'origine
+    if (event.origin !== 'https://xpongo.ddns.net:8443') return;
+
+    const data = event.data;
+    if (data.type === 'oauth_callback' && data.code) {
+        handleOAuthCode(data.code);
+    }
+});
+
+// Gestionnaire pour le code dans l'URL (fallback)
+window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+        handleOAuthCode(code);
+    }
+});
+
+function handleOAuthCode(code) {
+    const otp = document.getElementById('oauth2faField').value;
+    fetch(`https://${window.location.host}/auth/oauth/?code=${code}&otp=${otp}`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.access) {
+            // Stocker les données de session
+            sessionStorage.setItem('accessToken', data.access);
+            sessionStorage.setItem('refreshToken', data.refresh);
+            sessionStorage.setItem('userId', data.user.id);
+            sessionStorage.setItem('username', data.user.username);
+            sessionStorage.setItem('email', data.user.email);
+            
+            // Connecter le WebSocket
+            connectWebSocket(data.access, data.user.username, data.user.id, globalSocket);
+
+            // Transition vers la page d'accueil
+            const homePage = document.getElementById('HomePage');
+            const lockscreenPage = document.getElementById('LockPage');
+            const lockLogo = document.getElementById('lockLogo');
+
+            homePage.classList.remove('hidden');
+            homePage.classList.add('showing');
+            lockscreenPage.classList.remove('showing');
+            lockscreenPage.classList.add('hidden');
+            if (lockLogo) lockLogo.style.display = 'none';
+
+            // Charger les scripts nécessaires
+            loadScript('../js/page_script/clock.js', false);
+            loadScript('../js/router.js', true);
+
+            // Nettoyer l'URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            alert('OAuth failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error during OAuth request:', error);
+        alert('An error occurred during authentication');
+    });
+}
+
+log42Button.addEventListener('click', function() {
+    const oauthUrl = "https://api.intra.42.fr/oauth/authorize?" + new URLSearchParams({
+        client_id: 'u-s4t2ud-6d896cbba0cf9cbd760394daeca2728498dace7f3254b04ac08fe1fc0dcc73f3',
+        redirect_uri: 'https://xpongo.ddns.net:8443/succes/',
+        response_type: 'code'
+    });
+    
+    // Ouvrir dans une popup
+    const popup = window.open(oauthUrl, 'OAuth Login', 'width=600,height=600');
+    
+    if (!popup) {
+        alert('Please enable popups for this site to use OAuth login.');
+    }
 });
 
 

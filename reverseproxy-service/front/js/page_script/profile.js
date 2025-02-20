@@ -2,7 +2,7 @@ import { fetchProfileImages } from './fetchData.js';
 import { buildFriendList } from './friendList.js';
 
 
-function profileNav(idToSearch) {
+export function profileNav(idToSearch) {
 	const accessToken = sessionStorage.getItem('accessToken');
 	if (!accessToken) {
 		console.error('Access token not found');
@@ -417,8 +417,9 @@ function respondToFriendRequest(friendId, accept) {
 	.then(response => response.json())
 	.then(data => {
 		console.log(`Friend request ${accept ? 'accepted' : 'refused'}:`, data);
-		alert(`Friend request ${accept ? 'accepted' : 'refused'} successfully!`);
 		fetchFriendRequests(); // Refresh friend requests
+		buildFriendList(accessToken, "friendList-body",profileNav);
+		alert(`Friend request ${accept ? 'accepted' : 'refused'} successfully!`);
 	})
 	.catch(error => {
 		console.error(`Error responding to friend request:`, error);

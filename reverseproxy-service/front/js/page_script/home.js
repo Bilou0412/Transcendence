@@ -1,11 +1,11 @@
 import { initializeGame } from "../pong/main.js";
 import { sleep } from "../pong/resetBall.js";
-import { changeFriendStatus, setConnectedUsers } from "../page_script/friendList.js";
+import { changeFriendStatus, setConnectedUsers , buildFriendList} from "../page_script/friendList.js";
 // import { initializeGame } from "../pong/main";
 
 // export let globalSocket = null;
 export let socket = null;
-import { fetchFriendRequests } from '../page_script/profile.js';
+import { fetchFriendRequests,profileNav } from '../page_script/profile.js';
 
 export async function connectWebSocket(accessToken, username, userId, globalSocket) {
     console.log('Connecting to WebSocket...');
@@ -27,7 +27,7 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
                 receivedInviteCode(data);
                 break;
             case 'friend_request':
-                reloadProfileScript(data, friendRequestList);
+                reloadProfileScript(accessToken);
                 break;
             case 'list_user_connected':
                 setConnectedUsers(data);
@@ -39,9 +39,10 @@ export async function connectWebSocket(accessToken, username, userId, globalSock
     }
 };
 
-function reloadProfileScript() {
-    // console.log("recu");
+function reloadProfileScript(accessToken) {
+    console.log("recu");
     fetchFriendRequests();
+    buildFriendList(accessToken, "friendList-body",profileNav);
 }
 
 async function receivedInviteCode(data) {

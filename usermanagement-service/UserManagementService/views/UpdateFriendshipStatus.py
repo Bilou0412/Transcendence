@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import UserProfile, Friendship
 from ..decorators import authorize_user
+import requests
 from django.db.models import Q  # Assure-toi que ton décorateur est bien importé
 
 
@@ -46,6 +47,19 @@ def UpdateFriendshipStatus(request):
             return Response({
                 "error": "No pending friendship request found."
             }, status=status.HTTP_400_BAD_REQUEST)
+
+        wsmanagement_url = 'http://wsmanagement:8000/friend-request/'  # Correct URL
+        wsmanagement_data = {
+            'receiver_id': friend_id,
+            'sender_id': user_id
+        }
+        try:
+            response = requests.post(wsmanagement_url, json=wsmanagement_data)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            return Response({
+                "error": f"Failed to notify the receiver via WebSocket: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Mettre à jour le statut de la demande d'amitié
         if status_choice == 'refused':

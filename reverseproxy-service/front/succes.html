@@ -1,64 +1,66 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Authentification réussie</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
-    }
-
-    .checkmark-container {
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 50px;
-      color: green;
-      opacity: 0;
-      animation: fadeIn 0.5s ease-out forwards, scaleUp 0.5s ease-out forwards;
-    }
-
-    .checkmark {
-      display: inline-block;
-      animation: growCheckmark 0.5s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-
-    @keyframes scaleUp {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes growCheckmark {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
-    }
-
-    .message {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #333;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>OAuth Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .message {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-  <div class="checkmark-container">
-    <div class="checkmark">✔️</div>
-  </div>
-  <div class="message">Authentification réussie !</div>
+    <div class="message">
+        <h2>Processing OAuth...</h2>
+        <p>Please wait while we complete the authentication.</p>
+    </div>
 
-
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                if (window.opener) {
+                    // Si la fenêtre a été ouverte comme popup
+                    try {
+                        window.opener.postMessage({
+                            type: 'oauth_callback',
+                            code: code
+                        }, 'https://xpongo.ddns.net:8443');
+                        setTimeout(() => window.close(), 1000);
+                    } catch (e) {
+                        console.error('Error sending message to opener:', e);
+                        // Fallback à la redirection si la communication inter-fenêtres échoue
+                        window.location.href = `https://xpongo.ddns.net:8443/?code=${code}`;
+                    }
+                } else {
+                    // Si accédé directement (pas en popup)
+                    window.location.href = `https://xpongo.ddns.net:8443/?code=${code}`;
+                }
+            } else {
+                document.querySelector('.message').innerHTML = `
+                    <h2>Error</h2>
+                    <p>Authorization code not found.</p>
+                `;
+                setTimeout(() => {
+                    window.location.href = 'https://xpongo.ddns.net:8443/';
+                }, 3000);
+            }
+        };
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - my_network
 
@@ -63,7 +63,9 @@ services:
       - my_network
     depends_on:
       - db-chat
+      - redis
     entrypoint: ["/app/docker/entrypoint_dev.sh"]
+
 
   ### 🔹 Base de données pour Media ###
   db-media:
@@ -111,6 +113,8 @@ services:
     networks:
       - my_network
     entrypoint: ["/app/docker/entrypoint_dev.sh"]
+    depends_on:
+      - redis
 
   reverseproxy:
     build: ./reverseproxy-service
@@ -133,6 +137,7 @@ services:
       - remote
       - usermanagement
       - wsmanagement
+      - redis
     environment:
       - TZ=Europe/Paris
 
@@ -178,6 +183,9 @@ services:
     networks:
       - my_network
     entrypoint: ["/app/docker/entrypoint_dev.sh"]
+    depends_on:
+      - redis
+
 
 volumes:
   postgres_data_auth:
