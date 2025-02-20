@@ -69,6 +69,11 @@ clean:
 		echo "$(RED)Removing network $(NETWORK)...$(NC)"; \
 		docker network rm $(NETWORK); \
 	fi
+	@if docker ps --format '{{.Names}}' | grep -q "^redis$$"; then \
+    echo "$(GREEN)Stopping Redis service...$(NC)"; \
+    docker stop redis; \
+	docker rm redis; \
+    fi
 	@if [ -d "media-service/images/users_images/" ]; then \
     echo "$(RED)Removing media-service/images/users_images/ folder...$(NC)"; \
     rm -rf media-service/images/users_images/; \

@@ -329,7 +329,8 @@ export function fetchFriendRequests() {
 			return;
 		}
 		const requestContainer = document.getElementById('requestResults-body');
-		requestContainer.innerHTML = '';
+		if (requestContainer)
+			requestContainer.innerHTML = '';
 
 		const userIds = data.pending_requests.map(request => request);
 		if (userIds.length === 0) {
